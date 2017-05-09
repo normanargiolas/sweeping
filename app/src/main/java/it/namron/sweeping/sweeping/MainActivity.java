@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
@@ -75,6 +76,10 @@ public class MainActivity extends AppCompatActivity
             Drawable icon = ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_telegram);
             menu.findItem(R.id.nav_telegram).setIcon(icon);
         }
+
+        //Controllare eventuale capacità di memoria
+        Drawable icon = ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_manage);
+        menu.findItem(R.id.nav_manage).setIcon(icon);
     }
 
 
@@ -140,13 +145,31 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_whatsapp) {
-            Toast.makeText(getApplicationContext(), "whatsapp", Toast.LENGTH_SHORT).show();
-        } else if (id == R.id.nav_telegram) {
-            Toast.makeText(getApplicationContext(), "telegram", Toast.LENGTH_SHORT).show();
-        } else if (id == R.id.nav_manage) {
-            Toast.makeText(getApplicationContext(), "manage", Toast.LENGTH_SHORT).show();
+        switch (id) {
+            case R.id.nav_whatsapp:
+                Toast.makeText(getApplicationContext(), "whatsapp", Toast.LENGTH_SHORT).show();
+                fragment = new WhatsAppFragment();
+                break;
+            case R.id.nav_telegram:
+                Toast.makeText(getApplicationContext(), "telegram", Toast.LENGTH_SHORT).show();
+                fragment = new TelegramFragment();
+                break;
+            case R.id.nav_manage:
+                Toast.makeText(getApplicationContext(), "manage", Toast.LENGTH_SHORT).show();
+                fragment = new ManageFragment();
+                break;
+
+            default:
+                Toast.makeText(getApplicationContext(), "unknow choice", Toast.LENGTH_SHORT).show();
+
+                break;
         }
+
+        if (fragment != null) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
+        }
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

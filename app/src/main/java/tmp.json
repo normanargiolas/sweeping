@@ -1,0 +1,106 @@
+{
+  "entity": "registration",
+  "state": "Done",
+  "registration": {
+    "account": {
+      "ref": "0009999332",
+      "code": "IT",
+      "account_type": "anon",
+      "start_datetime": "2017-05-08T13:02:23Z"
+    },
+    "device": {
+      "uuid": {
+        "id": "00000000-32d5-ddbf-56b9-1b1f3a2bcb96",
+        "type": "UDID"
+      },
+      "notification_token": "APA91bEh-8BXqdJmpWanr4szyZbKucG5d5zj1mWhdpo5pOXgU6-XBIXHwa1dYXS00LBQAuj7Yh9_Pm01J6ZqN1o5jI2x0tojvd5XjLmszYfYazP-FQNAmkGyCQqT5CbU5vAV7aBvMvyG",
+      "platform": "android",
+      "os_version": "6.0.1",
+      "device_name": "Nexus 5",
+      "app_version": "1.2.0.13"
+    },
+    "party": {
+      "type": "named_user",
+      "user": {
+        "country_residence": "IT",
+        "tax_id": "RGLNMN81R18B354C",
+        "name": {
+          "first": "Norman",
+          "last": "Argiolas"
+        },
+        "birthday": "1981-10-18",
+        "birth_city": "CAGLIARI",
+        "birth_region": "CA",
+        "sex": "M",
+        "address": {
+          "lines": [
+            "via"
+          ],
+          "city": "CAGLIARI",
+          "region": "CA",
+          "post_code": "09123",
+          "country": "IT"
+        },
+        "document": {
+          "code": "01",
+          "type": "Carta d'Identità",
+          "number": "GS4622",
+          "issue_by": "Comune",
+          "issued_on": "2016-05-08",
+          "expire_on": "2019-07-08"
+        }
+      },
+      "config": {
+        "bank_out": {
+          "iban": "IT34I5411096620761796335219",
+          "name": "Norman Argiolas",
+          "state": "Done"
+        },
+        "bank_in": {
+          "iban": "IT57U03599018002P0009999332"
+        }
+      }
+    },
+    "authentication": {
+      "hpasswd": "vZH7JxYqS6pgpijDDSujpFpnD9eZDSKtHNMbVrdPn0A=",
+      "hpin": "gxEgYkSPzJzk7vM5diir68VJWnouSDBokFDqUtVpeto=",
+      "salt": "LM5xjEUzKwF5dyauDRr3-7KEzFCyyGTELYjcX1HuDo4=",
+      "smscode": 3302,
+      "security_question": {
+        "question": "Qual'e' il cognome di mia nonna materna",
+        "answer": "test123"
+      }
+    },
+    "contract": {
+      "named_user": {
+        "template": "/r/sysdoc/template/contract/1/named_user.mustache",
+        "answered_terms": {
+          "privacy_term_e": true,
+          "privacy_term_f": true,
+          "privacy_term_g": true
+        }
+      },
+      "aml": {
+        "template": "/r/sysdoc/template/contract/1/aml.mustache",
+        "answered_terms": {
+          "politically_exposed_person": true,
+          "source_of_fund": "Incassi di lavoro",
+          "profession": "Sono studente",
+          "foreign_wire_transfer": "Frequentemente"
+        }
+      },
+      "sdd_verify": {
+        "template": "/r/sysdoc/template/contract/1/sdd_verify.mustache",
+        "answered_terms": {
+          "iban": "IT34I5411096620761796335219",
+          "accept_initial_debit": true
+        }
+      }
+    }
+  },
+  "modification": {
+    "at": "2017-05-08T13:01:48Z",
+    "created_on": "2017-05-08T13:01:48Z",
+    "by": 2803
+  }
+}
