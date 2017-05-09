@@ -31,7 +31,7 @@ import java.util.ArrayList;
  * Created by norman on 09/05/17.
  */
 
-public class ManageFragment extends Fragment implements LoaderManager.LoaderCallbacks<Long> {
+public class ManageFragment extends Fragment {
 
     public static final String LOG_TAG = "ManageFragment";
 
@@ -43,7 +43,11 @@ public class ManageFragment extends Fragment implements LoaderManager.LoaderCall
     /*
      * This number will uniquely identify our Loader for get directory size
      */
-    private static final int DIRECTORY_SIZE_LOADER = 22;
+    private static final int DIRECTORY_SIZE_LOADER = 20;
+    /*
+     * This number will uniquely identify our Loader for get directory size
+     */
+    private static final int DIRECTORY_FILES_LOADER = 21;
 
     /* A constant to save and restore the path file uri */
     private static final String SEARCH_FILE_PATH_URI_EXTRA = "filePathUri";
@@ -51,6 +55,79 @@ public class ManageFragment extends Fragment implements LoaderManager.LoaderCall
     public ManageFragment() {
 
     }
+
+    private LoaderManager.LoaderCallbacks<Long> mSizePathLoaderCallback = new LoaderManager.LoaderCallbacks<Long>() {
+        @Override
+        public Loader<Long> onCreateLoader(int id, Bundle args) {
+            return new AsyncTaskLoader<Long>(getContext()) {
+
+                Long mDataByte;
+
+                @Override
+                protected void onStartLoading() {
+                    Long dataByte;
+
+                    if (args == null) {
+                        return;
+                    }
+                /*
+                 * If we already have cached results, just deliver them now. If we don't have any
+                 * cached results, force a load.
+                 */
+                    if (mDataByte != null) {
+                        deliverResult(mDataByte);
+                    } else {
+                        forceLoad();
+                    }
+
+                }
+
+                @Override
+                public Long loadInBackground() {
+                    Log.d(LOG_TAG, "loadInBackground");
+
+                    String filePath = args.getString(SEARCH_FILE_PATH_URI_EXTRA);
+                    Uri filePathUri = Uri.parse(filePath);
+
+                             /* If the user didn't enter anything, there's nothing to search for */
+                    if (filePathUri == null) {
+                        return null;
+                    }
+
+                /* Perform the search */
+                    long folder_size_bytes = FileUtils.sizeOfDirectory(new File(filePathUri.getPath()));
+                    Log.d(LOG_TAG, String.valueOf(folder_size_bytes / 1024));
+
+                    return folder_size_bytes;
+                }
+
+                @Override
+                public void deliverResult(Long dataByte) {
+                    mDataByte = dataByte;
+                    super.deliverResult(dataByte);
+                }
+            };
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Long> loader, Long data) {
+            Log.d(LOG_TAG, "onLoadFinished");
+
+            if (null == data) {
+                Log.d(LOG_TAG, "onLoadFinished error");
+            } else {
+                TextView textView = (TextView) getView().findViewById(R.id.manage_from_size);
+                textView.setText(String.valueOf(data / 1024));
+                Log.d(LOG_TAG, String.valueOf(data / 1024));
+            }
+        }
+
+
+        @Override
+        public void onLoaderReset(Loader<Long> loader) {
+        }
+    };
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -92,10 +169,11 @@ public class ManageFragment extends Fragment implements LoaderManager.LoaderCall
             }
         });
 
-                /*
+        /*
          * Initialize the loader
          */
-        getLoaderManager().initLoader(DIRECTORY_SIZE_LOADER, null, this);
+        getLoaderManager().initLoader(DIRECTORY_SIZE_LOADER, null, mSizePathLoaderCallback);
+//        getLoaderManager().initLoader(DIRECTORY_FILES_LOADER, null, this);
 
         return rootView;
     }
@@ -154,20 +232,19 @@ public class ManageFragment extends Fragment implements LoaderManager.LoaderCall
         TextView textView = (TextView) getView().findViewById(R.id.manage_from_folder);
         textView.setText(filePathUri.toString());
 
-        Bundle queryBundle = new Bundle();
-        queryBundle.putString(SEARCH_FILE_PATH_URI_EXTRA, filePathUri.toString());
+        Bundle sizeBundle = new Bundle();
+        sizeBundle.putString(SEARCH_FILE_PATH_URI_EXTRA, filePathUri.toString());
         LoaderManager loaderManager = getLoaderManager();
         Loader<Long> searchSizeLoader = loaderManager.getLoader(DIRECTORY_SIZE_LOADER);
+
         if (searchSizeLoader == null) {
-            loaderManager.initLoader(DIRECTORY_SIZE_LOADER, queryBundle, this);
+            loaderManager.initLoader(DIRECTORY_SIZE_LOADER, sizeBundle, mSizePathLoaderCallback);
         } else {
-            loaderManager.restartLoader(DIRECTORY_SIZE_LOADER, queryBundle, this);
+            loaderManager.restartLoader(DIRECTORY_SIZE_LOADER, sizeBundle, mSizePathLoaderCallback);
         }
 
-
-        //TODO implementare un loader per il calcolo
-        long folder_size_bytes = FileUtils.sizeOfDirectory(new File(filePathUri.getPath()));
-        Log.d(LOG_TAG, String.valueOf(folder_size_bytes / 1024));
+//        Bundle filesBundle = new Bundle();
+//        sizeBundle.putString(SEARCH_FILE_PATH_URI_EXTRA, filePathUri.toString());
 
 
         //TODO implementare un loader per il calcolo
@@ -187,75 +264,5 @@ public class ManageFragment extends Fragment implements LoaderManager.LoaderCall
             count++;
         }
         return count;
-    }
-
-    @Override
-    public Loader<Long> onCreateLoader(int id, final Bundle args) {
-        return new AsyncTaskLoader<Long>(getContext()) {
-
-            Long mDataByte;
-
-            @Override
-            protected void onStartLoading() {
-                Long dataByte;
-
-                if (args == null) {
-                    return;
-                }
-                /*
-                 * If we already have cached results, just deliver them now. If we don't have any
-                 * cached results, force a load.
-                 */
-                if (mDataByte != null) {
-                    deliverResult(mDataByte);
-                } else {
-                    forceLoad();
-                }
-
-            }
-
-            @Override
-            public Long loadInBackground() {
-                Log.d(LOG_TAG, "loadInBackground");
-
-                String filePath = args.getString(SEARCH_FILE_PATH_URI_EXTRA);
-                Uri filePathUri = Uri.parse(filePath);
-
-                             /* If the user didn't enter anything, there's nothing to search for */
-                if (filePathUri == null) {
-                    return null;
-                }
-
-                /* Perform the search */
-                long folder_size_bytes = FileUtils.sizeOfDirectory(new File(filePathUri.getPath()));
-                Log.d(LOG_TAG, String.valueOf(folder_size_bytes / 1024));
-
-                return folder_size_bytes;
-            }
-
-            @Override
-            public void deliverResult(Long dataByte) {
-                mDataByte = dataByte;
-                super.deliverResult(dataByte);
-            }
-        };
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Long> loader, Long data) {
-        Log.d(LOG_TAG, "onLoadFinished");
-
-        if (null == data) {
-            Log.d(LOG_TAG, "onLoadFinished error");
-        } else {
-            TextView textView = (TextView) getView().findViewById(R.id.manage_from_size);
-            textView.setText(String.valueOf(data));
-        }
-    }
-
-
-    @Override
-    public void onLoaderReset(Loader<Long> loader) {
-
     }
 }
