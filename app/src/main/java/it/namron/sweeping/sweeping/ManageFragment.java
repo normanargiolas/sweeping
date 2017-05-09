@@ -24,7 +24,6 @@ import com.nononsenseapps.filepicker.FilePickerActivity;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -47,7 +46,7 @@ public class ManageFragment extends Fragment {
     /*
      * This number will uniquely identify our Loader for get directory size
      */
-    private static final int DIRECTORY_FILES_LOADER = 21;
+    private static final int FILES_NUMBER_LOADER = 21;
 
     /* A constant to save and restore the path file uri */
     private static final String SEARCH_FILE_PATH_URI_EXTRA = "filePathUri";
@@ -128,6 +127,77 @@ public class ManageFragment extends Fragment {
         }
     };
 
+    private LoaderManager.LoaderCallbacks<Integer> mFilesNumberLoaderCallback = new LoaderManager.LoaderCallbacks<Integer>() {
+        @Override
+        public Loader<Integer> onCreateLoader(int id, Bundle args) {
+            return new AsyncTaskLoader<Integer>(getContext()) {
+
+                Integer mFiles;
+
+                @Override
+                protected void onStartLoading() {
+                    Integer files;
+
+                    if (args == null) {
+                        return;
+                    }
+                /*
+                 * If we already have cached results, just deliver them now. If we don't have any
+                 * cached results, force a load.
+                 */
+                    if (mFiles != null) {
+                        deliverResult(mFiles);
+                    } else {
+                        forceLoad();
+                    }
+
+                }
+
+                @Override
+                public Integer loadInBackground() {
+                    Log.d(LOG_TAG, "loadInBackground");
+
+                    String filePath = args.getString(SEARCH_FILE_PATH_URI_EXTRA);
+                    Uri filePathUri = Uri.parse(filePath);
+                    /* If the user didn't enter anything, there's nothing to search for */
+                    if (filePathUri == null) {
+                        return null;
+                    }
+
+                /* Perform the search */
+                    int number_of_file = countFiles(new File(filePathUri.getPath()));
+                    Log.d(LOG_TAG, String.valueOf(number_of_file));
+
+                    return number_of_file;
+                }
+
+                @Override
+                public void deliverResult(Integer files) {
+                    mFiles = files;
+                    super.deliverResult(files);
+                }
+            };
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Integer> loader, Integer data) {
+            Log.d(LOG_TAG, "onLoadFinished");
+
+            if (null == data) {
+                Log.d(LOG_TAG, "onLoadFinished error");
+            } else {
+                TextView textView = (TextView) getView().findViewById(R.id.manage_from_files);
+                textView.setText(String.valueOf(data));
+                Log.d(LOG_TAG, String.valueOf(data));
+            }
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Integer> loader) {
+
+        }
+    };
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -173,7 +243,7 @@ public class ManageFragment extends Fragment {
          * Initialize the loader
          */
         getLoaderManager().initLoader(DIRECTORY_SIZE_LOADER, null, mSizePathLoaderCallback);
-//        getLoaderManager().initLoader(DIRECTORY_FILES_LOADER, null, this);
+        getLoaderManager().initLoader(FILES_NUMBER_LOADER, null, mFilesNumberLoaderCallback);
 
         return rootView;
     }
@@ -232,27 +302,23 @@ public class ManageFragment extends Fragment {
         TextView textView = (TextView) getView().findViewById(R.id.manage_from_folder);
         textView.setText(filePathUri.toString());
 
-        Bundle sizeBundle = new Bundle();
-        sizeBundle.putString(SEARCH_FILE_PATH_URI_EXTRA, filePathUri.toString());
         LoaderManager loaderManager = getLoaderManager();
-        Loader<Long> searchSizeLoader = loaderManager.getLoader(DIRECTORY_SIZE_LOADER);
+        Bundle filePathBundle = new Bundle();
+        filePathBundle.putString(SEARCH_FILE_PATH_URI_EXTRA, filePathUri.toString());
 
+        Loader<Long> searchSizeLoader = loaderManager.getLoader(DIRECTORY_SIZE_LOADER);
         if (searchSizeLoader == null) {
-            loaderManager.initLoader(DIRECTORY_SIZE_LOADER, sizeBundle, mSizePathLoaderCallback);
+            loaderManager.initLoader(DIRECTORY_SIZE_LOADER, filePathBundle, mSizePathLoaderCallback);
         } else {
-            loaderManager.restartLoader(DIRECTORY_SIZE_LOADER, sizeBundle, mSizePathLoaderCallback);
+            loaderManager.restartLoader(DIRECTORY_SIZE_LOADER, filePathBundle, mSizePathLoaderCallback);
         }
 
-//        Bundle filesBundle = new Bundle();
-//        sizeBundle.putString(SEARCH_FILE_PATH_URI_EXTRA, filePathUri.toString());
-
-
-        //TODO implementare un loader per il calcolo
-        int number_of_file = countFiles(new File(filePathUri.getPath()));
-
-        Log.d(LOG_TAG, String.valueOf(number_of_file));
-
-
+        Loader<Long> searchFilesLoader = loaderManager.getLoader(FILES_NUMBER_LOADER);
+        if (searchSizeLoader == null) {
+            loaderManager.initLoader(FILES_NUMBER_LOADER, filePathBundle, mFilesNumberLoaderCallback);
+        } else {
+            loaderManager.restartLoader(FILES_NUMBER_LOADER, filePathBundle, mFilesNumberLoaderCallback);
+        }
     }
 
     public static int countFiles(File directory) {
