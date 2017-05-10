@@ -581,18 +581,23 @@ public class ManageFragment extends Fragment {
     }
 
     private boolean performeCopyFolder(Uri sourceUri, Uri descUri) {
-        Bundle pathBundle = new Bundle();
-        pathBundle.putString(SOURCE_PATH_URI_EXTRA, sourceUri.toString());
-        pathBundle.putString(DESTINATION_PATH_URI_EXTRA, descUri.toString());
 
-        Loader<Boolean> copyFolderLoader = mLoaderManager.getLoader(COPY_FOLDER_LOADER);
-        if (copyFolderLoader == null) {
-            mLoaderManager.initLoader(COPY_FOLDER_LOADER, pathBundle, mCopyFolderLoaderCallback);
-        } else {
-            mLoaderManager.restartLoader(COPY_FOLDER_LOADER, pathBundle, mCopyFolderLoaderCallback);
+        if(!sourceUri.equals(descUri)) {
+            Bundle pathBundle = new Bundle();
+            pathBundle.putString(SOURCE_PATH_URI_EXTRA, sourceUri.toString());
+            pathBundle.putString(DESTINATION_PATH_URI_EXTRA, descUri.toString());
+
+            Loader<Boolean> copyFolderLoader = mLoaderManager.getLoader(COPY_FOLDER_LOADER);
+            if (copyFolderLoader == null) {
+                mLoaderManager.initLoader(COPY_FOLDER_LOADER, pathBundle, mCopyFolderLoaderCallback);
+            } else {
+                mLoaderManager.restartLoader(COPY_FOLDER_LOADER, pathBundle, mCopyFolderLoaderCallback);
+            }
+            return true;
+        }else {
+            Toast.makeText(getActivity(), "La destinazione coincide con l'origine!", Toast.LENGTH_SHORT).show();
         }
-
-        return true;
+        return false;
     }
 
     private boolean performeDeleteFolder(Uri pathUri) {
