@@ -40,39 +40,72 @@
                 android:text="From"
                 android:textSize="14dp" />
 
-            <TextView
-                android:id="@+id/manage_from_folder"
-                android:layout_width="fill_parent"
+            <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:gravity="left"
-                android:text="Folder: /whatsapp_image"
-                android:textSize="10dp" />
+                android:columnCount="2"
+                android:orientation="horizontal"
+                android:rowCount="3"
+                tools:context=".GridXMLActivity">
 
-            <TextView
-                android:id="@+id/manage_from_files"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:gravity="left"
-                android:text="Files: 325"
-                android:textSize="10dp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right|top"
+                    android:text="Folder:"
+                    android:textSize="10dp" />
 
-            <TextView
-                android:id="@+id/manage_from_size"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:gravity="left"
-                android:text="Size: 325 GB"
-                android:textSize="10dp" />
+                <TextView
+                    android:id="@+id/manage_from_folder"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:gravity="left"
+                    android:text="..."
+                    android:textSize="10dp" />
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right|top"
+                    android:layout_marginLeft="20dp"
+                    android:text="Files:"
+                    android:textSize="10dp" />
+
+                <TextView
+                    android:id="@+id/manage_from_files"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:gravity="left"
+                    android:text="..."
+                    android:textSize="10dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right|top"
+                    android:layout_marginLeft="20dp"
+                    android:text="Size Kb:"
+                    android:textSize="10dp" />
+
+                <TextView
+                    android:id="@+id/manage_from_size"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:gravity="left"
+                    android:text="..."
+                    android:textSize="10dp" />
+            </GridLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginTop="10dp"
                 android:background="@android:color/darker_gray" />
+
         </LinearLayout>
 
         <android.support.design.widget.FloatingActionButton
@@ -96,6 +129,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+
             <TextView
                 android:id="@+id/manage_to"
                 android:layout_width="fill_parent"
@@ -106,33 +140,67 @@
                 android:text="To"
                 android:textSize="14dp" />
 
-            <TextView
-                android:id="@+id/manage_to_folder"
-                android:layout_width="fill_parent"
+            <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:gravity="left"
-                android:text="Folder: /whatsapp_image"
-                android:textSize="10dp" />
+                android:columnCount="2"
+                android:orientation="horizontal"
+                android:rowCount="3"
+                tools:context=".GridXMLActivity">
 
-            <TextView
-                android:id="@+id/manage_to_files"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:gravity="left"
-                android:text="Files: 325"
-                android:textSize="10dp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right|top"
+                    android:layout_marginLeft="20dp"
+                    android:text="Folder:"
+                    android:textSize="10dp" />
 
-            <TextView
-                android:id="@+id/manage_to_size"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:gravity="left"
-                android:text="Size: 325 GB"
-                android:textSize="10dp" />
+                <TextView
+                    android:id="@+id/manage_to_folder"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:gravity="left"
+                    android:text="..."
+                    android:textSize="10dp" />
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right|top"
+                    android:layout_marginLeft="20dp"
+                    android:text="Files:"
+                    android:textSize="10dp" />
+
+                <TextView
+                    android:id="@+id/manage_to_files"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:gravity="left"
+                    android:text="..."
+                    android:textSize="10dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right|top"
+                    android:layout_marginLeft="20dp"
+                    android:text="Size Kb:"
+                    android:textSize="10dp" />
+
+                <TextView
+                    android:id="@+id/manage_to_size"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:gravity="left"
+                    android:text="..."
+                    android:textSize="10dp" />
+
+            </GridLayout>
 
             <View
                 android:layout_width="match_parent"
@@ -151,6 +219,33 @@
             app:srcCompat="@drawable/fab_paste" />
 
     </android.support.design.widget.CoordinatorLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Switch
+            android:id="@+id/switch_manage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
+            android:text="Delete source folder  "
+            android:theme="@style/BrandedSwitch"/>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab_performe_manage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|left"
+            android:layout_margin="@dimen/fab_margin"
+            app:backgroundTint="@android:color/holo_blue_light"
+            app:srcCompat="@drawable/ic_play_arrow_white_48dp" />
+
+    </LinearLayout>
 
 
 </LinearLayout>

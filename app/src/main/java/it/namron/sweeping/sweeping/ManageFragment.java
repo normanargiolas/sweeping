@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
@@ -15,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,14 +44,30 @@ public class ManageFragment extends Fragment {
     /*
      * This number will uniquely identify our Loader for get directory size
      */
-    private static final int DIRECTORY_SIZE_LOADER = 20;
+    private static final int DIRECTORY_SOURCE_SIZE_LOADER = 20;
+    private static final int DIRECTORY_DESTINATION_SIZE_LOADER = 21;
+
     /*
      * This number will uniquely identify our Loader for get directory size
      */
-    private static final int FILES_NUMBER_LOADER = 21;
+    private static final int FILES_SOURCE_NUMBER_LOADER = 30;
+    private static final int FILES_DESTINATION_NUMBER_LOADER = 31;
+
 
     /* A constant to save and restore the path file uri */
     private static final String SEARCH_FILE_PATH_URI_EXTRA = "filePathUri";
+
+    private LoaderManager mLoaderManager;
+
+    private TextView mTextViewManageFromFolder;
+    private TextView mTextViewManageFromFiles;
+    private TextView mTextViewManageFromSize;
+    private TextView mTextViewManageToFolder;
+    private TextView mTextViewManageToFiles;
+    private TextView mTextViewManageToSize;
+
+    private Switch mSwitchManage;
+
 
     public ManageFragment() {
 
@@ -80,7 +96,6 @@ public class ManageFragment extends Fragment {
                     } else {
                         forceLoad();
                     }
-
                 }
 
                 @Override
@@ -117,8 +132,17 @@ public class ManageFragment extends Fragment {
             if (null == data) {
                 Log.d(LOG_TAG, "onLoadFinished error");
             } else {
-                TextView textView = (TextView) getView().findViewById(R.id.manage_from_size);
-                textView.setText(String.valueOf(data / 1024));
+                switch (loader.getId()) {
+                    case DIRECTORY_SOURCE_SIZE_LOADER:
+                        mTextViewManageFromSize.setText(String.valueOf(data / 1024));
+                        break;
+                    case DIRECTORY_DESTINATION_SIZE_LOADER:
+                        mTextViewManageToSize.setText(String.valueOf(data / 1024));
+                        break;
+                    default:
+                        Log.d(LOG_TAG, "onLoadFinished loader sconosciuto");
+                        break;
+                }
                 Log.d(LOG_TAG, String.valueOf(data / 1024));
             }
         }
@@ -199,8 +223,17 @@ public class ManageFragment extends Fragment {
             if (null == data) {
                 Log.d(LOG_TAG, "onLoadFinished error");
             } else {
-                TextView textView = (TextView) getView().findViewById(R.id.manage_from_files);
-                textView.setText(String.valueOf(data));
+                switch (loader.getId()) {
+                    case FILES_SOURCE_NUMBER_LOADER:
+                        mTextViewManageFromFiles.setText(String.valueOf(data));
+                        break;
+                    case FILES_DESTINATION_NUMBER_LOADER:
+                        mTextViewManageToFiles.setText(String.valueOf(data));
+                        break;
+                    default:
+                        Log.d(LOG_TAG, "onLoadFinished loader sconosciuto");
+                        break;
+                }
                 Log.d(LOG_TAG, String.valueOf(data));
             }
         }
@@ -211,11 +244,19 @@ public class ManageFragment extends Fragment {
         }
     };
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_manage, container, false);
+
+        mTextViewManageFromFolder = (TextView) rootView.findViewById(R.id.manage_from_folder);
+        mTextViewManageFromFiles = (TextView) rootView.findViewById(R.id.manage_from_files);
+        mTextViewManageFromSize = (TextView) rootView.findViewById(R.id.manage_from_size);
+        mTextViewManageToFolder = (TextView) rootView.findViewById(R.id.manage_to_folder);
+        mTextViewManageToFiles = (TextView) rootView.findViewById(R.id.manage_to_files);
+        mTextViewManageToSize = (TextView) rootView.findViewById(R.id.manage_to_size);
+
+        mSwitchManage = (Switch) rootView.findViewById(R.id.switch_manage);
 
         FloatingActionButton fab_source_manage = (FloatingActionButton) rootView.findViewById(R.id.fab_source_manage);
         fab_source_manage.setOnClickListener(new View.OnClickListener() {
@@ -240,7 +281,6 @@ public class ManageFragment extends Fragment {
             }
         });
 
-
         FloatingActionButton fab_destination_manage = (FloatingActionButton) rootView.findViewById(R.id.fab_destination_manage);
         fab_destination_manage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -264,11 +304,29 @@ public class ManageFragment extends Fragment {
                 }
             }
         });
+
+        FloatingActionButton fab_performe_manage = (FloatingActionButton) rootView.findViewById(R.id.fab_performe_manage);
+        fab_performe_manage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //copy folder
+                performeCopyFolder();
+
+                if(mSwitchManage.isChecked()){
+                    performeDeleteFolder();
+                }
+            }
+        });
+
         /*
          * Initialize the loader
          */
-        getLoaderManager().initLoader(DIRECTORY_SIZE_LOADER, null, mSizePathLoaderCallback);
-        getLoaderManager().initLoader(FILES_NUMBER_LOADER, null, mFilesNumberLoaderCallback);
+        mLoaderManager = getLoaderManager();
+        getLoaderManager().initLoader(DIRECTORY_SOURCE_SIZE_LOADER, null, mSizePathLoaderCallback);
+        getLoaderManager().initLoader(DIRECTORY_DESTINATION_SIZE_LOADER, null, mSizePathLoaderCallback);
+
+        getLoaderManager().initLoader(FILES_SOURCE_NUMBER_LOADER, null, mFilesNumberLoaderCallback);
+        getLoaderManager().initLoader(FILES_DESTINATION_NUMBER_LOADER, null, mFilesNumberLoaderCallback);
 
         return rootView;
     }
@@ -289,7 +347,7 @@ public class ManageFragment extends Fragment {
                         Uri fileUri = Uri.fromFile(file);
                         // Do something with the result...
 
-                        manageResoult(fileUri);
+                        manageSourceResoult(fileUri);
 
                         String msg = "Selected dir" + fileUri.getPath();
 
@@ -327,7 +385,7 @@ public class ManageFragment extends Fragment {
                         Uri fileUri = Uri.fromFile(file);
                         // Do something with the result...
 
-                        manageResoult(fileUri);
+                        manageDestinationResoult(fileUri);
 
                         String msg = "Selected dir" + fileUri.getPath();
 
@@ -359,27 +417,57 @@ public class ManageFragment extends Fragment {
         }
     }
 
-    private void manageResoult(Uri filePathUri) {
+    private boolean performeCopyFolder(){
 
-        TextView textView = (TextView) getView().findViewById(R.id.manage_from_folder);
-        textView.setText(filePathUri.toString());
+        return true;
+    }
 
-        LoaderManager loaderManager = getLoaderManager();
+    private boolean performeDeleteFolder(){
+
+        return true;
+    }
+
+    private void manageDestinationResoult(Uri filePathUri) {
+        mTextViewManageToFolder.setText(filePathUri.toString());
+
         Bundle filePathBundle = new Bundle();
         filePathBundle.putString(SEARCH_FILE_PATH_URI_EXTRA, filePathUri.toString());
 
-        Loader<Long> searchSizeLoader = loaderManager.getLoader(DIRECTORY_SIZE_LOADER);
+        Loader<Long> searchSizeLoader = mLoaderManager.getLoader(DIRECTORY_DESTINATION_SIZE_LOADER);
         if (searchSizeLoader == null) {
-            loaderManager.initLoader(DIRECTORY_SIZE_LOADER, filePathBundle, mSizePathLoaderCallback);
+            mLoaderManager.initLoader(DIRECTORY_DESTINATION_SIZE_LOADER, filePathBundle, mSizePathLoaderCallback);
         } else {
-            loaderManager.restartLoader(DIRECTORY_SIZE_LOADER, filePathBundle, mSizePathLoaderCallback);
+            mLoaderManager.restartLoader(DIRECTORY_DESTINATION_SIZE_LOADER, filePathBundle, mSizePathLoaderCallback);
         }
 
-        Loader<Long> searchFilesLoader = loaderManager.getLoader(FILES_NUMBER_LOADER);
+        Loader<Long> searchFilesLoader = mLoaderManager.getLoader(FILES_DESTINATION_NUMBER_LOADER);
         if (searchSizeLoader == null) {
-            loaderManager.initLoader(FILES_NUMBER_LOADER, filePathBundle, mFilesNumberLoaderCallback);
+            mLoaderManager.initLoader(FILES_DESTINATION_NUMBER_LOADER, filePathBundle, mFilesNumberLoaderCallback);
         } else {
-            loaderManager.restartLoader(FILES_NUMBER_LOADER, filePathBundle, mFilesNumberLoaderCallback);
+            mLoaderManager.restartLoader(FILES_DESTINATION_NUMBER_LOADER, filePathBundle, mFilesNumberLoaderCallback);
+        }
+
+    }
+
+
+    private void manageSourceResoult(Uri filePathUri) {
+        mTextViewManageFromFolder.setText(filePathUri.toString());
+
+        Bundle filePathBundle = new Bundle();
+        filePathBundle.putString(SEARCH_FILE_PATH_URI_EXTRA, filePathUri.toString());
+
+        Loader<Long> searchSizeLoader = mLoaderManager.getLoader(DIRECTORY_SOURCE_SIZE_LOADER);
+        if (searchSizeLoader == null) {
+            mLoaderManager.initLoader(DIRECTORY_SOURCE_SIZE_LOADER, filePathBundle, mSizePathLoaderCallback);
+        } else {
+            mLoaderManager.restartLoader(DIRECTORY_SOURCE_SIZE_LOADER, filePathBundle, mSizePathLoaderCallback);
+        }
+
+        Loader<Long> searchFilesLoader = mLoaderManager.getLoader(FILES_SOURCE_NUMBER_LOADER);
+        if (searchSizeLoader == null) {
+            mLoaderManager.initLoader(FILES_SOURCE_NUMBER_LOADER, filePathBundle, mFilesNumberLoaderCallback);
+        } else {
+            mLoaderManager.restartLoader(FILES_SOURCE_NUMBER_LOADER, filePathBundle, mFilesNumberLoaderCallback);
         }
     }
 
