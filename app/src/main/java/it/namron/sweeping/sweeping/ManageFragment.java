@@ -58,6 +58,8 @@ public class ManageFragment extends Fragment {
     private static final String SEARCH_FILE_PATH_URI_EXTRA = "filePathUri";
     private static final String SOURCE_PATH_URI_EXTRA = "sourcePath";
     private static final String DESTINATION_PATH_URI_EXTRA = "destinationPath";
+    private static final String DELETE_PATH_URI_EXTRA = "deletePath";
+
 
 
     private LoaderManager mLoaderManager;
@@ -78,6 +80,81 @@ public class ManageFragment extends Fragment {
     public ManageFragment() {
 
     }
+
+    private LoaderManager.LoaderCallbacks<Boolean> mDeleteFolderLoaderCallback = new LoaderManager.LoaderCallbacks<Boolean>() {
+
+        @Override
+        public Loader<Boolean> onCreateLoader(int id, Bundle args) {
+            return new AsyncTaskLoader<Boolean>(getContext()) {
+
+                Boolean mResponce;
+
+                @Override
+                protected void onStartLoading() {
+                    Boolean responce;
+
+                    if (args == null) {
+                        return;
+                    }
+                /*
+                 * If we already have cached results, just deliver them now. If we don't have any
+                 * cached results, force a load.
+                 */
+                    if (mResponce != null) {
+                        deliverResult(mResponce);
+                    } else {
+                        forceLoad();
+                    }
+                }
+
+                @Override
+                public Boolean loadInBackground() {
+                    Log.d(LOG_TAG, "loadInBackground");
+
+                    String deletePath = args.getString(DELETE_PATH_URI_EXTRA);
+                    Uri deleteUri = Uri.parse(deletePath);
+
+                    try {
+                        File directory = new File(deleteUri.getPath());
+                        FileUtils.deleteDirectory(directory);
+                        Log.d(LOG_TAG, "cartella eliminata");
+                    } catch (IOException e) {
+                        Log.d(LOG_TAG, "errore nell'eliminazione della cartella...");
+                        e.printStackTrace();
+                        return false;
+                    }
+                    return true;
+                }
+
+                @Override
+                public void deliverResult(Boolean data) {
+                    mResponce = data;
+                    super.deliverResult(data);
+                }
+            };
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Boolean> loader, Boolean data) {
+            if (null == data && data != false) {
+                Log.d(LOG_TAG, "onLoadFinished error");
+                String msg = "Errore nell'eliminazione della cartella!";
+                Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+            } else {
+                String msg = "Cartella eliminata correttamente correttamente!";
+                Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+
+                if (mSwitchManage.isChecked()) {
+                    performeDeleteFolder(mSourceFolder);
+                }
+            }
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Boolean> loader) {
+
+        }
+    };
 
     private LoaderManager.LoaderCallbacks<Boolean> mCopyFolderLoaderCallback = new LoaderManager.LoaderCallbacks<Boolean>() {
 
@@ -138,13 +215,17 @@ public class ManageFragment extends Fragment {
 
         @Override
         public void onLoadFinished(Loader<Boolean> loader, Boolean data) {
-            if (null == data) {
+            if (null == data && data != false) {
                 Log.d(LOG_TAG, "onLoadFinished error");
                 String msg = "Errore nella copia della cartella!";
                 Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
             } else {
                 String msg = "Cartella copiata correttamente!";
                 Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+
+                if (mSwitchManage.isChecked()) {
+                    performeDeleteFolder(mSourceFolder);
+                }
             }
         }
 
@@ -392,10 +473,6 @@ public class ManageFragment extends Fragment {
             public void onClick(View view) {
                 //copy folder
                 performeCopyFolder(mSourceFolder, mDestinationFolder);
-
-                if (mSwitchManage.isChecked()) {
-                    performeDeleteFolder();
-                }
             }
         });
 
@@ -410,7 +487,7 @@ public class ManageFragment extends Fragment {
         getLoaderManager().initLoader(FILES_DESTINATION_NUMBER_LOADER, null, mFilesNumberLoaderCallback);
 
         getLoaderManager().initLoader(COPY_FOLDER_LOADER, null, mCopyFolderLoaderCallback);
-//        getLoaderManager().initLoader(DELETE_FOLDER_LOADER, null, mDeleteFolderLoaderCallback);
+        getLoaderManager().initLoader(DELETE_FOLDER_LOADER, null, mDeleteFolderLoaderCallback);
 
         return rootView;
     }
@@ -504,26 +581,34 @@ public class ManageFragment extends Fragment {
     }
 
     private boolean performeCopyFolder(Uri sourceUri, Uri descUri) {
-
         Bundle pathBundle = new Bundle();
-        pathBundle.putString(SOURCE_PATH_URI_EXTRA, mSourceFolder.toString());
-        pathBundle.putString(DESTINATION_PATH_URI_EXTRA, mDestinationFolder.toString());
+        pathBundle.putString(SOURCE_PATH_URI_EXTRA, sourceUri.toString());
+        pathBundle.putString(DESTINATION_PATH_URI_EXTRA, descUri.toString());
 
-        Loader<Long> copyFolderLoader = mLoaderManager.getLoader(COPY_FOLDER_LOADER);
+        Loader<Boolean> copyFolderLoader = mLoaderManager.getLoader(COPY_FOLDER_LOADER);
         if (copyFolderLoader == null) {
             mLoaderManager.initLoader(COPY_FOLDER_LOADER, pathBundle, mCopyFolderLoaderCallback);
         } else {
             mLoaderManager.restartLoader(COPY_FOLDER_LOADER, pathBundle, mCopyFolderLoaderCallback);
         }
 
+        return true;
+    }
+
+    private boolean performeDeleteFolder(Uri pathUri) {
+        Bundle pathBundle = new Bundle();
+        pathBundle.putString(DELETE_PATH_URI_EXTRA, pathUri.toString());
+
+        Loader<Boolean> deleteFolderLoader = mLoaderManager.getLoader(DELETE_FOLDER_LOADER);
+        if (deleteFolderLoader == null) {
+            mLoaderManager.initLoader(DELETE_FOLDER_LOADER, pathBundle, mDeleteFolderLoaderCallback);
+        } else {
+            mLoaderManager.restartLoader(DELETE_FOLDER_LOADER, pathBundle, mDeleteFolderLoaderCallback);
+        }
 
         return true;
     }
 
-    private boolean performeDeleteFolder() {
-
-        return true;
-    }
 
     private void manageDestinationResoult(Uri filePathUri) {
         mTextViewManageToFolder.setText(filePathUri.toString());
