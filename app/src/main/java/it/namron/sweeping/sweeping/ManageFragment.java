@@ -26,7 +26,9 @@ import org.apache.commons.io.output.StringBuilderWriter;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by norman on 09/05/17.
@@ -59,7 +61,6 @@ public class ManageFragment extends Fragment {
     private static final String SOURCE_PATH_URI_EXTRA = "sourcePath";
     private static final String DESTINATION_PATH_URI_EXTRA = "destinationPath";
     private static final String DELETE_PATH_URI_EXTRA = "deletePath";
-
 
 
     private LoaderManager mLoaderManager;
@@ -190,12 +191,25 @@ public class ManageFragment extends Fragment {
                     Uri sourceUri = Uri.parse(sourcePath);
                     String destPath = args.getString(DESTINATION_PATH_URI_EXTRA);
                     Uri destUri = Uri.parse(destPath);
+                    File source = new File(sourceUri.getPath());
+                    File baseDirectory = new File(destUri.getPath());
+
+                    String lastSegment = sourceUri.getLastPathSegment();
+
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+                    String currentDateandTime = sdf.format(new Date());
+
+                    String subDirectory = lastSegment.
+                            concat("_").
+                            concat(currentDateandTime);
+
+                    File dest = new File(baseDirectory, subDirectory);
 
                     try {
-                        File source = new File(sourceUri.getPath());
-                        File desc = new File(destUri.getPath());
+                        FileUtils.forceMkdir(dest);
+                        Log.d(LOG_TAG, "performeCopyFolder cartella creata");
 
-                        FileUtils.copyDirectory(source, desc);
+                        FileUtils.copyDirectory(source, dest);
                         Log.d(LOG_TAG, "performeCopyFolder cartella copiata");
                     } catch (IOException e) {
                         Log.d(LOG_TAG, "performeCopyFolder error...");
@@ -582,7 +596,7 @@ public class ManageFragment extends Fragment {
 
     private boolean performeCopyFolder(Uri sourceUri, Uri descUri) {
 
-        if(!sourceUri.equals(descUri)) {
+        if (!sourceUri.equals(descUri)) {
             Bundle pathBundle = new Bundle();
             pathBundle.putString(SOURCE_PATH_URI_EXTRA, sourceUri.toString());
             pathBundle.putString(DESTINATION_PATH_URI_EXTRA, descUri.toString());
@@ -594,7 +608,7 @@ public class ManageFragment extends Fragment {
                 mLoaderManager.restartLoader(COPY_FOLDER_LOADER, pathBundle, mCopyFolderLoaderCallback);
             }
             return true;
-        }else {
+        } else {
             Toast.makeText(getActivity(), "La destinazione coincide con l'origine!", Toast.LENGTH_SHORT).show();
         }
         return false;
