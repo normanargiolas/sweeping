@@ -22,8 +22,10 @@ import android.widget.Toast;
 import com.nononsenseapps.filepicker.FilePickerActivity;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.output.StringBuilderWriter;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -42,20 +44,21 @@ public class ManageFragment extends Fragment {
 
 
     /*
-     * This number will uniquely identify our Loader for get directory size
+     * This number will uniquely identify our Loader
      */
     private static final int DIRECTORY_SOURCE_SIZE_LOADER = 20;
     private static final int DIRECTORY_DESTINATION_SIZE_LOADER = 21;
-
-    /*
-     * This number will uniquely identify our Loader for get directory size
-     */
     private static final int FILES_SOURCE_NUMBER_LOADER = 30;
     private static final int FILES_DESTINATION_NUMBER_LOADER = 31;
+    private static final int COPY_FOLDER_LOADER = 40;
+    private static final int DELETE_FOLDER_LOADER = 41;
 
 
     /* A constant to save and restore the path file uri */
     private static final String SEARCH_FILE_PATH_URI_EXTRA = "filePathUri";
+    private static final String SOURCE_PATH_URI_EXTRA = "sourcePath";
+    private static final String DESTINATION_PATH_URI_EXTRA = "destinationPath";
+
 
     private LoaderManager mLoaderManager;
 
@@ -68,10 +71,88 @@ public class ManageFragment extends Fragment {
 
     private Switch mSwitchManage;
 
+    private Uri mSourceFolder = null;
+    private Uri mDestinationFolder = null;
+
 
     public ManageFragment() {
 
     }
+
+    private LoaderManager.LoaderCallbacks<Boolean> mCopyFolderLoaderCallback = new LoaderManager.LoaderCallbacks<Boolean>() {
+
+        @Override
+        public Loader<Boolean> onCreateLoader(int id, Bundle args) {
+            return new AsyncTaskLoader<Boolean>(getContext()) {
+
+                Boolean mResponce;
+
+                @Override
+                protected void onStartLoading() {
+                    Boolean responce;
+
+                    if (args == null) {
+                        return;
+                    }
+                /*
+                 * If we already have cached results, just deliver them now. If we don't have any
+                 * cached results, force a load.
+                 */
+                    if (mResponce != null) {
+                        deliverResult(mResponce);
+                    } else {
+                        forceLoad();
+                    }
+                }
+
+                @Override
+                public Boolean loadInBackground() {
+                    Log.d(LOG_TAG, "loadInBackground");
+
+                    String sourcePath = args.getString(SOURCE_PATH_URI_EXTRA);
+                    Uri sourceUri = Uri.parse(sourcePath);
+                    String destPath = args.getString(DESTINATION_PATH_URI_EXTRA);
+                    Uri destUri = Uri.parse(destPath);
+
+                    try {
+                        File source = new File(sourceUri.getPath());
+                        File desc = new File(destUri.getPath());
+
+                        FileUtils.copyDirectory(source, desc);
+                        Log.d(LOG_TAG, "performeCopyFolder cartella copiata");
+                    } catch (IOException e) {
+                        Log.d(LOG_TAG, "performeCopyFolder error...");
+                        e.printStackTrace();
+                        return false;
+                    }
+                    return true;
+                }
+
+                @Override
+                public void deliverResult(Boolean data) {
+                    mResponce = data;
+                    super.deliverResult(data);
+                }
+            };
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Boolean> loader, Boolean data) {
+            if (null == data) {
+                Log.d(LOG_TAG, "onLoadFinished error");
+                String msg = "Errore nella copia della cartella!";
+                Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+            } else {
+                String msg = "Cartella copiata correttamente!";
+                Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Boolean> loader) {
+
+        }
+    };
 
     private LoaderManager.LoaderCallbacks<Long> mSizePathLoaderCallback = new LoaderManager.LoaderCallbacks<Long>() {
         @Override
@@ -310,9 +391,9 @@ public class ManageFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 //copy folder
-                performeCopyFolder();
+                performeCopyFolder(mSourceFolder, mDestinationFolder);
 
-                if(mSwitchManage.isChecked()){
+                if (mSwitchManage.isChecked()) {
                     performeDeleteFolder();
                 }
             }
@@ -327,6 +408,9 @@ public class ManageFragment extends Fragment {
 
         getLoaderManager().initLoader(FILES_SOURCE_NUMBER_LOADER, null, mFilesNumberLoaderCallback);
         getLoaderManager().initLoader(FILES_DESTINATION_NUMBER_LOADER, null, mFilesNumberLoaderCallback);
+
+        getLoaderManager().initLoader(COPY_FOLDER_LOADER, null, mCopyFolderLoaderCallback);
+//        getLoaderManager().initLoader(DELETE_FOLDER_LOADER, null, mDeleteFolderLoaderCallback);
 
         return rootView;
     }
@@ -347,6 +431,7 @@ public class ManageFragment extends Fragment {
                         Uri fileUri = Uri.fromFile(file);
                         // Do something with the result...
 
+                        mSourceFolder = fileUri;
                         manageSourceResoult(fileUri);
 
                         String msg = "Selected dir" + fileUri.getPath();
@@ -385,6 +470,7 @@ public class ManageFragment extends Fragment {
                         Uri fileUri = Uri.fromFile(file);
                         // Do something with the result...
 
+                        mDestinationFolder = fileUri;
                         manageDestinationResoult(fileUri);
 
                         String msg = "Selected dir" + fileUri.getPath();
@@ -417,12 +503,24 @@ public class ManageFragment extends Fragment {
         }
     }
 
-    private boolean performeCopyFolder(){
+    private boolean performeCopyFolder(Uri sourceUri, Uri descUri) {
+
+        Bundle pathBundle = new Bundle();
+        pathBundle.putString(SOURCE_PATH_URI_EXTRA, mSourceFolder.toString());
+        pathBundle.putString(DESTINATION_PATH_URI_EXTRA, mDestinationFolder.toString());
+
+        Loader<Long> copyFolderLoader = mLoaderManager.getLoader(COPY_FOLDER_LOADER);
+        if (copyFolderLoader == null) {
+            mLoaderManager.initLoader(COPY_FOLDER_LOADER, pathBundle, mCopyFolderLoaderCallback);
+        } else {
+            mLoaderManager.restartLoader(COPY_FOLDER_LOADER, pathBundle, mCopyFolderLoaderCallback);
+        }
+
 
         return true;
     }
 
-    private boolean performeDeleteFolder(){
+    private boolean performeDeleteFolder() {
 
         return true;
     }
