@@ -1,81 +1,13 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/label_whatsapp"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:gravity="center_horizontal"
-        android:text="WhatsApp"
-        android:textSize="45dp"
-        android:textStyle="bold" />
-
-    <View
+    <!--COMPLETED (2) Replace the TextView with a RecyclerView with an id of "@+id/rv_numbers"-->
+    <!--COMPLETED (3) Make the width and height of the RecyclerView match_parent-->
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_numbers"
         android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@android:color/darker_gray" />
-
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/label_whatsapp_images"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="10dp"
-            android:gravity="left"
-            android:text="Images"
-            android:textSize="14dp" />
-
-        <TextView
-            android:id="@+id/files_whatsapp_images"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:gravity="left"
-            android:text="Files: 325"
-            android:textSize="10dp" />
-
-        <TextView
-            android:id="@+id/dimensione_whatsapp_images"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:gravity="left"
-            android:text="Size: 325 GB"
-            android:textSize="10dp" />
-
-        <TextView
-            android:id="@+id/folder_whatsapp_images"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:gravity="left"
-            android:text="Folder: /whatsapp_image"
-            android:textSize="10dp" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="10dp"
-            android:background="@android:color/darker_gray" />
-
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/label_whatsapp_videos"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:gravity="left"
-        android:text="Videos"
-        android:textSize="12dp" />
-
-
-</LinearLayout>
+        android:layout_height="match_parent"/>
+</FrameLayout>

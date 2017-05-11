@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -18,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import it.namron.sweeping.adapter.DirectoryAdapter;
 import it.namron.sweeping.fragment.ManageFragment;
 import it.namron.sweeping.constant.PackageApp;
 import it.namron.sweeping.sweeping.R;
@@ -28,11 +31,9 @@ import it.namron.sweeping.fragment.WhatsAppFragment;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    public static final String LOG_TAG = "AppSweeping";
-    private static final int PICKFILE_REQUEST_CODE = 1;
+    private static final String TAG = MainActivity.class.getSimpleName();
 
     @Override
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
 
+        //Set initial fragment
         Fragment fragment = new ManageFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
@@ -57,7 +59,7 @@ public class MainActivity extends AppCompatActivity
 
         populateNavigationDrawer(navigationView);
 
-        Log.d(LOG_TAG, "onCreate done!");
+        Log.d(TAG, "onCreate done!");
 
     }
 

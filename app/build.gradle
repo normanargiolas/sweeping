@@ -38,6 +38,9 @@ dependencies {
     compile 'com.nononsenseapps:filepicker:4.1.0'
     compile group: 'commons-io', name: 'commons-io', version: '2.4'
 
+    compile 'com.android.support:recyclerview-v7:25.3.1'
+
+
 
     testCompile 'junit:junit:4.12'
 }
