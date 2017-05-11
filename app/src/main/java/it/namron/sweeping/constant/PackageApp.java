@@ -1,4 +1,4 @@
-package it.namron.sweeping.sweeping;
+package it.namron.sweeping.constant;
 
 import java.util.AbstractMap.*;
 import java.util.Collections;

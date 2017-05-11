@@ -1,4 +1,4 @@
-package it.namron.sweeping.sweeping;
+package it.namron.sweeping.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -29,6 +29,8 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+
+import it.namron.sweeping.sweeping.R;
 
 /**
  * Created by norman on 09/05/17.

@@ -1,21 +1,13 @@
-package it.namron.sweeping.sweeping;
+package it.namron.sweeping.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.DocumentsContract;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -26,12 +18,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.nononsenseapps.filepicker.FilePickerActivity;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import it.namron.sweeping.fragment.ManageFragment;
+import it.namron.sweeping.constant.PackageApp;
+import it.namron.sweeping.sweeping.R;
+import it.namron.sweeping.fragment.TelegramFragment;
+import it.namron.sweeping.fragment.WhatsAppFragment;
 
 
 public class MainActivity extends AppCompatActivity
@@ -158,18 +149,20 @@ public class MainActivity extends AppCompatActivity
 
         switch (id) {
             case R.id.nav_whatsapp:
+                this.setTitle("WhatsApp");
                 Toast.makeText(getApplicationContext(), "whatsapp", Toast.LENGTH_SHORT).show();
                 fragment = new WhatsAppFragment();
                 break;
             case R.id.nav_telegram:
+                this.setTitle("Telegram");
                 Toast.makeText(getApplicationContext(), "telegram", Toast.LENGTH_SHORT).show();
                 fragment = new TelegramFragment();
                 break;
             case R.id.nav_manage:
+                this.setTitle("Manage");
                 Toast.makeText(getApplicationContext(), "manage", Toast.LENGTH_SHORT).show();
                 fragment = new ManageFragment();
                 break;
-
             default:
                 Toast.makeText(getApplicationContext(), "unknow choice", Toast.LENGTH_SHORT).show();
 
