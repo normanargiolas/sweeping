@@ -24,7 +24,7 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.Dire
     private static final String TAG = DirectoryAdapter.class.getSimpleName();
 
 //    private int mNumberItems;
-    private MatrixCursor mCursor;
+    private Cursor mCursor;
 
     private final Context mContext;
 
@@ -53,11 +53,7 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.Dire
 
         directoryAdapterViewHolder.iconView.setImageResource(R.drawable.folder);
 
-
         directoryAdapterViewHolder.listItemDirectoryView.setText(mCursor.getColumnName(position));
-
-
-
 
 //        directoryAdapterViewHolder.bind(position);
     }
@@ -65,10 +61,10 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.Dire
     @Override
     public int getItemCount() {
         if (null == mCursor) return 0;
-        return mCursor.getColumnCount();
+        return mCursor.getCount();
     }
 
-    public void swapCursor(MatrixCursor newCursor) {
+    public void swapCursor(Cursor newCursor) {
         mCursor = newCursor;
         notifyDataSetChanged();
     }

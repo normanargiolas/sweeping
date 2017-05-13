@@ -8,12 +8,16 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
@@ -50,9 +54,89 @@ public class WhatsAppFragment extends Fragment {
     private DirectoryAdapter mDirectoryAdapter;
     private RecyclerView mDirectoryList;
 
+
+    /*
+     * This number will uniquely identify our Loader
+     */
+    private static final int ID_WHATSAPP_FOLDER_LOADER = 20;
+
+    private LoaderManager mLoaderManager;
+
+
     public WhatsAppFragment() {
 
     }
+
+    private LoaderManager.LoaderCallbacks<Cursor> mWhatsAppFolderLoaderCallback = new LoaderManager.LoaderCallbacks<Cursor>() {
+
+        @Override
+        public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
+            switch (loaderId) {
+                case ID_WHATSAPP_FOLDER_LOADER:
+                    return new AsyncTaskLoader<Cursor>(getContext()) {
+
+                        Cursor mResponce;
+
+                        @Override
+                        protected void onStartLoading() {
+                            Cursor responce;
+
+                            if (args == null) {
+                                return;
+                            }
+                            if (mResponce != null) {
+                                deliverResult(mResponce);
+                            } else {
+                                forceLoad();
+                            }
+                        }
+
+                        @Override
+                        public void deliverResult(Cursor data) {
+                            mResponce = data;
+                            super.deliverResult(data);
+                        }
+
+                        @Override
+                        public Cursor loadInBackground() {
+                            return searchWhatsAppFolders();
+                        }
+                    };
+                default:
+                    throw new RuntimeException("Loader Not Implemented: " + loaderId);
+            }
+        }
+
+        private Cursor searchWhatsAppFolders(){
+            return null;
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+            if (null == data) {
+                int currentLine = Thread.currentThread().getStackTrace()[0].getLineNumber();
+                String mthd = Thread.currentThread().getStackTrace()[0].getMethodName();
+                String log = mthd.concat(": ").concat(String.valueOf(currentLine));
+                Log.d(LOG_TAG, log);
+
+                Toast.makeText(getActivity(), log, Toast.LENGTH_SHORT).show();
+            } else {
+                mDirectoryAdapter.swapCursor(data);
+            }
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Cursor> loader) {
+            switch (loader.getId()) {
+                case ID_WHATSAPP_FOLDER_LOADER:
+                    mDirectoryAdapter.swapCursor(null);
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -68,8 +152,14 @@ public class WhatsAppFragment extends Fragment {
         mDirectoryAdapter = new DirectoryAdapter(getContext());
         mDirectoryList.setAdapter(mDirectoryAdapter);
 
-//        todo eseguirlo in un loader
-        searchWhatsAppFolders();
+        /*
+         * Initialize the loader
+         */
+        mLoaderManager = getLoaderManager();
+        getLoaderManager().initLoader(ID_WHATSAPP_FOLDER_LOADER, null, mWhatsAppFolderLoaderCallback);
+
+////        todo eseguirlo in un loader
+//        searchWhatsAppFolders();
 
         return rootView;
     }
@@ -133,7 +223,7 @@ public class WhatsAppFragment extends Fragment {
                     Log.d(LOG_TAG, "loadInBackground");
 
 
-                    mDirectoryAdapter.swapCursor(matrixCursor);
+//                    mDirectoryAdapter.swapCursor(matrixCursor);
                 }
             }
         }// end of SD card checking
