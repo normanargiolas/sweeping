@@ -14,6 +14,11 @@ import java.util.stream.Stream;
 public class PackageApp {
 
     public static final String WHATSAPP = "com.whatsapp";
+    public static final String WHATSAPP_DIRECTORY = "WhatsApp";
+    public static final String WHATSAPP_MEDIA = "Media";
+
+
+
     public static final String TELEGRAM = "com.telegram";
 
 

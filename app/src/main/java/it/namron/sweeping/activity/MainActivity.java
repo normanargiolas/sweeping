@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity
 
 
         //Set initial fragment
-        Fragment fragment = new ManageFragment();
+        Fragment fragment = new WhatsAppFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
 

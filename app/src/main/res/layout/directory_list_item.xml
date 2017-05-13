@@ -12,19 +12,21 @@
     android:paddingTop="12dp">
 
     <ImageView
-        android:id="@+id/weather_icon"
+        android:id="@+id/directory_icon"
         android:layout_width="40dp"
         android:layout_height="40dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        tools:src="@drawable/fab_cut"/>
+        tools:src="@drawable/folder"/>
 
     <TextView
-        android:id="@+id/tv_item_number"
+        android:id="@+id/directory_folder"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="16dp"
-        app:layout_constraintLeft_toRightOf="@+id/weather_icon"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        app:layout_constraintLeft_toRightOf="@+id/directory_icon"
+        android:paddingTop="10dp"
         tools:text="Today, April 03"/>
+
 
 </android.support.constraint.ConstraintLayout>
