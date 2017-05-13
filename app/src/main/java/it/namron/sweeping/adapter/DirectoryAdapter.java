@@ -61,7 +61,7 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.Dire
     @Override
     public int getItemCount() {
         if (null == mCursor) return 0;
-        return mCursor.getCount();
+        return mCursor.getColumnCount();
     }
 
     public void swapCursor(Cursor newCursor) {

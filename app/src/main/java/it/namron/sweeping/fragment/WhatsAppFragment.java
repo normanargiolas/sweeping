@@ -4,9 +4,11 @@ import android.content.ClipData;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.MatrixCursor;
+import android.database.MergeCursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Parcel;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
@@ -34,6 +36,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import it.namron.library.WhatsApp;
 import it.namron.sweeping.activity.MainActivity;
 import it.namron.sweeping.adapter.DirectoryAdapter;
 import it.namron.sweeping.constant.PackageApp;
@@ -61,6 +64,7 @@ public class WhatsAppFragment extends Fragment {
     private static final int ID_WHATSAPP_FOLDER_LOADER = 20;
 
     private LoaderManager mLoaderManager;
+//    private Loader<Cursor> mFolderLoader;
 
 
     public WhatsAppFragment() {
@@ -99,16 +103,46 @@ public class WhatsAppFragment extends Fragment {
 
                         @Override
                         public Cursor loadInBackground() {
-                            return searchWhatsAppFolders();
+                            File whatsAppDirectory;
+                            File mediaDirectory;
+                            if (Environment.getExternalStorageState() == null) {
+
+                            } else if (Environment.getExternalStorageState() != null) {
+                                // search for directory on SD card
+                                File baseDirectory = new File(Environment.getExternalStorageDirectory().getPath());
+                                whatsAppDirectory = new File(baseDirectory, PackageApp.WHATSAPP_DIRECTORY);
+                                if (whatsAppDirectory.exists()) {
+                                    mediaDirectory = new File(whatsAppDirectory, PackageApp.WHATSAPP_MEDIA);
+                                    if (mediaDirectory.exists()) {
+                                        
+                                        File[] subdirs = mediaDirectory.listFiles((FileFilter) DirectoryFileFilter.DIRECTORY);
+
+                                        List<String> listDirectory = new ArrayList<String>();
+
+                                        for (int i = 0; i < subdirs.length; i++) {
+                                            String dir = subdirs[i].getPath();
+
+                                            Uri dirUri = Uri.parse(dir);
+                                            String folder = dirUri.getLastPathSegment();
+                                            if (!folder.startsWith(".")) {
+                                                listDirectory.add(folder);
+                                            }
+                                        }
+
+                                        String[] arreyListDir = listDirectory.toArray(new String[listDirectory.size()]);
+                                        MatrixCursor matrixCursor = new MatrixCursor(arreyListDir);
+                                        Log.d(LOG_TAG, "loadInBackground");
+
+                                        return matrixCursor;
+                                    }
+                                }
+                            }
+                            return null;
                         }
                     };
                 default:
                     throw new RuntimeException("Loader Not Implemented: " + loaderId);
             }
-        }
-
-        private Cursor searchWhatsAppFolders(){
-            return null;
         }
 
         @Override
@@ -156,7 +190,16 @@ public class WhatsAppFragment extends Fragment {
          * Initialize the loader
          */
         mLoaderManager = getLoaderManager();
-        getLoaderManager().initLoader(ID_WHATSAPP_FOLDER_LOADER, null, mWhatsAppFolderLoaderCallback);
+
+        Bundle pathBundle = new Bundle();
+        pathBundle.putString(PackageApp.WHATSAPP, PackageApp.WHATSAPP_DIRECTORY);
+//        WhatsApp a = new WhatsApp().get {};
+
+        String a = WhatsApp.folder.PACKAGE.getText();
+        pathBundle.putString(WhatsApp.folder.PACKAGE.name(), WhatsApp.folder.PACKAGE.getText());
+
+
+        getLoaderManager().initLoader(ID_WHATSAPP_FOLDER_LOADER, pathBundle, mWhatsAppFolderLoaderCallback);
 
 ////        todo eseguirlo in un loader
 //        searchWhatsAppFolders();
