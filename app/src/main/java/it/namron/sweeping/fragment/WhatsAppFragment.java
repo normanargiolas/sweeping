@@ -1,14 +1,10 @@
 package it.namron.sweeping.fragment;
 
-import android.content.ClipData;
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.MatrixCursor;
-import android.database.MergeCursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Parcel;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
@@ -21,32 +17,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
-import org.apache.commons.io.filefilter.FalseFileFilter;
-import org.apache.commons.io.filefilter.NotFileFilter;
-import org.apache.commons.io.filefilter.TrueFileFilter;
 
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import it.namron.library.WhatsApp;
-import it.namron.sweeping.activity.MainActivity;
 import it.namron.sweeping.adapter.DirectoryAdapter;
 import it.namron.sweeping.constant.PackageApp;
+import it.namron.sweeping.model.Message;
 import it.namron.sweeping.sweeping.R;
 
 /**
  * Created by norman on 09/05/17.
  */
 
-public class WhatsAppFragment extends Fragment {
+public class WhatsAppFragment extends Fragment implements DirectoryAdapter.MessageAdapterListener {
 
     private static final String LOG_TAG = WhatsAppFragment.class.getSimpleName();
 
@@ -57,6 +45,7 @@ public class WhatsAppFragment extends Fragment {
     private DirectoryAdapter mDirectoryAdapter;
     private RecyclerView mDirectoryList;
 
+    private List<Message> messages = new ArrayList<>();
 
     /*
      * This number will uniquely identify our Loader
@@ -67,19 +56,21 @@ public class WhatsAppFragment extends Fragment {
 //    private Loader<Cursor> mFolderLoader;
 
 
+    private Toast mToast;
+
     public WhatsAppFragment() {
 
     }
 
-    private LoaderManager.LoaderCallbacks<Cursor> mWhatsAppFolderLoaderCallback = new LoaderManager.LoaderCallbacks<Cursor>() {
+    private LoaderManager.LoaderCallbacks<List<Message>> mWhatsAppFolderLoaderCallback = new LoaderManager.LoaderCallbacks<List<Message>>() {
 
         @Override
-        public Loader<Cursor> onCreateLoader(int loaderId, Bundle args) {
+        public Loader<List<Message>> onCreateLoader(int loaderId, Bundle args) {
             switch (loaderId) {
                 case ID_WHATSAPP_FOLDER_LOADER:
-                    return new AsyncTaskLoader<Cursor>(getContext()) {
+                    return new AsyncTaskLoader<List<Message>>(getContext()) {
 
-                        Cursor mResponce;
+                        List<Message> mResponce;
 
                         @Override
                         protected void onStartLoading() {
@@ -96,13 +87,13 @@ public class WhatsAppFragment extends Fragment {
                         }
 
                         @Override
-                        public void deliverResult(Cursor data) {
+                        public void deliverResult(List<Message> data) {
                             mResponce = data;
                             super.deliverResult(data);
                         }
 
                         @Override
-                        public Cursor loadInBackground() {
+                        public List<Message> loadInBackground() {
                             File whatsAppDirectory;
                             File mediaDirectory;
                             if (Environment.getExternalStorageState() == null) {
@@ -114,10 +105,13 @@ public class WhatsAppFragment extends Fragment {
                                 if (whatsAppDirectory.exists()) {
                                     mediaDirectory = new File(whatsAppDirectory, PackageApp.WHATSAPP_MEDIA);
                                     if (mediaDirectory.exists()) {
-                                        
+
                                         File[] subdirs = mediaDirectory.listFiles((FileFilter) DirectoryFileFilter.DIRECTORY);
 
-                                        List<String> listDirectory = new ArrayList<String>();
+//                                        List<String> listDirectory = new ArrayList<String>();
+
+                                        messages.clear();
+                                        Message msg = new Message();
 
                                         for (int i = 0; i < subdirs.length; i++) {
                                             String dir = subdirs[i].getPath();
@@ -125,15 +119,22 @@ public class WhatsAppFragment extends Fragment {
                                             Uri dirUri = Uri.parse(dir);
                                             String folder = dirUri.getLastPathSegment();
                                             if (!folder.startsWith(".")) {
-                                                listDirectory.add(folder);
+//                                                listDirectory.add(folder);
+
+                                                msg.setFolderName(folder);
+                                                msg.setSelected(false);
+                                                messages.add(msg);
                                             }
                                         }
 
-                                        String[] arreyListDir = listDirectory.toArray(new String[listDirectory.size()]);
-                                        MatrixCursor matrixCursor = new MatrixCursor(arreyListDir);
-                                        Log.d(LOG_TAG, "loadInBackground");
+                                        return messages;
 
-                                        return matrixCursor;
+
+//                                        String[] arreyListDir = listDirectory.toArray(new String[listDirectory.size()]);
+//                                        MatrixCursor matrixCursor = new MatrixCursor(arreyListDir);
+//                                        Log.d(LOG_TAG, "loadInBackground");
+//
+//                                        return matrixCursor;
                                     }
                                 }
                             }
@@ -146,7 +147,7 @@ public class WhatsAppFragment extends Fragment {
         }
 
         @Override
-        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        public void onLoadFinished(Loader<List<Message>> loader, List<Message> data) {
             if (null == data) {
                 int currentLine = Thread.currentThread().getStackTrace()[0].getLineNumber();
                 String mthd = Thread.currentThread().getStackTrace()[0].getMethodName();
@@ -155,15 +156,15 @@ public class WhatsAppFragment extends Fragment {
 
                 Toast.makeText(getActivity(), log, Toast.LENGTH_SHORT).show();
             } else {
-                mDirectoryAdapter.swapCursor(data);
+                mDirectoryAdapter.swapFolder(data);
             }
         }
 
         @Override
-        public void onLoaderReset(Loader<Cursor> loader) {
+        public void onLoaderReset(Loader<List<Message>> loader) {
             switch (loader.getId()) {
                 case ID_WHATSAPP_FOLDER_LOADER:
-                    mDirectoryAdapter.swapCursor(null);
+                    mDirectoryAdapter.swapFolder(null);
                     break;
                 default:
                     break;
@@ -183,7 +184,7 @@ public class WhatsAppFragment extends Fragment {
         mDirectoryList.setHasFixedSize(true);
 
         //The GreenAdapter is responsible for displaying each item in the list.
-        mDirectoryAdapter = new DirectoryAdapter(getContext());
+        mDirectoryAdapter = new DirectoryAdapter(getContext(), this, messages);
         mDirectoryList.setAdapter(mDirectoryAdapter);
 
         /*
@@ -270,6 +271,23 @@ public class WhatsAppFragment extends Fragment {
                 }
             }
         }// end of SD card checking
+    }
+
+    @Override
+    public void onIconDirectoryClicked(int position) {
+        Message message = messages.get(position);
+        message.setSelected(!message.isSelected());
+        messages.set(position, message);
+        mDirectoryAdapter.notifyDataSetChanged();
+
+
+        if (mToast != null) {
+            mToast.cancel();
+        }
+        String toastMessage = "Item #" + position + " clicked.";
+        mToast = Toast.makeText(this.getContext(), toastMessage, Toast.LENGTH_LONG);
+
+        mToast.show();
     }
 }
 
