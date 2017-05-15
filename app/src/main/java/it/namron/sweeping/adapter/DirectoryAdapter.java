@@ -58,24 +58,20 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.Dire
         Log.d(TAG, "#" + position);
         Message message = messages.get(position);
 
-
-//        mCursor.moveToPosition(position);
-
         directoryAdapterViewHolder.listItemDirectoryView.setText(message.getFolderName());
 
 //        directoryAdapterViewHolder.bind(position);
         applyDirectory(directoryAdapterViewHolder, message);
 
         applyClickEvents(directoryAdapterViewHolder, position);
-
     }
 
     private void applyDirectory(DirectoryAdapterViewHolder holder, Message message) {
-        if (!message.isSelected()) {
-            holder.directoryIcon.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.folder));
+        if (message.isSelected()) {
+            holder.directoryIcon.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.folder_selected));
 //            holder.directoryIcon.setColorFilter(ContextCompat.getColor(mContext, R.color.icon_tint_selected));
         } else {
-            holder.directoryIcon.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.folder_checked));
+            holder.directoryIcon.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.folder));
 //            holder.directoryIcon.setColorFilter(ContextCompat.getColor(mContext, R.color.icon_tint_normal));
         }
     }

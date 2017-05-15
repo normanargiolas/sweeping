@@ -5,7 +5,7 @@ android {
     buildToolsVersion "25.0.3"
     defaultConfig {
         applicationId "it.namron.sweeping.sweeping"
-        minSdkVersion 23
+        minSdkVersion 19
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
@@ -39,5 +39,5 @@ dependencies {
     compile 'commons-io:commons-io:2.4'
     compile 'com.android.support:recyclerview-v7:25.3.1'
     testCompile 'junit:junit:4.12'
-    compile project(':whatsapp-lib')
+    compile project(':core-lib')
 }

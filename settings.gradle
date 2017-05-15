@@ -1,1 +1,1 @@
-include ':app', ':whatsapp-lib', ':core-lib'
+include ':app', ':core-lib'

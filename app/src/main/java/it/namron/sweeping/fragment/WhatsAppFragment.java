@@ -1,10 +1,7 @@
 package it.namron.sweeping.fragment;
 
 import android.database.Cursor;
-import android.database.MatrixCursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
@@ -17,14 +14,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import org.apache.commons.io.filefilter.DirectoryFileFilter;
-
-import java.io.File;
-import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.namron.library.WhatsApp;
+import it.namron.core.WhatsApp;
 import it.namron.sweeping.adapter.DirectoryAdapter;
 import it.namron.sweeping.constant.PackageApp;
 import it.namron.sweeping.model.Message;
@@ -37,8 +30,6 @@ import it.namron.sweeping.sweeping.R;
 public class WhatsAppFragment extends Fragment implements DirectoryAdapter.MessageAdapterListener {
 
     private static final String LOG_TAG = WhatsAppFragment.class.getSimpleName();
-
-    public static final int NUM_LIST_ITEMS = 100;
 
     //References to RecyclerView and Adapter to reset the list to its
     //"pretty" state when the reset menu item is clicked.
@@ -53,8 +44,6 @@ public class WhatsAppFragment extends Fragment implements DirectoryAdapter.Messa
     private static final int ID_WHATSAPP_FOLDER_LOADER = 20;
 
     private LoaderManager mLoaderManager;
-//    private Loader<Cursor> mFolderLoader;
-
 
     private Toast mToast;
 
@@ -74,7 +63,6 @@ public class WhatsAppFragment extends Fragment implements DirectoryAdapter.Messa
 
                         @Override
                         protected void onStartLoading() {
-                            Cursor responce;
 
                             if (args == null) {
                                 return;
@@ -94,51 +82,19 @@ public class WhatsAppFragment extends Fragment implements DirectoryAdapter.Messa
 
                         @Override
                         public List<Message> loadInBackground() {
-                            File whatsAppDirectory;
-                            File mediaDirectory;
-                            if (Environment.getExternalStorageState() == null) {
 
-                            } else if (Environment.getExternalStorageState() != null) {
-                                // search for directory on SD card
-                                File baseDirectory = new File(Environment.getExternalStorageDirectory().getPath());
-                                whatsAppDirectory = new File(baseDirectory, PackageApp.WHATSAPP_DIRECTORY);
-                                if (whatsAppDirectory.exists()) {
-                                    mediaDirectory = new File(whatsAppDirectory, PackageApp.WHATSAPP_MEDIA);
-                                    if (mediaDirectory.exists()) {
+                            messages.clear();
+                            Message msg;
 
-                                        File[] subdirs = mediaDirectory.listFiles((FileFilter) DirectoryFileFilter.DIRECTORY);
-
-//                                        List<String> listDirectory = new ArrayList<String>();
-
-                                        messages.clear();
-                                        Message msg = new Message();
-
-                                        for (int i = 0; i < subdirs.length; i++) {
-                                            String dir = subdirs[i].getPath();
-
-                                            Uri dirUri = Uri.parse(dir);
-                                            String folder = dirUri.getLastPathSegment();
-                                            if (!folder.startsWith(".")) {
-//                                                listDirectory.add(folder);
-
-                                                msg.setFolderName(folder);
-                                                msg.setSelected(false);
-                                                messages.add(msg);
-                                            }
-                                        }
-
-                                        return messages;
-
-
-//                                        String[] arreyListDir = listDirectory.toArray(new String[listDirectory.size()]);
-//                                        MatrixCursor matrixCursor = new MatrixCursor(arreyListDir);
-//                                        Log.d(LOG_TAG, "loadInBackground");
-//
-//                                        return matrixCursor;
-                                    }
-                                }
+                            List<String> whatsAppDir = WhatsApp.listOfWhatsAppDirectory();
+                            for (String dir : whatsAppDir) {
+                                msg = new Message();
+                                msg.setFolderName(dir);
+                                msg.setSelected(true);
+                                messages.add(msg);
                             }
-                            return null;
+
+                            return messages;
                         }
                     };
                 default:
@@ -206,71 +162,6 @@ public class WhatsAppFragment extends Fragment implements DirectoryAdapter.Messa
 //        searchWhatsAppFolders();
 
         return rootView;
-    }
-
-    private void searchWhatsAppFolders() {
-        //if there is no SD card, create new directory objects to make directory on device
-        File whatsAppDirectory;
-        File mediaDirectory;
-        if (Environment.getExternalStorageState() == null) {
-//            //create new file directory object
-//            whatsAppDirectory = new File(Environment.getDataDirectory()
-//                    + PackageApp.WHATSAPP_DIRECTORY);
-//            mediaDirectory = new File(Environment.getDataDirectory()
-//                    + PackageApp.WHATSAPP_MEDIA);
-//            /*
-//             * this checks to see if there are any previous test photo files
-//             * if there are any photos, they are deleted for the sake of
-//             * memory
-//             */
-//            if (mediaDirectory.exists()) {
-//                File[] dirFiles = mediaDirectory.listFiles();
-//                if (dirFiles.length != 0) {
-//                    for (int ii = 0; ii <= dirFiles.length; ii++) {
-////                        dirFiles[ii].delete();
-//                    }
-//                }
-//            }
-////            // if no directory exists, create new directory
-////            if (!whatsAppDirectory.exists()) {
-////                whatsAppDirectory.mkdir();
-////            }
-//
-//            // if phone DOES have sd card
-        } else if (Environment.getExternalStorageState() != null) {
-            // search for directory on SD card
-            File baseDirectory = new File(Environment.getExternalStorageDirectory().getPath());
-            whatsAppDirectory = new File(baseDirectory, PackageApp.WHATSAPP_DIRECTORY);
-            if (whatsAppDirectory.exists()) {
-                mediaDirectory = new File(whatsAppDirectory, PackageApp.WHATSAPP_MEDIA);
-                if (mediaDirectory.exists()) {
-                    File[] subdirs = mediaDirectory.listFiles((FileFilter) DirectoryFileFilter.DIRECTORY);
-
-                    List<String> listDirectory = new ArrayList<String>();
-//                    todo controllare use MatrixCursor, instead of addRow() which is not very handy, use builder method newRow()
-
-
-                    for (int i = 0; i < subdirs.length; i++) {
-                        String dir = subdirs[i].getPath();
-
-                        Uri dirUri = Uri.parse(dir);
-                        String folder = dirUri.getLastPathSegment();
-                        if (!folder.startsWith(".")) {
-                            listDirectory.add(folder);
-                        }
-                    }
-
-                    String[] arreyListDir = listDirectory.toArray(new String[listDirectory.size()]);
-
-                    MatrixCursor matrixCursor = new MatrixCursor(arreyListDir);
-
-                    Log.d(LOG_TAG, "loadInBackground");
-
-
-//                    mDirectoryAdapter.swapCursor(matrixCursor);
-                }
-            }
-        }// end of SD card checking
     }
 
     @Override
