@@ -14,7 +14,8 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import it.namron.sweeping.model.AppEntry;
+//import it.namron.core.utility.AppEntry;
+import it.namron.sweeping.model.AppItemModel;
 import it.namron.sweeping.sweeping.R;
 
 /**
@@ -25,9 +26,9 @@ public class AppEntryAdapter extends RecyclerView.Adapter<AppEntryAdapter.AppEnt
     private static final String TAG = AppEntryAdapter.class.getSimpleName();
 
     private final Context mContext;
-    List<AppEntry> appEntry;
+    List<AppItemModel> appEntry;
 
-    public AppEntryAdapter(@NonNull Context context, List<AppEntry> appEntry) {
+    public AppEntryAdapter(@NonNull Context context, List<AppItemModel> appEntry) {
         this.appEntry = appEntry;
         mContext = context;
     }
@@ -46,7 +47,7 @@ public class AppEntryAdapter extends RecyclerView.Adapter<AppEntryAdapter.AppEnt
     @Override
     public void onBindViewHolder(AppEntryAdapterViewHolder appEntryAdapterViewHolder, int position) {
         Log.d(TAG, "#" + position);
-        AppEntry appModel = appEntry.get(position);
+        AppItemModel appModel = appEntry.get(position);
 
         appEntryAdapterViewHolder.appName.setText(appModel.getAppName());
         appEntryAdapterViewHolder.txtPrimary.setText(appModel.getTxtPrimary());
@@ -67,7 +68,7 @@ public class AppEntryAdapter extends RecyclerView.Adapter<AppEntryAdapter.AppEnt
         return appEntry.size();
     }
 
-    public void swapFolder(List<AppEntry> appEntry) {
+    public void swapFolder(List<AppItemModel> appEntry) {
         this.appEntry = appEntry;
         notifyDataSetChanged();
     }

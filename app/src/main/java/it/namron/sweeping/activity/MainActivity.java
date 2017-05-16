@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.Loader;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -27,12 +28,14 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.namron.core.utility.AppEntry;
+import it.namron.core.utility.AppListLoader;
 import it.namron.sweeping.adapter.AppEntryAdapter;
 import it.namron.sweeping.constant.PackageApp;
 import it.namron.sweeping.fragment.ManageFragment;
 import it.namron.sweeping.fragment.TelegramFragment;
 import it.namron.sweeping.fragment.WhatsAppFragment;
-import it.namron.sweeping.model.AppEntry;
+import it.namron.sweeping.model.AppItemModel;
 import it.namron.sweeping.sweeping.R;
 
 
@@ -41,7 +44,7 @@ public class MainActivity extends AppCompatActivity
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private List<AppEntry> mAppListModel = new ArrayList<>();
+    private List<AppItemModel> mAppListModel = new ArrayList<>();
     private RecyclerView mRecyclerView;
     private AppEntryAdapter mAppListAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -53,13 +56,32 @@ public class MainActivity extends AppCompatActivity
     private LoaderManager mLoaderManager;
 
 
-//    private LoaderManager.LoaderCallbacks<List<AppEntry>> mAppListLoaderCallback = new LoaderManager.LoaderCallbacks<List<AppEntry>>() {
-//
-//    };
+    private LoaderManager.LoaderCallbacks<List<AppEntry>> mAppListLoaderCallback = new LoaderManager.LoaderCallbacks<List<AppEntry>>() {
+
+        @Override
+        public Loader<List<AppEntry>> onCreateLoader(int id, Bundle args) {
+            // This is called when a new Loader needs to be created.  This
+            // sample only has one Loader with no arguments, so it is simple.
+            return new AppListLoader(getApplicationContext());
+//            return null;
+        }
+
+        @Override
+        public void onLoadFinished(Loader<List<AppEntry>> loader, List<AppEntry> data) {
+
+        }
+
+        @Override
+        public void onLoaderReset(Loader<List<AppEntry>> loader) {
+
+        }
+    };
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -96,14 +118,14 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
 
-//        /*
-//         * Initialize the loader
-//         */
-//        mLoaderManager = getSupportLoaderManager();
-//
-//        //Insert same data here into bundle
-//        Bundle pathBundle = new Bundle();
-//        getSupportLoaderManager().initLoader(ID_APP_LIST_LOADER, pathBundle, mAppListLoaderCallback);
+        /*
+         * Initialize the loader
+         */
+        mLoaderManager = getSupportLoaderManager();
+
+        //Insert same data here into bundle
+        Bundle pathBundle = new Bundle();
+        getSupportLoaderManager().initLoader(ID_APP_LIST_LOADER, pathBundle, mAppListLoaderCallback);
 
 
         populateNavigationDrawer(navigationView);
@@ -126,17 +148,17 @@ public class MainActivity extends AppCompatActivity
 //        swipeRefreshLayout.setRefreshing(true);
         mAppListModel.clear();
 
-        AppEntry appListModel;
+        AppItemModel appListModel;
 
-        appListModel = new AppEntry();
+        appListModel = new AppItemModel();
         appListModel.setAppName("Applicazione1");
         mAppListModel.add(appListModel);
 
-        appListModel = new AppEntry();
+        appListModel = new AppItemModel();
         appListModel.setAppName("Applicazione2");
         mAppListModel.add(appListModel);
 
-        appListModel = new AppEntry();
+        appListModel = new AppItemModel();
         appListModel.setAppName("Applicazione3");
         mAppListModel.add(appListModel);
 

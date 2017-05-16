@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import it.namron.sweeping.model.Message;
+import it.namron.sweeping.model.DirectoryItemModel;
 import it.namron.sweeping.sweeping.R;
 
 /**
@@ -26,14 +26,14 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.Dire
 
     private final Context mContext;
 
-    private List<Message> messages;
+    private List<DirectoryItemModel> messages;
     private MessageAdapterListener listener;
 
     public interface MessageAdapterListener {
         void onIconDirectoryClicked(int position);
     }
 
-    public DirectoryAdapter(@NonNull Context context, MessageAdapterListener listener, List<Message> messages) {
+    public DirectoryAdapter(@NonNull Context context, MessageAdapterListener listener, List<DirectoryItemModel> messages) {
         this.listener = listener;
         this.messages = messages;
         mContext = context;
@@ -53,7 +53,7 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.Dire
     @Override
     public void onBindViewHolder(DirectoryAdapterViewHolder directoryAdapterViewHolder, int position) {
         Log.d(TAG, "#" + position);
-        Message message = messages.get(position);
+        DirectoryItemModel message = messages.get(position);
 
         directoryAdapterViewHolder.listItemDirectoryView.setText(message.getFolderName());
 
@@ -63,7 +63,7 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.Dire
         applyClickEvents(directoryAdapterViewHolder, position);
     }
 
-    private void applyDirectory(DirectoryAdapterViewHolder holder, Message message) {
+    private void applyDirectory(DirectoryAdapterViewHolder holder, DirectoryItemModel message) {
         if (message.isSelected()) {
             holder.directoryIcon.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.folder_selected));
 //            holder.directoryIcon.setColorFilter(ContextCompat.getColor(mContext, R.color.icon_tint_selected));
@@ -101,7 +101,7 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.Dire
 //        notifyDataSetChanged();
 //    }
 
-    public void swapFolder(List<Message> messages) {
+    public void swapFolder(List<DirectoryItemModel> messages) {
         this.messages = messages;
         notifyDataSetChanged();
     }

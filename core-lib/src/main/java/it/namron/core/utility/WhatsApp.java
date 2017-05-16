@@ -46,6 +46,7 @@ public class WhatsApp {
         File mediaDirectory;
 
         if (Environment.getExternalStorageState() == null) {
+//            todo da pensare come procedere
             //cercare nella memoria interna del dispositivo
         } else if (Environment.getExternalStorageState() != null) {
             // search for directory on SD card

@@ -19,7 +19,7 @@ import java.util.List;
 import it.namron.core.utility.WhatsApp;
 import it.namron.sweeping.adapter.DirectoryAdapter;
 import it.namron.sweeping.constant.PackageApp;
-import it.namron.sweeping.model.Message;
+import it.namron.sweeping.model.DirectoryItemModel;
 import it.namron.sweeping.sweeping.R;
 
 /**
@@ -35,7 +35,7 @@ public class WhatsAppFragment extends Fragment implements DirectoryAdapter.Messa
     private DirectoryAdapter mDirectoryAdapter;
     private RecyclerView mDirectoryList;
 
-    private List<Message> messages = new ArrayList<>();
+    private List<DirectoryItemModel> messages = new ArrayList<>();
 
     /*
      * This number will uniquely identify our Loader
@@ -50,15 +50,15 @@ public class WhatsAppFragment extends Fragment implements DirectoryAdapter.Messa
 
     }
 
-    private LoaderManager.LoaderCallbacks<List<Message>> mWhatsAppFolderLoaderCallback = new LoaderManager.LoaderCallbacks<List<Message>>() {
+    private LoaderManager.LoaderCallbacks<List<DirectoryItemModel>> mWhatsAppFolderLoaderCallback = new LoaderManager.LoaderCallbacks<List<DirectoryItemModel>>() {
 
         @Override
-        public Loader<List<Message>> onCreateLoader(int loaderId, Bundle args) {
+        public Loader<List<DirectoryItemModel>> onCreateLoader(int loaderId, Bundle args) {
             switch (loaderId) {
                 case ID_WHATSAPP_FOLDER_LOADER:
-                    return new AsyncTaskLoader<List<Message>>(getContext()) {
+                    return new AsyncTaskLoader<List<DirectoryItemModel>>(getContext()) {
 
-                        List<Message> mResponce;
+                        List<DirectoryItemModel> mResponce;
 
                         @Override
                         protected void onStartLoading() {
@@ -74,20 +74,20 @@ public class WhatsAppFragment extends Fragment implements DirectoryAdapter.Messa
                         }
 
                         @Override
-                        public void deliverResult(List<Message> data) {
+                        public void deliverResult(List<DirectoryItemModel> data) {
                             mResponce = data;
                             super.deliverResult(data);
                         }
 
                         @Override
-                        public List<Message> loadInBackground() {
+                        public List<DirectoryItemModel> loadInBackground() {
 
                             messages.clear();
-                            Message msg;
+                            DirectoryItemModel msg;
 
                             List<String> whatsAppDir = WhatsApp.listOfWhatsAppDirectory();
                             for (String dir : whatsAppDir) {
-                                msg = new Message();
+                                msg = new DirectoryItemModel();
                                 msg.setFolderName(dir);
                                 msg.setSelected(true);
                                 messages.add(msg);
@@ -102,7 +102,7 @@ public class WhatsAppFragment extends Fragment implements DirectoryAdapter.Messa
         }
 
         @Override
-        public void onLoadFinished(Loader<List<Message>> loader, List<Message> data) {
+        public void onLoadFinished(Loader<List<DirectoryItemModel>> loader, List<DirectoryItemModel> data) {
             if (null == data) {
                 int currentLine = Thread.currentThread().getStackTrace()[0].getLineNumber();
                 String mthd = Thread.currentThread().getStackTrace()[0].getMethodName();
@@ -116,7 +116,7 @@ public class WhatsAppFragment extends Fragment implements DirectoryAdapter.Messa
         }
 
         @Override
-        public void onLoaderReset(Loader<List<Message>> loader) {
+        public void onLoaderReset(Loader<List<DirectoryItemModel>> loader) {
             switch (loader.getId()) {
                 case ID_WHATSAPP_FOLDER_LOADER:
                     mDirectoryAdapter.swapFolder(null);
@@ -165,7 +165,7 @@ public class WhatsAppFragment extends Fragment implements DirectoryAdapter.Messa
 
     @Override
     public void onIconDirectoryClicked(int position) {
-        Message message = messages.get(position);
+        DirectoryItemModel message = messages.get(position);
         message.setSelected(!message.isSelected());
         messages.set(position, message);
         mDirectoryAdapter.notifyDataSetChanged();

@@ -1,10 +1,10 @@
 package it.namron.sweeping.model;
 
 /**
- * Created by norman on 16/05/17.
+ * Created by norman on 17/05/17.
  */
 
-public class AppEntry {
+public class AppItemModel {
     String appName;
     String txtPrimary;
     String txtSecondary;

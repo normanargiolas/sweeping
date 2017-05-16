@@ -4,13 +4,13 @@ package it.namron.sweeping.model;
  * Created by norman on 15/05/17.
  */
 
-public class Message {
+public class DirectoryItemModel {
     private int id;
 
     private boolean isSelected;
     private String folderName;
 
-    public Message() {
+    public DirectoryItemModel() {
     }
 
     public int getId() {
