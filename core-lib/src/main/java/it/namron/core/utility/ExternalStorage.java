@@ -1,4 +1,4 @@
-package it.namron.core;
+package it.namron.core.utility;
 
 import android.app.Activity;
 import android.os.Environment;

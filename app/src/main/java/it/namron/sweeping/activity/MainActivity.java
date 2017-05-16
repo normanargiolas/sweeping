@@ -4,20 +4,22 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -25,14 +27,13 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.namron.sweeping.adapter.AppListAdapter;
-import it.namron.sweeping.adapter.DirectoryAdapter;
-import it.namron.sweeping.fragment.ManageFragment;
+import it.namron.sweeping.adapter.AppEntryAdapter;
 import it.namron.sweeping.constant.PackageApp;
-import it.namron.sweeping.model.AppListModel;
-import it.namron.sweeping.sweeping.R;
+import it.namron.sweeping.fragment.ManageFragment;
 import it.namron.sweeping.fragment.TelegramFragment;
 import it.namron.sweeping.fragment.WhatsAppFragment;
+import it.namron.sweeping.model.AppEntry;
+import it.namron.sweeping.sweeping.R;
 
 
 public class MainActivity extends AppCompatActivity
@@ -40,10 +41,21 @@ public class MainActivity extends AppCompatActivity
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
-    private List<AppListModel> appListModel = new ArrayList<>();
+    private List<AppEntry> mAppListModel = new ArrayList<>();
     private RecyclerView mRecyclerView;
-    private AppListAdapter mAppListAdapter;
+    private AppEntryAdapter mAppListAdapter;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
+    /*
+     * This number will uniquely identify our Loader
+     */
+    private static final int ID_APP_LIST_LOADER = 20;
+    private LoaderManager mLoaderManager;
+
+
+//    private LoaderManager.LoaderCallbacks<List<AppEntry>> mAppListLoaderCallback = new LoaderManager.LoaderCallbacks<List<AppEntry>>() {
+//
+//    };
 
 
     @Override
@@ -55,15 +67,17 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.app_list_recycler);
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
+//        swipeRefreshLayout.setOnRefreshListener(this);
+
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
 
-        //The AppListAdapter is responsible for displaying each item in the list.
-        mAppListAdapter = new AppListAdapter(getApplicationContext(), appListModel);
+        //The AppEntryAdapter is responsible for displaying each item in the list.
+        mAppListAdapter = new AppEntryAdapter(getApplicationContext(), mAppListModel);
         mRecyclerView.setAdapter(mAppListAdapter);
-
 
 
         //Set initial fragment
@@ -81,11 +95,55 @@ public class MainActivity extends AppCompatActivity
         navigationView.setItemIconTintList(null);
         navigationView.setNavigationItemSelectedListener(this);
 
+
+//        /*
+//         * Initialize the loader
+//         */
+//        mLoaderManager = getSupportLoaderManager();
+//
+//        //Insert same data here into bundle
+//        Bundle pathBundle = new Bundle();
+//        getSupportLoaderManager().initLoader(ID_APP_LIST_LOADER, pathBundle, mAppListLoaderCallback);
+
+
         populateNavigationDrawer(navigationView);
 
-        Log.d(TAG, "onCreate done!");
 
+        // show loader and fetch installed app
+        swipeRefreshLayout.post(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        getAppInstalled();
+                    }
+                }
+        );
+
+        Log.d(TAG, "onCreate done!");
     }
+
+    private void getAppInstalled() {
+//        swipeRefreshLayout.setRefreshing(true);
+        mAppListModel.clear();
+
+        AppEntry appListModel;
+
+        appListModel = new AppEntry();
+        appListModel.setAppName("Applicazione1");
+        mAppListModel.add(appListModel);
+
+        appListModel = new AppEntry();
+        appListModel.setAppName("Applicazione2");
+        mAppListModel.add(appListModel);
+
+        appListModel = new AppEntry();
+        appListModel.setAppName("Applicazione3");
+        mAppListModel.add(appListModel);
+
+        mAppListAdapter.swapFolder(mAppListModel);
+//        swipeRefreshLayout.setRefreshing(false);
+    }
+
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

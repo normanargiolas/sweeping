@@ -1,6 +1,5 @@
 package it.namron.sweeping.fragment;
 
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -17,7 +16,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.namron.core.WhatsApp;
+import it.namron.core.utility.WhatsApp;
 import it.namron.sweeping.adapter.DirectoryAdapter;
 import it.namron.sweeping.constant.PackageApp;
 import it.namron.sweeping.model.Message;

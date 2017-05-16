@@ -4,7 +4,7 @@ package it.namron.sweeping.model;
  * Created by norman on 16/05/17.
  */
 
-public class AppListModel {
+public class AppEntry {
     String appName;
     String txtPrimary;
     String txtSecondary;

@@ -14,44 +14,43 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import it.namron.sweeping.model.AppListModel;
-import it.namron.sweeping.model.Message;
+import it.namron.sweeping.model.AppEntry;
 import it.namron.sweeping.sweeping.R;
 
 /**
  * Created by norman on 16/05/17.
  */
 
-public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListAdapterViewHolder> {
-    private static final String TAG = AppListAdapter.class.getSimpleName();
+public class AppEntryAdapter extends RecyclerView.Adapter<AppEntryAdapter.AppEntryAdapterViewHolder> {
+    private static final String TAG = AppEntryAdapter.class.getSimpleName();
 
     private final Context mContext;
-    List<AppListModel> appListModel;
+    List<AppEntry> appEntry;
 
-    public AppListAdapter(@NonNull Context context, List<AppListModel> appListModel) {
-        this.appListModel = appListModel;
+    public AppEntryAdapter(@NonNull Context context, List<AppEntry> appEntry) {
+        this.appEntry = appEntry;
         mContext = context;
     }
 
     @Override
-    public AppListAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public AppEntryAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         int layoutIdForListItem = R.layout.app_list_row;
-        LayoutInflater inflater = LayoutInflater.from(mContext);
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         boolean shouldAttachToParentImmediately = false;
 
         View view = inflater.inflate(layoutIdForListItem, parent, shouldAttachToParentImmediately);
-        AppListAdapterViewHolder viewHolder = new AppListAdapterViewHolder(view);
+        AppEntryAdapterViewHolder viewHolder = new AppEntryAdapterViewHolder(view);
         return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(AppListAdapterViewHolder appListAdapterViewHolder, int position) {
+    public void onBindViewHolder(AppEntryAdapterViewHolder appEntryAdapterViewHolder, int position) {
         Log.d(TAG, "#" + position);
-        AppListModel appModel = appListModel.get(position);
+        AppEntry appModel = appEntry.get(position);
 
-        appListAdapterViewHolder.appName.setText(appModel.getAppName());
-        appListAdapterViewHolder.txtPrimary.setText(appModel.getTxtPrimary());
-        appListAdapterViewHolder.txtSecondary.setText(appModel.getTxtSecondary());
+        appEntryAdapterViewHolder.appName.setText(appModel.getAppName());
+        appEntryAdapterViewHolder.txtPrimary.setText(appModel.getTxtPrimary());
+        appEntryAdapterViewHolder.txtSecondary.setText(appModel.getTxtSecondary());
 
 //        appListAdapterViewHolder.infoInstallation.setText(appModel.getInfoInstallation);
 
@@ -59,16 +58,21 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListA
 
 //    @Override
 //    public long getItemId(int position) {
-//        return appListModel.get(position).getId();
+//        return appEntry.get(position).getId();
 //    }
 
     @Override
     public int getItemCount() {
-        if (null == appListModel) return 0;
-        return appListModel.size();
+        if (null == appEntry) return 0;
+        return appEntry.size();
     }
 
-    public class AppListAdapterViewHolder extends RecyclerView.ViewHolder {
+    public void swapFolder(List<AppEntry> appEntry) {
+        this.appEntry = appEntry;
+        notifyDataSetChanged();
+    }
+
+    public class AppEntryAdapterViewHolder extends RecyclerView.ViewHolder {
         public LinearLayout appContainer;
         public TextView appName;
         public TextView txtPrimary;
@@ -78,7 +82,7 @@ public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListA
         public ImageView appIcon;
         public TextView infoInstallation;
 
-        public AppListAdapterViewHolder(View itemView) {
+        public AppEntryAdapterViewHolder(View itemView) {
             super(itemView);
             appContainer = (LinearLayout) itemView.findViewById(R.id.app_container);
             appName = (TextView) itemView.findViewById(R.id.app_name);

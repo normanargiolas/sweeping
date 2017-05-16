@@ -101,7 +101,7 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.Dire
 //        notifyDataSetChanged();
 //    }
 
-        public void swapFolder(List<Message> messages) {
+    public void swapFolder(List<Message> messages) {
         this.messages = messages;
         notifyDataSetChanged();
     }
