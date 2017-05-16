@@ -1,7 +1,6 @@
 package it.namron.sweeping.adapter;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -24,8 +23,6 @@ import it.namron.sweeping.sweeping.R;
 public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.DirectoryAdapterViewHolder> {
 
     private static final String TAG = DirectoryAdapter.class.getSimpleName();
-
-//    private Cursor mCursor;
 
     private final Context mContext;
 
@@ -83,6 +80,11 @@ public class DirectoryAdapter extends RecyclerView.Adapter<DirectoryAdapter.Dire
                 listener.onIconDirectoryClicked(position);
             }
         });
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return messages.get(position).getId();
     }
 
     @Override

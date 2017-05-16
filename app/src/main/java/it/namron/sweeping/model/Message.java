@@ -5,11 +5,20 @@ package it.namron.sweeping.model;
  */
 
 public class Message {
+    private int id;
 
     private boolean isSelected;
     private String folderName;
 
     public Message() {
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public boolean isSelected() {

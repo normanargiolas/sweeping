@@ -139,7 +139,7 @@ public class WhatsAppFragment extends Fragment implements DirectoryAdapter.Messa
         mDirectoryList.setLayoutManager(layoutManager);
         mDirectoryList.setHasFixedSize(true);
 
-        //The GreenAdapter is responsible for displaying each item in the list.
+        //The DirectoryAdapter is responsible for displaying each item in the list.
         mDirectoryAdapter = new DirectoryAdapter(getContext(), this, messages);
         mDirectoryList.setAdapter(mDirectoryAdapter);
 
