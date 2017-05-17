@@ -36,13 +36,12 @@ public class AppListLoader extends AsyncTaskLoader<List<AppEntry>> {
      */
     public static final Comparator<AppEntry> ALPHA_COMPARATOR = new Comparator<AppEntry>() {
         private final Collator sCollator = Collator.getInstance();
+
         @Override
         public int compare(AppEntry object1, AppEntry object2) {
             return sCollator.compare(object1.getLabel(), object2.getLabel());
         }
     };
-
-
 
 
     public AppListLoader(Context context) {
@@ -61,10 +60,17 @@ public class AppListLoader extends AsyncTaskLoader<List<AppEntry>> {
     @Override
     public List<AppEntry> loadInBackground() {
         // Retrieve all known applications.
+//        List<ApplicationInfo> apps = mPm.getInstalledApplications(0);
+//        for (ApplicationInfo app : apps) {
+//            if ((app.flags & (ApplicationInfo.FLAG_UPDATED_SYSTEM_APP | ApplicationInfo.FLAG_SYSTEM)) > 0) {
+//                // It is a system app
+//            } else {
+//                // It is installed by the user
+//            }
+//        }
 
 //        todo | MATCH_DISABLED_COMPONENTS
-        List<ApplicationInfo> apps = mPm.getInstalledApplications(
-                mPm.MATCH_UNINSTALLED_PACKAGES );
+        List<ApplicationInfo> apps = mPm.getInstalledApplications(mPm.MATCH_UNINSTALLED_PACKAGES);
         if (apps == null) {
             apps = new ArrayList<ApplicationInfo>();
         }
@@ -73,7 +79,7 @@ public class AppListLoader extends AsyncTaskLoader<List<AppEntry>> {
 
         // Create corresponding array of entries and load their labels.
         List<AppEntry> entries = new ArrayList<AppEntry>(apps.size());
-        for (int i=0; i<apps.size(); i++) {
+        for (int i = 0; i < apps.size(); i++) {
             AppEntry entry = new AppEntry(this, apps.get(i));
             entry.loadLabel(context);
             entries.add(entry);
@@ -91,7 +97,8 @@ public class AppListLoader extends AsyncTaskLoader<List<AppEntry>> {
      * super class will take care of delivering it; the implementation
      * here just adds a little more logic.
      */
-    @Override public void deliverResult(List<AppEntry> apps) {
+    @Override
+    public void deliverResult(List<AppEntry> apps) {
         if (isReset()) {
             // An async query came in while the loader is stopped.  We
             // don't need the result.
@@ -119,7 +126,8 @@ public class AppListLoader extends AsyncTaskLoader<List<AppEntry>> {
     /**
      * Handles a request to start the Loader.
      */
-    @Override protected void onStartLoading() {
+    @Override
+    protected void onStartLoading() {
         if (mApps != null) {
             // If we currently have a result available, deliver it
             // immediately.
@@ -145,7 +153,8 @@ public class AppListLoader extends AsyncTaskLoader<List<AppEntry>> {
     /**
      * Handles a request to stop the Loader.
      */
-    @Override protected void onStopLoading() {
+    @Override
+    protected void onStopLoading() {
         // Attempt to cancel the current load task if possible.
         cancelLoad();
     }
@@ -153,7 +162,8 @@ public class AppListLoader extends AsyncTaskLoader<List<AppEntry>> {
     /**
      * Handles a request to cancel a load.
      */
-    @Override public void onCanceled(List<AppEntry> apps) {
+    @Override
+    public void onCanceled(List<AppEntry> apps) {
         super.onCanceled(apps);
 
         // At this point we can release the resources associated with 'apps'
@@ -164,7 +174,8 @@ public class AppListLoader extends AsyncTaskLoader<List<AppEntry>> {
     /**
      * Handles a request to completely reset the Loader.
      */
-    @Override protected void onReset() {
+    @Override
+    protected void onReset() {
         super.onReset();
 
         // Ensure the loader is stopped

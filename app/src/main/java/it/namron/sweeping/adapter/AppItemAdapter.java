@@ -14,7 +14,6 @@ import android.widget.TextView;
 
 import java.util.List;
 
-//import it.namron.core.utility.AppEntry;
 import it.namron.sweeping.model.AppItemModel;
 import it.namron.sweeping.sweeping.R;
 
@@ -22,58 +21,62 @@ import it.namron.sweeping.sweeping.R;
  * Created by norman on 16/05/17.
  */
 
-public class AppEntryAdapter extends RecyclerView.Adapter<AppEntryAdapter.AppEntryAdapterViewHolder> {
-    private static final String TAG = AppEntryAdapter.class.getSimpleName();
+public class AppItemAdapter extends RecyclerView.Adapter<AppItemAdapter.AppItemAdapterViewHolder> {
+    private static final String TAG = AppItemAdapter.class.getSimpleName();
 
     private final Context mContext;
-    List<AppItemModel> appEntry;
+    List<AppItemModel> appItem;
 
-    public AppEntryAdapter(@NonNull Context context, List<AppItemModel> appEntry) {
-        this.appEntry = appEntry;
+    public AppItemAdapter(@NonNull Context context, List<AppItemModel> appItem) {
+        this.appItem = appItem;
         mContext = context;
     }
 
     @Override
-    public AppEntryAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public AppItemAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         int layoutIdForListItem = R.layout.app_list_row;
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         boolean shouldAttachToParentImmediately = false;
 
         View view = inflater.inflate(layoutIdForListItem, parent, shouldAttachToParentImmediately);
-        AppEntryAdapterViewHolder viewHolder = new AppEntryAdapterViewHolder(view);
+        AppItemAdapterViewHolder viewHolder = new AppItemAdapterViewHolder(view);
         return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(AppEntryAdapterViewHolder appEntryAdapterViewHolder, int position) {
+    public void onBindViewHolder(AppItemAdapterViewHolder appItemAdapterViewHolder, int position) {
         Log.d(TAG, "#" + position);
-        AppItemModel appModel = appEntry.get(position);
+        AppItemModel appModel = appItem.get(position);
 
-        appEntryAdapterViewHolder.appName.setText(appModel.getAppName());
-        appEntryAdapterViewHolder.txtPrimary.setText(appModel.getTxtPrimary());
-        appEntryAdapterViewHolder.txtSecondary.setText(appModel.getTxtSecondary());
+        appItemAdapterViewHolder.appName.setText(appModel.getAppName());
+        appItemAdapterViewHolder.txtPrimary.setText(appModel.getTxtPrimary());
+        appItemAdapterViewHolder.txtSecondary.setText(appModel.getTxtSecondary());
 
-//        appListAdapterViewHolder.infoInstallation.setText(appModel.getInfoInstallation);
+        ImageView appIcon = new ImageView(mContext);
+        appIcon.setImageDrawable(appModel.getAppIcon());
+        appItemAdapterViewHolder.appIcon.setImageDrawable(appIcon.getDrawable());
+
+        appItemAdapterViewHolder.infoInstallation.setText(appModel.getInfoInstallation());
 
     }
 
 //    @Override
 //    public long getItemId(int position) {
-//        return appEntry.get(position).getId();
+//        return appItem.get(position).getId();
 //    }
 
     @Override
     public int getItemCount() {
-        if (null == appEntry) return 0;
-        return appEntry.size();
+        if (null == appItem) return 0;
+        return appItem.size();
     }
 
-    public void swapFolder(List<AppItemModel> appEntry) {
-        this.appEntry = appEntry;
+    public void swapFolder(List<AppItemModel> appItemList) {
+        this.appItem = appItemList;
         notifyDataSetChanged();
     }
 
-    public class AppEntryAdapterViewHolder extends RecyclerView.ViewHolder {
+    public class AppItemAdapterViewHolder extends RecyclerView.ViewHolder {
         public LinearLayout appContainer;
         public TextView appName;
         public TextView txtPrimary;
@@ -83,7 +86,7 @@ public class AppEntryAdapter extends RecyclerView.Adapter<AppEntryAdapter.AppEnt
         public ImageView appIcon;
         public TextView infoInstallation;
 
-        public AppEntryAdapterViewHolder(View itemView) {
+        public AppItemAdapterViewHolder(View itemView) {
             super(itemView);
             appContainer = (LinearLayout) itemView.findViewById(R.id.app_container);
             appName = (TextView) itemView.findViewById(R.id.app_name);

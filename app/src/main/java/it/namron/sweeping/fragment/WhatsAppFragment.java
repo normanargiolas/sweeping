@@ -17,8 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.namron.core.utility.WhatsApp;
-import it.namron.sweeping.adapter.DirectoryAdapter;
-import it.namron.sweeping.constant.PackageApp;
+import it.namron.sweeping.adapter.DirectoryItemAdapter;
+import it.namron.sweeping.utils.PackageApp;
 import it.namron.sweeping.model.DirectoryItemModel;
 import it.namron.sweeping.sweeping.R;
 
@@ -26,13 +26,13 @@ import it.namron.sweeping.sweeping.R;
  * Created by norman on 09/05/17.
  */
 
-public class WhatsAppFragment extends Fragment implements DirectoryAdapter.MessageAdapterListener {
+public class WhatsAppFragment extends Fragment implements DirectoryItemAdapter.MessageAdapterListener {
 
     private static final String LOG_TAG = WhatsAppFragment.class.getSimpleName();
 
     //References to RecyclerView and Adapter to reset the list to its
     //"pretty" state when the reset menu item is clicked.
-    private DirectoryAdapter mDirectoryAdapter;
+    private DirectoryItemAdapter mDirectoryAdapter;
     private RecyclerView mDirectoryList;
 
     private List<DirectoryItemModel> messages = new ArrayList<>();
@@ -138,8 +138,8 @@ public class WhatsAppFragment extends Fragment implements DirectoryAdapter.Messa
         mDirectoryList.setLayoutManager(layoutManager);
         mDirectoryList.setHasFixedSize(true);
 
-        //The DirectoryAdapter is responsible for displaying each item in the list.
-        mDirectoryAdapter = new DirectoryAdapter(getContext(), this, messages);
+        //The DirectoryItemAdapter is responsible for displaying each item in the list.
+        mDirectoryAdapter = new DirectoryItemAdapter(getContext(), this, messages);
         mDirectoryList.setAdapter(mDirectoryAdapter);
 
         /*

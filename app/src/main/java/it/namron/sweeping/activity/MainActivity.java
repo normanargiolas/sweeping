@@ -23,6 +23,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -30,8 +31,8 @@ import java.util.List;
 
 import it.namron.core.utility.AppEntry;
 import it.namron.core.utility.AppListLoader;
-import it.namron.sweeping.adapter.AppEntryAdapter;
-import it.namron.sweeping.constant.PackageApp;
+import it.namron.sweeping.adapter.AppItemAdapter;
+import it.namron.sweeping.utils.PackageApp;
 import it.namron.sweeping.fragment.ManageFragment;
 import it.namron.sweeping.fragment.TelegramFragment;
 import it.namron.sweeping.fragment.WhatsAppFragment;
@@ -42,11 +43,11 @@ import it.namron.sweeping.sweeping.R;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     private List<AppItemModel> mAppListModel = new ArrayList<>();
     private RecyclerView mRecyclerView;
-    private AppEntryAdapter mAppListAdapter;
+    private AppItemAdapter mAppEntryAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
 
     /*
@@ -59,16 +60,31 @@ public class MainActivity extends AppCompatActivity
     private LoaderManager.LoaderCallbacks<List<AppEntry>> mAppListLoaderCallback = new LoaderManager.LoaderCallbacks<List<AppEntry>>() {
 
         @Override
-        public Loader<List<AppEntry>> onCreateLoader(int id, Bundle args) {
-            // This is called when a new Loader needs to be created.  This
-            // sample only has one Loader with no arguments, so it is simple.
-            return new AppListLoader(getApplicationContext());
-//            return null;
+        public Loader<List<AppEntry>> onCreateLoader(int loaderId, Bundle args) {
+            switch (loaderId) {
+                case ID_APP_LIST_LOADER:
+                    // This is called when a new Loader needs to be created.  This
+                    // sample only has one Loader with no arguments, so it is simple.
+                    return new AppListLoader(getApplicationContext());
+                default:
+                    throw new RuntimeException("Loader Not Implemented: " + loaderId);
+            }
         }
 
         @Override
-        public void onLoadFinished(Loader<List<AppEntry>> loader, List<AppEntry> data) {
+        public void onLoadFinished(Loader<List<AppEntry>> loader, List<AppEntry> appList) {
+            if (null == appList) {
+                int currentLine = Thread.currentThread().getStackTrace()[0].getLineNumber();
+                String mthd = Thread.currentThread().getStackTrace()[0].getMethodName();
+                String log = mthd.concat(": ").concat(String.valueOf(currentLine));
+                Log.d(LOG_TAG, log);
 
+                Toast.makeText(getApplicationContext(), log, Toast.LENGTH_SHORT).show();
+            } else {
+                //appList conteins all app installed
+                List<AppItemModel> appItemModelList = PackageApp.listOftargetApp(appList);
+                mAppEntryAdapter.swapFolder(appItemModelList);
+            }
         }
 
         @Override
@@ -97,9 +113,9 @@ public class MainActivity extends AppCompatActivity
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
 
-        //The AppEntryAdapter is responsible for displaying each item in the list.
-        mAppListAdapter = new AppEntryAdapter(getApplicationContext(), mAppListModel);
-        mRecyclerView.setAdapter(mAppListAdapter);
+        //The AppItemAdapter is responsible for displaying each item in the list.
+        mAppEntryAdapter = new AppItemAdapter(getApplicationContext(), mAppListModel);
+        mRecyclerView.setAdapter(mAppEntryAdapter);
 
 
         //Set initial fragment
@@ -132,16 +148,16 @@ public class MainActivity extends AppCompatActivity
 
 
         // show loader and fetch installed app
-        swipeRefreshLayout.post(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        getAppInstalled();
-                    }
-                }
-        );
+//        swipeRefreshLayout.post(
+//                new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        getAppInstalled();
+//                    }
+//                }
+//        );
 
-        Log.d(TAG, "onCreate done!");
+        Log.d(LOG_TAG, "onCreate done!");
     }
 
     private void getAppInstalled() {
@@ -162,7 +178,7 @@ public class MainActivity extends AppCompatActivity
         appListModel.setAppName("Applicazione3");
         mAppListModel.add(appListModel);
 
-        mAppListAdapter.swapFolder(mAppListModel);
+        mAppEntryAdapter.swapFolder(mAppListModel);
 //        swipeRefreshLayout.setRefreshing(false);
     }
 
