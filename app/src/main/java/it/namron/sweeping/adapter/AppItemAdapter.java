@@ -38,7 +38,7 @@ public class AppItemAdapter extends RecyclerView.Adapter<AppItemAdapter.AppItemA
      * The interface that receives onClick messages.
      */
     public interface AppItemAdapterOnClickListener {
-        void onListItemClick(int clickedItemIndex);
+        void onListItemClick(AppItemModel clickedItem);
     }
 
 
@@ -124,7 +124,7 @@ public class AppItemAdapter extends RecyclerView.Adapter<AppItemAdapter.AppItemA
         @Override
         public void onClick(View v) {
             int adapterPosition = getAdapterPosition();
-            mOnClickListener.onListItemClick(adapterPosition);
+            mOnClickListener.onListItemClick(appItemList.get(adapterPosition));
 //            v.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK);
         }
     }

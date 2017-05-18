@@ -1,6 +1,5 @@
 package it.namron.sweeping.activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
@@ -13,7 +12,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -32,16 +30,16 @@ import java.util.List;
 import it.namron.core.utility.AppEntry;
 import it.namron.core.utility.AppListLoader;
 import it.namron.sweeping.adapter.AppItemAdapter;
-import it.namron.sweeping.utils.PackageApp;
 import it.namron.sweeping.fragment.ManageFragment;
 import it.namron.sweeping.fragment.TelegramFragment;
 import it.namron.sweeping.fragment.WhatsAppFragment;
 import it.namron.sweeping.model.AppItemModel;
 import it.namron.sweeping.sweeping.R;
+import it.namron.sweeping.utils.PackageApp;
 
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener , AppItemAdapter.AppItemAdapterOnClickListener {
+        implements NavigationView.OnNavigationItemSelectedListener, AppItemAdapter.AppItemAdapterOnClickListener {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -52,6 +50,11 @@ public class MainActivity extends AppCompatActivity
 
     private Toast mToast;
 
+    /**
+     * A value that uniquely identifies the request to download an
+     * image.
+     */
+    private static final int APP_INFO_REQUEST = 1;
 
     /*
      * This number will uniquely identify our Loader
@@ -151,42 +154,8 @@ public class MainActivity extends AppCompatActivity
 
         populateNavigationDrawer(navigationView);
 
-
-        // show loader and fetch installed app
-//        swipeRefreshLayout.post(
-//                new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        getAppInstalled();
-//                    }
-//                }
-//        );
-
         Log.d(LOG_TAG, "onCreate done!");
     }
-
-//    private void getAppInstalled() {
-////        swipeRefreshLayout.setRefreshing(true);
-//        mAppListModel.clear();
-//
-//        AppItemModel appListModel;
-//
-//        appListModel = new AppItemModel();
-//        appListModel.setAppName("Applicazione1");
-//        mAppListModel.add(appListModel);
-//
-//        appListModel = new AppItemModel();
-//        appListModel.setAppName("Applicazione2");
-//        mAppListModel.add(appListModel);
-//
-//        appListModel = new AppItemModel();
-//        appListModel.setAppName("Applicazione3");
-//        mAppListModel.add(appListModel);
-//
-//        mAppEntryAdapter.swapFolder(mAppListModel);
-////        swipeRefreshLayout.setRefreshing(false);
-//    }
-
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -308,7 +277,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onListItemClick(int clickedItemIndex) {
+    public void onListItemClick(AppItemModel clickedItem) {
 
         /*
          * Even if a Toast isn't showing, it's okay to cancel it. Doing so
@@ -321,9 +290,22 @@ public class MainActivity extends AppCompatActivity
         if (mToast != null) {
             mToast.cancel();
         }
-        String toastMessage = "Item #" + clickedItemIndex + " clicked.";
+        String toastMessage = clickedItem.getAppName() + " clicked.";
         mToast = Toast.makeText(this, toastMessage, Toast.LENGTH_LONG);
 
         mToast.show();
+        try {
+            Intent appInfoIntent = makeAppInfoIntent(clickedItem);
+            if (appInfoIntent != null)
+                startActivityForResult(appInfoIntent, APP_INFO_REQUEST);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private Intent makeAppInfoIntent(AppItemModel clickedItem) {
+        Class destinationActivity = AppInfoActivity.class;
+        return new Intent(getApplicationContext(), destinationActivity);
     }
 }
