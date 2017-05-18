@@ -1,5 +1,6 @@
 package it.namron.sweeping.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
@@ -23,7 +24,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -41,14 +41,17 @@ import it.namron.sweeping.sweeping.R;
 
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener , AppItemAdapter.AppItemAdapterOnClickListener {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     private List<AppItemModel> mAppListModel = new ArrayList<>();
     private RecyclerView mRecyclerView;
     private AppItemAdapter mAppEntryAdapter;
-    private SwipeRefreshLayout swipeRefreshLayout;
+//    private SwipeRefreshLayout swipeRefreshLayout;
+
+    private Toast mToast;
+
 
     /*
      * This number will uniquely identify our Loader
@@ -105,16 +108,18 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.app_list_recycler);
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
+//        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
 //        swipeRefreshLayout.setOnRefreshListener(this);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+        mRecyclerView.setHasFixedSize(true);
+
 
         //The AppItemAdapter is responsible for displaying each item in the list.
-        mAppEntryAdapter = new AppItemAdapter(getApplicationContext(), mAppListModel);
+        mAppEntryAdapter = new AppItemAdapter(this, mAppListModel, this);
         mRecyclerView.setAdapter(mAppEntryAdapter);
 
 
@@ -160,27 +165,27 @@ public class MainActivity extends AppCompatActivity
         Log.d(LOG_TAG, "onCreate done!");
     }
 
-    private void getAppInstalled() {
-//        swipeRefreshLayout.setRefreshing(true);
-        mAppListModel.clear();
-
-        AppItemModel appListModel;
-
-        appListModel = new AppItemModel();
-        appListModel.setAppName("Applicazione1");
-        mAppListModel.add(appListModel);
-
-        appListModel = new AppItemModel();
-        appListModel.setAppName("Applicazione2");
-        mAppListModel.add(appListModel);
-
-        appListModel = new AppItemModel();
-        appListModel.setAppName("Applicazione3");
-        mAppListModel.add(appListModel);
-
-        mAppEntryAdapter.swapFolder(mAppListModel);
-//        swipeRefreshLayout.setRefreshing(false);
-    }
+//    private void getAppInstalled() {
+////        swipeRefreshLayout.setRefreshing(true);
+//        mAppListModel.clear();
+//
+//        AppItemModel appListModel;
+//
+//        appListModel = new AppItemModel();
+//        appListModel.setAppName("Applicazione1");
+//        mAppListModel.add(appListModel);
+//
+//        appListModel = new AppItemModel();
+//        appListModel.setAppName("Applicazione2");
+//        mAppListModel.add(appListModel);
+//
+//        appListModel = new AppItemModel();
+//        appListModel.setAppName("Applicazione3");
+//        mAppListModel.add(appListModel);
+//
+//        mAppEntryAdapter.swapFolder(mAppListModel);
+////        swipeRefreshLayout.setRefreshing(false);
+//    }
 
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -300,5 +305,25 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onListItemClick(int clickedItemIndex) {
+
+        /*
+         * Even if a Toast isn't showing, it's okay to cancel it. Doing so
+         * ensures that our new Toast will show immediately, rather than
+         * being delayed while other pending Toasts are shown.
+         *
+         * Comment out these three lines, run the app, and click on a bunch of
+         * different items if you're not sure what I'm talking about.
+         */
+        if (mToast != null) {
+            mToast.cancel();
+        }
+        String toastMessage = "Item #" + clickedItemIndex + " clicked.";
+        mToast = Toast.makeText(this, toastMessage, Toast.LENGTH_LONG);
+
+        mToast.show();
     }
 }

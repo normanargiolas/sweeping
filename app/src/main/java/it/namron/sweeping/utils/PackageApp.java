@@ -69,7 +69,7 @@ public class PackageApp {
 
         }
 
-        return appItemModelList;\
+        return appItemModelList;
     }
 
 
