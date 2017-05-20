@@ -2,13 +2,17 @@ package it.namron.sweeping.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+
+import it.namron.sweeping.sweeping.R;
 
 /**
  * Created by norman on 19/05/17.
  */
 
-public class AppInfoActivity extends Activity {
+public class AppInfoActivity extends BaseActivity {
 
     private static final String LOG_TAG = AppInfoActivity.class.getSimpleName();
 
@@ -17,8 +21,14 @@ public class AppInfoActivity extends Activity {
         // Always call super class for necessary
         // initialization/implementation.
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        set(null, null, this);
 
-        if(savedInstanceState != null) {
+
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
+
+        if (savedInstanceState != null) {
             // The activity is being re-created. Use the
             // savedInstanceState bundle for initializations either
             // during onCreate or onRestoreInstanceState().

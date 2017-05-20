@@ -3,6 +3,29 @@
     <string name="app_info_activity">AppInfoActivity</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="menu">Hello menu!</string>
+
+
+    <string-array name="nav_drawer_items">
+        <item>First</item>
+        <item>Second</item>
+        <!-- <item>Third</item>
+        <item>Fourth</item>
+        <item>Fifth</item>
+        <item>Sixth</item> -->
+    </string-array>
+
+    <array name="nav_drawer_icons">
+        <item>@drawable/ic_menu_camera</item>
+        <item>@drawable/ic_menu_gallery</item>
+        <!--
+        <item>@drawable/ic_launcher</item>
+        <item>@drawable/ic_launcher</item>
+        <item>@drawable/ic_launcher</item>
+        <item>@drawable/ic_launcher</item>
+        -->
+
+    </array>
 
     <string name="action_settings">Settings</string>
 </resources>

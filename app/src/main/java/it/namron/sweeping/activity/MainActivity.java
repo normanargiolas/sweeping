@@ -2,6 +2,7 @@ package it.namron.sweeping.activity;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -37,9 +38,11 @@ import it.namron.sweeping.model.AppItemModel;
 import it.namron.sweeping.sweeping.R;
 import it.namron.sweeping.utils.PackageApp;
 
+import static it.namron.sweeping.utils.LogUtils.LOGD;
+import static it.namron.sweeping.utils.LogUtils.makeLogTag;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, AppItemAdapter.AppItemAdapterOnClickListener {
+
+public class MainActivity extends BaseActivity implements AppItemAdapter.AppItemAdapterOnClickListener {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -107,8 +110,24 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        String[] navMenuTitles;
+        TypedArray navMenuIcons;
+        navMenuTitles = getResources().getStringArray(R.array.nav_drawer_items); // load
+        // titles
+        // from
+        // strings.xml
+
+        navMenuIcons = getResources()
+                .obtainTypedArray(R.array.nav_drawer_icons);// load icons from
+        // strings.xml
+
+        set(navMenuTitles, navMenuIcons, this);
+
+
+
+
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.app_list_recycler);
 //        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
@@ -131,15 +150,15 @@ public class MainActivity extends AppCompatActivity
 //        FragmentManager fragmentManager = getSupportFragmentManager();
 //        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
+//        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+//                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+//        drawer.addDrawerListener(toggle);
+//        toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setItemIconTintList(null);
-        navigationView.setNavigationItemSelectedListener(this);
+//        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+//        navigationView.setItemIconTintList(null);
+//        navigationView.setNavigationItemSelectedListener(this);
 
 
         /*
@@ -152,7 +171,7 @@ public class MainActivity extends AppCompatActivity
         getSupportLoaderManager().initLoader(ID_APP_LIST_LOADER, pathBundle, mAppListLoaderCallback);
 
 
-        populateNavigationDrawer(navigationView);
+//        populateNavigationDrawer(navigationView);
 
         Log.d(LOG_TAG, "onCreate done!");
     }
@@ -203,15 +222,15 @@ public class MainActivity extends AppCompatActivity
 //    }
 
 
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
+//    @Override
+//    public void onBackPressed() {
+//        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+//        if (drawer.isDrawerOpen(GravityCompat.START)) {
+//            drawer.closeDrawer(GravityCompat.START);
+//        } else {
+//            super.onBackPressed();
+//        }
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -235,46 +254,6 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        Fragment fragment = null;
-
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        switch (id) {
-            case R.id.nav_whatsapp:
-                this.setTitle("WhatsApp");
-                Toast.makeText(getApplicationContext(), "whatsapp", Toast.LENGTH_SHORT).show();
-                fragment = new WhatsAppFragment();
-                break;
-            case R.id.nav_telegram:
-                this.setTitle("Telegram");
-                Toast.makeText(getApplicationContext(), "telegram", Toast.LENGTH_SHORT).show();
-                fragment = new TelegramFragment();
-                break;
-            case R.id.nav_manage:
-                this.setTitle("Manage");
-                Toast.makeText(getApplicationContext(), "manage", Toast.LENGTH_SHORT).show();
-                fragment = new ManageFragment();
-                break;
-            default:
-                Toast.makeText(getApplicationContext(), "unknow choice", Toast.LENGTH_SHORT).show();
-
-                break;
-        }
-
-        if (fragment != null) {
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
-        }
-
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
 
     @Override
     public void onListItemClick(AppItemModel clickedItem) {
