@@ -148,6 +148,8 @@ public class BaseActivity extends AppCompatActivity  implements NavigationView.O
 //        mDrawerToggle.syncState();
 //    }
 
+
+    //start new activity
     //    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {

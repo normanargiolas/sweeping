@@ -6,20 +6,13 @@ import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,15 +24,11 @@ import java.util.List;
 import it.namron.core.utility.AppEntry;
 import it.namron.core.utility.AppListLoader;
 import it.namron.sweeping.adapter.AppItemAdapter;
-import it.namron.sweeping.fragment.ManageFragment;
-import it.namron.sweeping.fragment.TelegramFragment;
-import it.namron.sweeping.fragment.WhatsAppFragment;
 import it.namron.sweeping.model.AppItemModel;
 import it.namron.sweeping.sweeping.R;
 import it.namron.sweeping.utils.PackageApp;
 
-import static it.namron.sweeping.utils.LogUtils.LOGD;
-import static it.namron.sweeping.utils.LogUtils.makeLogTag;
+import static it.namron.sweeping.utils.Constant.APP_SELECTED_BUNDLE;
 
 
 public class MainActivity extends BaseActivity implements AppItemAdapter.AppItemAdapterOnClickListener {
@@ -53,13 +42,16 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
 
     private Toast mToast;
 
+
+
+
     /**
      * A value that uniquely identifies the request to download an
      * image.
      */
     private static final int APP_INFO_REQUEST = 1;
 
-    /*
+    /**
      * This number will uniquely identify our Loader
      */
     private static final int ID_APP_LIST_LOADER = 20;
@@ -122,8 +114,6 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
         // strings.xml
 
         set(navMenuTitles, navMenuIcons, this);
-
-
 
 
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -283,8 +273,16 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
 
     }
 
+
     private Intent makeAppInfoIntent(AppItemModel clickedItem) {
         Class destinationActivity = AppInfoActivity.class;
-        return new Intent(getApplicationContext(), destinationActivity);
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(APP_SELECTED_BUNDLE, clickedItem);
+
+        Intent intent = new Intent(getApplicationContext(), destinationActivity);
+        intent.putExtras(bundle);
+
+        return intent;
     }
 }
+

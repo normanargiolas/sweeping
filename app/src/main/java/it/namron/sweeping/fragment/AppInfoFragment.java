@@ -18,18 +18,25 @@ import java.util.List;
 
 import it.namron.core.utility.WhatsApp;
 import it.namron.sweeping.adapter.DirectoryItemAdapter;
-import it.namron.sweeping.utils.PackageApp;
+import it.namron.sweeping.model.AppItemModel;
 import it.namron.sweeping.model.DirectoryItemModel;
 import it.namron.sweeping.sweeping.R;
+import it.namron.sweeping.utils.PackageApp;
+
+import static it.namron.sweeping.utils.Constant.APP_FACEBOOK;
+import static it.namron.sweeping.utils.Constant.APP_NAME_BUNDLE;
+import static it.namron.sweeping.utils.Constant.APP_SELECTED_BUNDLE;
+import static it.namron.sweeping.utils.Constant.APP_TELEGRAM;
+import static it.namron.sweeping.utils.Constant.APP_WHATSAPP;
 
 /**
  * Created by norman on 09/05/17.
  */
 
-public class WhatsAppFragment extends Fragment
+public class AppInfoFragment extends Fragment
         implements DirectoryItemAdapter.MessageAdapterListener {
 
-    private static final String LOG_TAG = WhatsAppFragment.class.getSimpleName();
+    private static final String LOG_TAG = AppInfoFragment.class.getSimpleName();
 
     //References to RecyclerView and Adapter to reset the list to its
     //"pretty" state when the reset menu item is clicked.
@@ -41,32 +48,39 @@ public class WhatsAppFragment extends Fragment
     /*
      * This number will uniquely identify our Loader
      */
-    private static final int ID_WHATSAPP_FOLDER_LOADER = 20;
+    private static final int ID_APP_INFO_FOLDER_LOADER = 20;
+
+    private static final int ID_WHATSAPP_FOLDER_LOADER = 30;
 
     private LoaderManager mLoaderManager;
 
     private Toast mToast;
 
-    public WhatsAppFragment() {
+    public AppInfoFragment() {
 
     }
 
-    private LoaderManager.LoaderCallbacks<List<DirectoryItemModel>> mWhatsAppFolderLoaderCallback = new LoaderManager.LoaderCallbacks<List<DirectoryItemModel>>() {
+
+    private LoaderManager.LoaderCallbacks<List<DirectoryItemModel>> mAppInfoFolderLoaderCallback = new LoaderManager.LoaderCallbacks<List<DirectoryItemModel>>() {
 
         @Override
         public Loader<List<DirectoryItemModel>> onCreateLoader(int loaderId, Bundle args) {
             switch (loaderId) {
-                case ID_WHATSAPP_FOLDER_LOADER:
+                case ID_APP_INFO_FOLDER_LOADER:
                     return new AsyncTaskLoader<List<DirectoryItemModel>>(getContext()) {
 
                         List<DirectoryItemModel> mResponce;
+                        String mAppName;
+
 
                         @Override
                         protected void onStartLoading() {
-
-                            if (args == null) {
+                            if (args != null && args.getString(APP_NAME_BUNDLE) != null) {
+                                mAppName = args.getString(APP_NAME_BUNDLE).toLowerCase();
+                            } else {
                                 return;
                             }
+
                             if (mResponce != null) {
                                 deliverResult(mResponce);
                             } else {
@@ -85,13 +99,22 @@ public class WhatsAppFragment extends Fragment
 
                             messages.clear();
                             DirectoryItemModel msg;
-
-                            List<String> whatsAppDir = WhatsApp.listOfWhatsAppDirectory();
-                            for (String dir : whatsAppDir) {
-                                msg = new DirectoryItemModel();
-                                msg.setFolderName(dir);
-                                msg.setSelected(true);
-                                messages.add(msg);
+                            switch (mAppName) {
+                                case APP_WHATSAPP:
+                                    List<String> whatsAppDir = WhatsApp.listOfWhatsAppDirectory();
+                                    for (String dir : whatsAppDir) {
+                                        msg = new DirectoryItemModel();
+                                        msg.setFolderName(dir);
+                                        msg.setSelected(true);
+                                        messages.add(msg);
+                                    }
+                                    break;
+                                case APP_TELEGRAM:
+                                    break;
+                                case APP_FACEBOOK:
+                                    break;
+                                default:
+                                    throw new RuntimeException("App non valida: " + mAppName);
                             }
 
                             return messages;
@@ -119,7 +142,7 @@ public class WhatsAppFragment extends Fragment
         @Override
         public void onLoaderReset(Loader<List<DirectoryItemModel>> loader) {
             switch (loader.getId()) {
-                case ID_WHATSAPP_FOLDER_LOADER:
+                case ID_APP_INFO_FOLDER_LOADER:
                     mDirectoryAdapter.swapFolder(null);
                     break;
                 default:
@@ -132,34 +155,45 @@ public class WhatsAppFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_whatsapp, container, false);
-
-        mDirectoryList = (RecyclerView) rootView.findViewById(R.id.rv_numbers);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        mDirectoryList.setLayoutManager(layoutManager);
-        mDirectoryList.setHasFixedSize(true);
-
-        //The DirectoryItemAdapter is responsible for displaying each item in the list.
-        mDirectoryAdapter = new DirectoryItemAdapter(getContext(), this, messages);
-        mDirectoryList.setAdapter(mDirectoryAdapter);
-
-        /*
-         * Initialize the loader
-         */
-        mLoaderManager = getLoaderManager();
-
-        Bundle pathBundle = new Bundle();
-        pathBundle.putString(PackageApp.WHATSAPP, PackageApp.WHATSAPP_DIRECTORY);
-//        WhatsApp a = new WhatsApp().get {};
-
-        String a = WhatsApp.folder.PACKAGE.getText();
-        pathBundle.putString(WhatsApp.folder.PACKAGE.name(), WhatsApp.folder.PACKAGE.getText());
+        View rootView = inflater.inflate(R.layout.fragment_app_info, container, false);
 
 
-        getLoaderManager().initLoader(ID_WHATSAPP_FOLDER_LOADER, pathBundle, mWhatsAppFolderLoaderCallback);
+//        mDirectoryList = (RecyclerView) rootView.findViewById(R.id.rv_numbers);
+//        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+//        mDirectoryList.setLayoutManager(layoutManager);
+//        mDirectoryList.setHasFixedSize(true);
+//
+//        //The DirectoryItemAdapter is responsible for displaying each item in the list.
+//        mDirectoryAdapter = new DirectoryItemAdapter(getContext(), this, messages);
+//        mDirectoryList.setAdapter(mDirectoryAdapter);
+//
+//        Bundle bundle = getArguments();
+//        if (bundle != null) {
+//            AppItemModel appItem = (AppItemModel) bundle.getParcelable(APP_SELECTED_BUNDLE);
+//            if (appItem != null) {
+//
+//                /*
+//                * Initialize the loader
+//                */
+//                mLoaderManager = getLoaderManager();
+//                Bundle appInfoBundle = new Bundle();
+//                appInfoBundle.putString(APP_NAME_BUNDLE, appItem.getAppName());
+//
+//                getLoaderManager().initLoader(ID_APP_INFO_FOLDER_LOADER, appInfoBundle, mAppInfoFolderLoaderCallback);
+//
+//            }
+//        }
 
-////        todo eseguirlo in un loader
-//        searchWhatsAppFolders();
+
+//        Bundle pathBundle = new Bundle();
+//        pathBundle.putString(PackageApp.WHATSAPP, PackageApp.WHATSAPP_DIRECTORY);
+////        WhatsApp a = new WhatsApp().get {};
+//
+//        String a = WhatsApp.folder.PACKAGE.getText();
+//        pathBundle.putString(WhatsApp.folder.PACKAGE.name(), WhatsApp.folder.PACKAGE.getText());
+//
+//
+//        getLoaderManager().initLoader(ID_WHATSAPP_FOLDER_LOADER, pathBundle, mWhatsAppFolderLoaderCallback);
 
         return rootView;
     }
