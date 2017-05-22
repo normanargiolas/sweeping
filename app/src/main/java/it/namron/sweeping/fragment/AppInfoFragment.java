@@ -22,7 +22,6 @@ import it.namron.sweeping.adapter.DirectoryItemAdapter;
 import it.namron.sweeping.model.AppItemModel;
 import it.namron.sweeping.model.DirectoryItemModel;
 import it.namron.sweeping.sweeping.R;
-import it.namron.sweeping.utils.PackageApp;
 
 import static it.namron.sweeping.utils.Constant.APP_FACEBOOK;
 import static it.namron.sweeping.utils.Constant.APP_NAME_BUNDLE;
@@ -42,9 +41,9 @@ public class AppInfoFragment extends Fragment
     //References to RecyclerView and Adapter to reset the list to its
     //"pretty" state when the reset menu item is clicked.
     private DirectoryItemAdapter mDirectoryAdapter;
-    private RecyclerView mDirectoryList;
+    private RecyclerView mRecyclerView;
 
-    private List<DirectoryItemModel> messages = new ArrayList<>();
+    private List<DirectoryItemModel> mDirectoryListModels = new ArrayList<>();
 
     /*
      * This number will uniquely identify our Loader
@@ -98,7 +97,7 @@ public class AppInfoFragment extends Fragment
                         @Override
                         public List<DirectoryItemModel> loadInBackground() {
 
-                            messages.clear();
+                            mDirectoryListModels.clear();
                             DirectoryItemModel msg;
                             List<String> appDirList = null;
 
@@ -119,9 +118,9 @@ public class AppInfoFragment extends Fragment
                                 msg = new DirectoryItemModel();
                                 msg.setFolderName(dir);
                                 msg.setSelected(true);
-                                messages.add(msg);
+                                mDirectoryListModels.add(msg);
                             }
-                            return messages;
+                            return mDirectoryListModels;
                         }
                     };
                 default:
@@ -162,14 +161,14 @@ public class AppInfoFragment extends Fragment
         View rootView = inflater.inflate(R.layout.fragment_app_info, container, false);
 
 
-        mDirectoryList = (RecyclerView) rootView.findViewById(R.id.rv_numbers);
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.rv_numbers);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        mDirectoryList.setLayoutManager(layoutManager);
-        mDirectoryList.setHasFixedSize(true);
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setHasFixedSize(true);
 
         //The DirectoryItemAdapter is responsible for displaying each item in the list.
-        mDirectoryAdapter = new DirectoryItemAdapter(getContext(), this, messages);
-        mDirectoryList.setAdapter(mDirectoryAdapter);
+        mDirectoryAdapter = new DirectoryItemAdapter(getContext(), this, mDirectoryListModels);
+        mRecyclerView.setAdapter(mDirectoryAdapter);
 
         Bundle bundle = getArguments();
         if (bundle != null) {
@@ -193,9 +192,9 @@ public class AppInfoFragment extends Fragment
 
     @Override
     public void onIconDirectoryClicked(int position) {
-        DirectoryItemModel message = messages.get(position);
+        DirectoryItemModel message = mDirectoryListModels.get(position);
         message.setSelected(!message.isSelected());
-        messages.set(position, message);
+        mDirectoryListModels.set(position, message);
         mDirectoryAdapter.notifyDataSetChanged();
 
 

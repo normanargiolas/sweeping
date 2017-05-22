@@ -1,24 +1,14 @@
 package it.namron.sweeping.activity;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import java.io.Serializable;
-
-import it.namron.sweeping.adapter.AppItemAdapter;
 import it.namron.sweeping.fragment.AppInfoFragment;
 import it.namron.sweeping.fragment.ManageFragment;
 import it.namron.sweeping.fragment.TelegramFragment;
@@ -49,7 +39,7 @@ public class AppInfoActivity extends BaseActivity {
 //        setContentView(R.layout.activity_main_f);
 
 
-        set(null, null, this);
+        setDrawer(this, null, null);
 
         if (savedInstanceState != null) {
             // The activity is being re-created. Use the

@@ -12,6 +12,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,10 +21,14 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import it.namron.sweeping.adapter.DirectoryItemAdapter;
+import it.namron.sweeping.adapter.DrawerItemAdapter;
 import it.namron.sweeping.fragment.ManageFragment;
 import it.namron.sweeping.fragment.TelegramFragment;
 import it.namron.sweeping.fragment.WhatsAppFragment;
+import it.namron.sweeping.model.DrawerItemModel;
 import it.namron.sweeping.sweeping.R;
 
 import static it.namron.sweeping.utils.LogUtils.LOGD;
@@ -40,6 +45,11 @@ import static it.namron.sweeping.utils.LogUtils.makeLogTag;
 public class BaseActivity extends AppCompatActivity  implements NavigationView.OnNavigationItemSelectedListener{
 
     private static final String TAG = makeLogTag(BaseActivity.class);
+
+    private DrawerItemAdapter mDrawerItemAdapter;
+    private RecyclerView mDraweryRecyclerView;
+    private List<DrawerItemModel> mDrawerItemList = new ArrayList<>();
+
 
 //    private DrawerLayout mDrawerLayout;
 //    private ListView mDrawerList;
@@ -62,7 +72,8 @@ public class BaseActivity extends AppCompatActivity  implements NavigationView.O
 //        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout_tmp);
     }
 
-    public void set(String[] navMenuTitles, TypedArray navMenuIcons, Context context) {
+    public void setDrawer(Context context) {
+
 //        mTitle = mDrawerTitle = getTitle();
 
 //        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);

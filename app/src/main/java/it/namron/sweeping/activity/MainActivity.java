@@ -113,7 +113,7 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
                 .obtainTypedArray(R.array.nav_drawer_icons);// load icons from
         // strings.xml
 
-        set(navMenuTitles, navMenuIcons, this);
+        setDrawer(getApplicationContext());
 
 
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
