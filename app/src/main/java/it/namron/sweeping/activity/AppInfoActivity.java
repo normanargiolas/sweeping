@@ -45,6 +45,10 @@ public class AppInfoActivity extends BaseActivity {
         // initialization/implementation.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_app_info);
+
+//        setContentView(R.layout.activity_main_f);
+
+
         set(null, null, this);
 
         if (savedInstanceState != null) {
@@ -61,6 +65,13 @@ public class AppInfoActivity extends BaseActivity {
                     "onCreate(): activity created");
         }
 
+//        if (savedInstanceState == null) {
+//            getSupportFragmentManager().beginTransaction()
+//                    .add(R.id.container, new AppInfoFragment()).commit();
+//
+//        }
+
+
         //Set initial fragment
         Fragment fragment = new AppInfoFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -71,22 +82,7 @@ public class AppInfoActivity extends BaseActivity {
             AppItemModel appItem = (AppItemModel) bundle.getParcelable(APP_SELECTED_BUNDLE);
         }
 
-
         fragmentManager.beginTransaction().replace(R.id.content_frame_app_info, fragment).commit();
-
-
-//        mRecyclerView = (RecyclerView) findViewById(R.id.rv_numbers);
-//
-//        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-//        mRecyclerView.setLayoutManager(mLayoutManager);
-//        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-//        mRecyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
-//        mRecyclerView.setHasFixedSize(true);
-//
-//
-//        //The AppItemAdapter is responsible for displaying each item in the list.
-//        mAppEntryAdapter = new AppItemAdapter(this, mAppListModel, this);
-//        mRecyclerView.setAdapter(mAppEntryAdapter);
 
     }
 

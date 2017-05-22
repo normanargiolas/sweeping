@@ -16,6 +16,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.namron.core.utility.TelegramApp;
 import it.namron.core.utility.WhatsApp;
 import it.namron.sweeping.adapter.DirectoryItemAdapter;
 import it.namron.sweeping.model.AppItemModel;
@@ -99,17 +100,14 @@ public class AppInfoFragment extends Fragment
 
                             messages.clear();
                             DirectoryItemModel msg;
+                            List<String> appDirList = null;
+
                             switch (mAppName) {
                                 case APP_WHATSAPP:
-                                    List<String> whatsAppDir = WhatsApp.listOfWhatsAppDirectory();
-                                    for (String dir : whatsAppDir) {
-                                        msg = new DirectoryItemModel();
-                                        msg.setFolderName(dir);
-                                        msg.setSelected(true);
-                                        messages.add(msg);
-                                    }
+                                    appDirList = WhatsApp.listOfWhatsAppDirectory();
                                     break;
                                 case APP_TELEGRAM:
+                                    appDirList = TelegramApp.listOfTelegramAppDirectory();
                                     break;
                                 case APP_FACEBOOK:
                                     break;
@@ -117,6 +115,12 @@ public class AppInfoFragment extends Fragment
                                     throw new RuntimeException("App non valida: " + mAppName);
                             }
 
+                            for (String dir : appDirList) {
+                                msg = new DirectoryItemModel();
+                                msg.setFolderName(dir);
+                                msg.setSelected(true);
+                                messages.add(msg);
+                            }
                             return messages;
                         }
                     };
@@ -158,42 +162,31 @@ public class AppInfoFragment extends Fragment
         View rootView = inflater.inflate(R.layout.fragment_app_info, container, false);
 
 
-//        mDirectoryList = (RecyclerView) rootView.findViewById(R.id.rv_numbers);
-//        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-//        mDirectoryList.setLayoutManager(layoutManager);
-//        mDirectoryList.setHasFixedSize(true);
-//
-//        //The DirectoryItemAdapter is responsible for displaying each item in the list.
-//        mDirectoryAdapter = new DirectoryItemAdapter(getContext(), this, messages);
-//        mDirectoryList.setAdapter(mDirectoryAdapter);
-//
-//        Bundle bundle = getArguments();
-//        if (bundle != null) {
-//            AppItemModel appItem = (AppItemModel) bundle.getParcelable(APP_SELECTED_BUNDLE);
-//            if (appItem != null) {
-//
-//                /*
-//                * Initialize the loader
-//                */
-//                mLoaderManager = getLoaderManager();
-//                Bundle appInfoBundle = new Bundle();
-//                appInfoBundle.putString(APP_NAME_BUNDLE, appItem.getAppName());
-//
-//                getLoaderManager().initLoader(ID_APP_INFO_FOLDER_LOADER, appInfoBundle, mAppInfoFolderLoaderCallback);
-//
-//            }
-//        }
+        mDirectoryList = (RecyclerView) rootView.findViewById(R.id.rv_numbers);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        mDirectoryList.setLayoutManager(layoutManager);
+        mDirectoryList.setHasFixedSize(true);
 
+        //The DirectoryItemAdapter is responsible for displaying each item in the list.
+        mDirectoryAdapter = new DirectoryItemAdapter(getContext(), this, messages);
+        mDirectoryList.setAdapter(mDirectoryAdapter);
 
-//        Bundle pathBundle = new Bundle();
-//        pathBundle.putString(PackageApp.WHATSAPP, PackageApp.WHATSAPP_DIRECTORY);
-////        WhatsApp a = new WhatsApp().get {};
-//
-//        String a = WhatsApp.folder.PACKAGE.getText();
-//        pathBundle.putString(WhatsApp.folder.PACKAGE.name(), WhatsApp.folder.PACKAGE.getText());
-//
-//
-//        getLoaderManager().initLoader(ID_WHATSAPP_FOLDER_LOADER, pathBundle, mWhatsAppFolderLoaderCallback);
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            AppItemModel appItem = (AppItemModel) bundle.getParcelable(APP_SELECTED_BUNDLE);
+            if (appItem != null) {
+
+                /*
+                * Initialize the loader
+                */
+                mLoaderManager = getLoaderManager();
+                Bundle appInfoBundle = new Bundle();
+                appInfoBundle.putString(APP_NAME_BUNDLE, appItem.getAppName());
+
+                getLoaderManager().initLoader(ID_APP_INFO_FOLDER_LOADER, appInfoBundle, mAppInfoFolderLoaderCallback);
+
+            }
+        }
 
         return rootView;
     }
