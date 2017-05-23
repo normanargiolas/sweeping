@@ -7,17 +7,13 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import it.namron.sweeping.fragment.AppInfoFragment;
 import it.namron.sweeping.fragment.ManageFragment;
-import it.namron.sweeping.fragment.TelegramFragment;
-import it.namron.sweeping.fragment.WhatsAppFragment;
 import it.namron.sweeping.model.AppItemModel;
 import it.namron.sweeping.sweeping.R;
 
 import static it.namron.sweeping.utils.Constant.APP_SELECTED_BUNDLE;
-import static it.namron.sweeping.utils.Constant.NAVIGATION_ITEM_BUNDLE;
 
 /**
  * Created by norman on 19/05/17.

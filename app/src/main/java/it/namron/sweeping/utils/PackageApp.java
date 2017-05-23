@@ -1,13 +1,12 @@
 package it.namron.sweeping.utils;
 
-import android.widget.ImageView;
-
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import it.namron.core.utility.AppEntry;
 import it.namron.sweeping.model.AppItemModel;
+
+import static it.namron.sweeping.utils.Constant.APP_TARGET_LIST;
 
 /**
  * Created by norman on 08/05/17.
@@ -15,39 +14,19 @@ import it.namron.sweeping.model.AppItemModel;
 
 public class PackageApp {
 
-    public static enum target {
-        WHATSAPP("whatsapp"),
-        TELEGRAM("telegram"),
-        FACEBOOK("facebook");
 
-        private final String text;
 
-        private target(String text) {
-            this.text = text;
-        }
+    public static List<AppItemModel> listOfTargetDir(List<AppEntry> appList) {
+        /**
+         * todo inserire le cartelle
+         * download
+         * bluethoot
+         **/
 
-        public String getName() {
-            return text;
-        }
+        return null;
     }
 
-
-    public static final String WHATSAPP = "com.whatsapp";
-    public static final String WHATSAPP_DIRECTORY = "WhatsApp";
-    public static final String WHATSAPP_MEDIA = "Media";
-
-    public static final String TELEGRAM = "com.telegram";
-
-
-    public static final List<String> APP_TARGET_LIST = Collections.unmodifiableList(
-            new ArrayList<String>() {{
-                add("whatsapp");
-                add("telegram");
-                add("facebook");
-            }});
-
-
-    public static List<AppItemModel> listOftargetApp(List<AppEntry> appList) {
+        public static List<AppItemModel> listOfTargetApp(List<AppEntry> appList) {
         List<AppItemModel> appItemModelList = new ArrayList<>();
         AppItemModel appItemModel;
         int mId = 0;

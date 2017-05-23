@@ -5,9 +5,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.widget.ImageView;
-
-import java.io.Serializable;
 
 /**
  * Created by norman on 17/05/17.

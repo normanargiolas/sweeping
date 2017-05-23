@@ -82,10 +82,12 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
                 Toast.makeText(getApplicationContext(), log, Toast.LENGTH_SHORT).show();
             } else {
                 //appList conteins all app installed
-                List<AppItemModel> appItemModelList = PackageApp.listOftargetApp(appList);
-                addDrawerItem(appItemModelList);
-                mAppEntryAdapter.swapFolder(appItemModelList);
+                List<AppItemModel> appItemModelList = PackageApp.listOfTargetApp(appList);
+                List<AppItemModel> appDirItemModelList = PackageApp.listOfTargetDir(appList);
+                appItemModelList.addAll(appDirItemModelList);
                 mAppListModel = appItemModelList;
+                addDrawerItem(mAppListModel);
+                mAppEntryAdapter.swapFolder(mAppListModel);
             }
         }
 
