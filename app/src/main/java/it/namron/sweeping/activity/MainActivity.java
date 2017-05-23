@@ -83,8 +83,11 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
             } else {
                 //appList conteins all app installed
                 List<AppItemModel> appItemModelList = PackageApp.listOfTargetApp(appList);
+                
                 List<AppItemModel> appDirItemModelList = PackageApp.listOfTargetDir(appList);
-                appItemModelList.addAll(appDirItemModelList);
+                if (appDirItemModelList != null)
+                    appItemModelList.addAll(appDirItemModelList);
+
                 mAppListModel = appItemModelList;
                 addDrawerItem(mAppListModel);
                 mAppEntryAdapter.swapFolder(mAppListModel);
