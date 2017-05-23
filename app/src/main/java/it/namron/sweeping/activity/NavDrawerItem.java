@@ -3,6 +3,7 @@ package it.namron.sweeping.activity;
 public class NavDrawerItem {
 	private String title;
 	private int icon;
+	private int id;
 
 	public NavDrawerItem() {
 	}
@@ -32,4 +33,11 @@ public class NavDrawerItem {
 		this.icon = icon;
 	}
 
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
 }

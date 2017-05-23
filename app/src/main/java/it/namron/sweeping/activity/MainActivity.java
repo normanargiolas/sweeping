@@ -3,12 +3,12 @@ package it.namron.sweeping.activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -24,6 +24,7 @@ import java.util.List;
 import it.namron.core.utility.AppEntry;
 import it.namron.core.utility.AppListLoader;
 import it.namron.sweeping.adapter.AppItemAdapter;
+import it.namron.sweeping.fragment.ManageFragment;
 import it.namron.sweeping.model.AppItemModel;
 import it.namron.sweeping.sweeping.R;
 import it.namron.sweeping.utils.PackageApp;
@@ -41,8 +42,6 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
 //    private SwipeRefreshLayout swipeRefreshLayout;
 
     private Toast mToast;
-
-
 
 
     /**
@@ -84,7 +83,9 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
             } else {
                 //appList conteins all app installed
                 List<AppItemModel> appItemModelList = PackageApp.listOftargetApp(appList);
+                addDrawerItem(appItemModelList);
                 mAppEntryAdapter.swapFolder(appItemModelList);
+                mAppListModel = appItemModelList;
             }
         }
 
@@ -97,8 +98,6 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -171,23 +170,23 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
     }
 
 
-    private void populateNavigationDrawer(NavigationView navigationView) {
-        Menu menu = navigationView.getMenu();
-
-        if (appInstalledOrNot(PackageApp.WHATSAPP)) {
-            Drawable icon = ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_whatsapp);
-            menu.findItem(R.id.nav_whatsapp).setIcon(icon);
-        }
-
-        if (appInstalledOrNot(PackageApp.TELEGRAM)) {
-            Drawable icon = ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_telegram);
-            menu.findItem(R.id.nav_telegram).setIcon(icon);
-        }
-
-        //Controllare eventuale capacità di memoria
-        Drawable icon = ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_manage);
-        menu.findItem(R.id.nav_manage).setIcon(icon);
-    }
+//    private void populateNavigationDrawer(NavigationView navigationView) {
+//        Menu menu = navigationView.getMenu();
+//
+//        if (appInstalledOrNot(PackageApp.WHATSAPP)) {
+//            Drawable icon = ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_whatsapp);
+//            menu.findItem(R.id.nav_whatsapp).setIcon(icon);
+//        }
+//
+//        if (appInstalledOrNot(PackageApp.TELEGRAM)) {
+//            Drawable icon = ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_telegram);
+//            menu.findItem(R.id.nav_telegram).setIcon(icon);
+//        }
+//
+//        //Controllare eventuale capacità di memoria
+//        Drawable icon = ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_manage);
+//        menu.findItem(R.id.nav_manage).setIcon(icon);
+//    }
 
 
     private boolean appInstalledOrNot(String uri) {
@@ -256,13 +255,19 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
          * Comment out these three lines, run the app, and click on a bunch of
          * different items if you're not sure what I'm talking about.
          */
-        if (mToast != null) {
-            mToast.cancel();
-        }
-        String toastMessage = clickedItem.getAppName() + " clicked.";
-        mToast = Toast.makeText(this, toastMessage, Toast.LENGTH_LONG);
+//        if (mToast != null) {
+//            mToast.cancel();
+//        }
+//        String toastMessage = clickedItem.getAppName() + " clicked.";
+//        mToast = Toast.makeText(this, toastMessage, Toast.LENGTH_LONG);
+//
+//        mToast.show();
+        Log.d(LOG_TAG, "Start new Activity-->" + clickedItem.getAppName());
 
-        mToast.show();
+        startAppInfoActivity(clickedItem);
+    }
+
+    private void startAppInfoActivity(AppItemModel clickedItem) {
         try {
             Intent appInfoIntent = makeAppInfoIntent(clickedItem);
             if (appInfoIntent != null)
@@ -270,9 +275,7 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
-
 
     private Intent makeAppInfoIntent(AppItemModel clickedItem) {
         Class destinationActivity = AppInfoActivity.class;
@@ -283,6 +286,38 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
         intent.putExtras(bundle);
 
         return intent;
+    }
+
+    /**
+     * Start new Activity
+     */
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        Fragment fragment = null;
+
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+
+        switch (id) {
+            case R.id.nav_manage:
+                //todo start activity
+                this.setTitle("Manage");
+                fragment = new ManageFragment();
+                break;
+            default:
+                if (mAppListModel != null) {
+                    AppItemModel appItemModel = mAppListModel.get(id);
+                    Log.d(LOG_TAG, "Start new Activity-->" + appItemModel.getAppName());
+
+                    startAppInfoActivity(appItemModel);
+                }
+                break;
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 }
 

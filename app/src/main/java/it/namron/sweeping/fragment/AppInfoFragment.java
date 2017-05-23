@@ -24,6 +24,7 @@ import it.namron.sweeping.model.DirectoryItemModel;
 import it.namron.sweeping.sweeping.R;
 
 import static it.namron.sweeping.utils.Constant.APP_FACEBOOK;
+import static it.namron.sweeping.utils.Constant.APP_MESSENGER;
 import static it.namron.sweeping.utils.Constant.APP_NAME_BUNDLE;
 import static it.namron.sweeping.utils.Constant.APP_SELECTED_BUNDLE;
 import static it.namron.sweeping.utils.Constant.APP_TELEGRAM;
@@ -110,16 +111,22 @@ public class AppInfoFragment extends Fragment
                                     break;
                                 case APP_FACEBOOK:
                                     break;
+                                case APP_MESSENGER:
+                                    break;
                                 default:
+                                    Log.d(LOG_TAG, "Start new Fragment-->" + mAppName);
                                     throw new RuntimeException("App non valida: " + mAppName);
                             }
 
-                            for (String dir : appDirList) {
-                                msg = new DirectoryItemModel();
-                                msg.setFolderName(dir);
-                                msg.setSelected(true);
-                                mDirectoryListModels.add(msg);
+                            if (appDirList != null) {
+                                for (String dir : appDirList) {
+                                    msg = new DirectoryItemModel();
+                                    msg.setFolderName(dir);
+                                    msg.setSelected(true);
+                                    mDirectoryListModels.add(msg);
+                                }
                             }
+
                             return mDirectoryListModels;
                         }
                     };
@@ -159,8 +166,6 @@ public class AppInfoFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_app_info, container, false);
-
-
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.rv_numbers);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(layoutManager);
@@ -172,9 +177,10 @@ public class AppInfoFragment extends Fragment
 
         Bundle bundle = getArguments();
         if (bundle != null) {
-            AppItemModel appItem = (AppItemModel) bundle.getParcelable(APP_SELECTED_BUNDLE);
-            if (appItem != null) {
+            AppItemModel appItem = bundle.getParcelable(APP_SELECTED_BUNDLE);
+            getActivity().setTitle(appItem.getAppName());
 
+            if (appItem != null) {
                 /*
                 * Initialize the loader
                 */
@@ -183,7 +189,6 @@ public class AppInfoFragment extends Fragment
                 appInfoBundle.putString(APP_NAME_BUNDLE, appItem.getAppName());
 
                 getLoaderManager().initLoader(ID_APP_INFO_FOLDER_LOADER, appInfoBundle, mAppInfoFolderLoaderCallback);
-
             }
         }
 

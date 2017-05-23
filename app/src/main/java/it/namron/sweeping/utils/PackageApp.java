@@ -39,9 +39,6 @@ public class PackageApp {
     public static final String TELEGRAM = "com.telegram";
 
 
-
-
-
     public static final List<String> APP_TARGET_LIST = Collections.unmodifiableList(
             new ArrayList<String>() {{
                 add("whatsapp");
@@ -53,12 +50,13 @@ public class PackageApp {
     public static List<AppItemModel> listOftargetApp(List<AppEntry> appList) {
         List<AppItemModel> appItemModelList = new ArrayList<>();
         AppItemModel appItemModel;
+        int mId = 0;
         for (AppEntry appEntry : appList) {
             String appPackage = appEntry.getApplicationInfo().packageName;
-
             for (String app : APP_TARGET_LIST) {
                 if (appPackage.contains(app)) {
                     appItemModel = new AppItemModel();
+                    appItemModel.setId(mId++);
                     appItemModel.setAppName(appEntry.getLabel());
                     appItemModel.setTxtPrimary(appEntry.getApplicationInfo().processName);
                     appItemModel.setTxtSecondary(appEntry.getApplicationInfo().dataDir);

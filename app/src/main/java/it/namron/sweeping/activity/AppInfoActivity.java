@@ -17,6 +17,7 @@ import it.namron.sweeping.model.AppItemModel;
 import it.namron.sweeping.sweeping.R;
 
 import static it.namron.sweeping.utils.Constant.APP_SELECTED_BUNDLE;
+import static it.namron.sweeping.utils.Constant.NAVIGATION_ITEM_BUNDLE;
 
 /**
  * Created by norman on 19/05/17.
@@ -28,6 +29,7 @@ public class AppInfoActivity extends BaseActivity {
 
 //    private RecyclerView mRecyclerView;
 
+    AppItemModel mAppItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +41,7 @@ public class AppInfoActivity extends BaseActivity {
 //        setContentView(R.layout.activity_main_f);
 
 
-        setDrawer(this, null, null);
+        setDrawer(getApplicationContext());
 
         if (savedInstanceState != null) {
             // The activity is being re-created. Use the
@@ -68,50 +70,48 @@ public class AppInfoActivity extends BaseActivity {
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            fragment.setArguments(bundle);
-            AppItemModel appItem = (AppItemModel) bundle.getParcelable(APP_SELECTED_BUNDLE);
-        }
+            mAppItem = (AppItemModel) bundle.getParcelable(APP_SELECTED_BUNDLE);
+            Log.d(LOG_TAG, "Start new Fragment-->" + mAppItem.getAppName());
 
+            fragment.setArguments(bundle);
+        }
         fragmentManager.beginTransaction().replace(R.id.content_frame_app_info, fragment).commit();
 
     }
 
 
-    //    start new fragment
+    /**
+     * Start new Fragment
+     */
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         Fragment fragment = null;
+        Bundle bundle = null;
 
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.nav_whatsapp:
-                this.setTitle("WhatsApp");
-                Toast.makeText(getApplicationContext(), "whatsapp", Toast.LENGTH_SHORT).show();
-                fragment = new WhatsAppFragment();
-                break;
-            case R.id.nav_telegram:
-                this.setTitle("Telegram");
-                Toast.makeText(getApplicationContext(), "telegram", Toast.LENGTH_SHORT).show();
-                fragment = new TelegramFragment();
-                break;
             case R.id.nav_manage:
+                //todo da rivedere
                 this.setTitle("Manage");
-                Toast.makeText(getApplicationContext(), "manage", Toast.LENGTH_SHORT).show();
                 fragment = new ManageFragment();
                 break;
             default:
-                Toast.makeText(getApplicationContext(), "unknow choice", Toast.LENGTH_SHORT).show();
+                AppItemModel appItemModel = getAppItemById(id);
+                bundle = new Bundle();
+                bundle.putParcelable(APP_SELECTED_BUNDLE, appItemModel);
 
+                Log.d(LOG_TAG, "Start new Fragment-->" + appItemModel.getAppName());
+
+                fragment = new AppInfoFragment();
                 break;
         }
-
         if (fragment != null) {
             FragmentManager fragmentManager = getSupportFragmentManager();
+            fragment.setArguments(bundle);
             fragmentManager.beginTransaction().replace(R.id.content_frame_app_info, fragment).commit();
         }
-
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

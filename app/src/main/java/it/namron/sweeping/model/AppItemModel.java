@@ -13,15 +13,16 @@ import java.io.Serializable;
  * Created by norman on 17/05/17.
  */
 
-public class AppItemModel implements Parcelable{
+public class AppItemModel implements Parcelable {
     private String appName;
     private String txtPrimary;
     private String txtSecondary;
     private String infoInstallation;
-//    private ImageView appIcon;
+    //    private ImageView appIcon;
     private Drawable appIcon;
+    private int id;
 
-    public AppItemModel(){
+    public AppItemModel() {
 
     }
 
@@ -96,12 +97,19 @@ public class AppItemModel implements Parcelable{
         dest.writeString(txtSecondary);
         dest.writeString(infoInstallation);
 
-        if ( appIcon != null ) {
+        if (appIcon != null) {
             Bitmap bitmap = (Bitmap) ((BitmapDrawable) appIcon).getBitmap();
             dest.writeParcelable(bitmap, flags);
-        }
-        else {
+        } else {
             dest.writeParcelable(null, flags);
         }
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }
