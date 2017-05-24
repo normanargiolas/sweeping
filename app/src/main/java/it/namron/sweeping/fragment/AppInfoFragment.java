@@ -1,7 +1,11 @@
 package it.namron.sweeping.fragment;
 
+import android.app.Dialog;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
@@ -11,6 +15,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -19,6 +26,7 @@ import java.util.List;
 import it.namron.core.utility.TelegramApp;
 import it.namron.core.utility.WhatsApp;
 import it.namron.sweeping.adapter.DirectoryItemAdapter;
+import it.namron.sweeping.dialog.AlertDFragment;
 import it.namron.sweeping.model.AppItemModel;
 import it.namron.sweeping.model.DirectoryItemModel;
 import it.namron.sweeping.sweeping.R;
@@ -29,13 +37,14 @@ import static it.namron.sweeping.utils.Constant.APP_NAME_BUNDLE;
 import static it.namron.sweeping.utils.Constant.APP_SELECTED_BUNDLE;
 import static it.namron.sweeping.utils.Constant.APP_TELEGRAM;
 import static it.namron.sweeping.utils.Constant.APP_WHATSAPP;
+import static it.namron.sweeping.utils.Constant.DIALOG_FRAGMENT;
 
 /**
  * Created by norman on 09/05/17.
  */
 
 public class AppInfoFragment extends Fragment
-        implements DirectoryItemAdapter.MessageAdapterListener {
+        implements DirectoryItemAdapter.MessageAdapterListener, AlertDFragment.ResoultDialogListener {
 
     private static final String LOG_TAG = AppInfoFragment.class.getSimpleName();
 
@@ -161,11 +170,36 @@ public class AppInfoFragment extends Fragment
         }
     };
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_app_info, container, false);
+
+        FragmentManager fm = getFragmentManager();
+
+        FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDFragment alertdFragment = new AlertDFragment();
+                alertdFragment.setTargetFragment(AppInfoFragment.this, DIALOG_FRAGMENT);
+
+                // Show Alert DialogFragment
+                alertdFragment.show(fm, "Alert Dialog Fragment");
+
+
+
+
+                //Mostrare un menu dialog di conferma
+                //Recuperare i dati
+                //Avviare la procedura di copia
+                //Eventualmente cancellare gli originali
+
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+            }
+        });
+
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.rv_numbers);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(layoutManager);
@@ -210,6 +244,11 @@ public class AppInfoFragment extends Fragment
         mToast = Toast.makeText(this.getContext(), toastMessage, Toast.LENGTH_LONG);
 
         mToast.show();
+    }
+
+    @Override
+    public void onResoultDialog(String inputText) {
+        Toast.makeText(getContext(), "Hi, " + inputText, Toast.LENGTH_SHORT).show();
     }
 }
 

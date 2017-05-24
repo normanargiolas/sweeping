@@ -106,17 +106,6 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        String[] navMenuTitles;
-        TypedArray navMenuIcons;
-        navMenuTitles = getResources().getStringArray(R.array.nav_drawer_items); // load
-        // titles
-        // from
-        // strings.xml
-
-        navMenuIcons = getResources()
-                .obtainTypedArray(R.array.nav_drawer_icons);// load icons from
-        // strings.xml
-
         setDrawer(getApplicationContext());
 
 
@@ -137,23 +126,6 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
         //The AppItemAdapter is responsible for displaying each item in the list.
         mAppEntryAdapter = new AppItemAdapter(this, mAppListModel, this);
         mRecyclerView.setAdapter(mAppEntryAdapter);
-
-
-        //Set initial fragment
-//        Fragment fragment = new WhatsAppFragment();
-//        FragmentManager fragmentManager = getSupportFragmentManager();
-//        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).commit();
-
-//        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-//                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-//        drawer.addDrawerListener(toggle);
-//        toggle.syncState();
-
-//        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-//        navigationView.setItemIconTintList(null);
-//        navigationView.setNavigationItemSelectedListener(this);
-
 
         /*
          * Initialize the loader

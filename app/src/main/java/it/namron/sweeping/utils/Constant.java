@@ -16,6 +16,9 @@ public class Constant {
     public static final String APP_MESSENGER = "messenger";
 
 
+    public static final int DIALOG_FRAGMENT = 1;
+
+
     /**
      * This string will uniquely identify our bundle
      */
