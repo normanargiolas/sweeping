@@ -13,7 +13,12 @@ import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
+import it.namron.sweeping.model.AppItemModel;
 import it.namron.sweeping.sweeping.R;
 
 public class PerformCopyDialog extends DialogFragment {
@@ -32,9 +37,57 @@ public class PerformCopyDialog extends DialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.performe_copy_dialog, container, false);
 
-        // Do something else
+        EditText performeEditText = (EditText) rootView.findViewById(R.id.performe_edit_text);
+
+        RadioGroup performeRadioGroup = (RadioGroup) rootView.findViewById(R.id.performe_radio_group);
+        RadioButton performeRdBtnSposta = (RadioButton) rootView.findViewById(R.id.performe_rdBtn_sposta);
+        RadioButton performeRdBtnTieni = (RadioButton) rootView.findViewById(R.id.performe_rdBtn_tieni);
+        performeRdBtnTieni.setChecked(true);
+
+
+        performeRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup performeRadioGroup, int checkedId) {
+                switch (checkedId) {
+                    case R.id.performe_rdBtn_sposta:
+                        // 'Incident' checked
+//                    fall.setVisibility(View.GONE);
+//                    trip.setVisibility(View.GONE);
+//                    illness.setVisibility(View.GONE);
+                        mListener.onResoultDialog("sposta");
+
+                        break;
+                    case R.id.performe_rdBtn_tieni:
+                        mListener.onResoultDialog("tieni");
+
+                        // 'Accident' checked
+                        break;
+                }
+            }
+        });
+
+
+
+        Button performeBtnOkay = (Button) rootView.findViewById(R.id.performe_btn_okay);
+        performeBtnOkay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.onResoultDialog("OK");
+            }
+        });
+
+        Button performeBtnCancel = (Button) rootView.findViewById(R.id.performe_btn_cancel);
+        performeBtnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.onResoultDialog("Cancell");
+            }
+        });
+
+
         return rootView;
     }
+
 
 //    @Override
 //    public Dialog onCreateDialog(Bundle savedInstanceState) {

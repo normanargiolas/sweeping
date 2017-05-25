@@ -13,7 +13,7 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:id="@+id/app_icon"
+                android:id="@+id/dialog_icon"
                 android:layout_width="@dimen/icon_width_height"
                 android:layout_height="@dimen/icon_width_height"
                 android:src="@drawable/androidhappy" />
@@ -23,15 +23,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
 
+                android:layout_alignParentTop="true"
+                android:layout_toEndOf="@+id/dialog_icon"
                 android:ellipsize="end"
                 android:lines="1"
                 android:padding="10dp"
                 android:text="@string/title_performe_copy_dialog"
                 android:textColor="@color/colorBarra"
                 android:textSize="@dimen/title_text_view"
-                android:textStyle="bold"
-                android:layout_alignParentTop="true"
-                android:layout_toEndOf="@+id/app_icon" />
+                android:textStyle="bold" />
         </RelativeLayout>
 
         <View
@@ -56,7 +56,7 @@
             android:paddingLeft="10dp">
 
             <EditText
-                android:id="@+id/editText"
+                android:id="@+id/performe_edit_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:inputType="text"
@@ -78,29 +78,34 @@
             android:textSize="@dimen/msg_text_view" />
 
 
-        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+        <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/performe_radio_group"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
             android:paddingLeft="10dp"
             android:paddingRight="10dp">
 
-            <RadioButton
-                android:id="@+id/radioButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
+            <!--<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent">-->
+                <RadioButton
+                    android:id="@+id/performe_rdBtn_sposta"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:text="@string/sposta_performe_copy_dialog" />
 
-                android:text="@string/sposta_performe_copy_dialog" />
+                <RadioButton
+                    android:id="@+id/performe_rdBtn_tieni"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentTop="true"
+                    android:text="@string/tieni_originali__performe_copy_dialog" />
+            <!--</RelativeLayout>-->
 
-            <RadioButton
-                android:id="@+id/radioButton2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentTop="true"
-                android:text="@string/tieni_originali__performe_copy_dialog" />
+        </RadioGroup>
 
-        </RelativeLayout>
 
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="match_parent"
@@ -108,25 +113,25 @@
             android:paddingTop="20dp">
 
             <Button
-                android:id="@+id/button"
+                android:id="@+id/performe_btn_cancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:background="@android:color/transparent"
                 android:text="Annulla"
-                android:textSize="@dimen/msg_text_view"
-                android:textColor="@color/colorBarra" />
+                android:textColor="@color/colorBarra"
+                android:textSize="@dimen/msg_text_view" />
 
             <Button
-                android:id="@+id/button2"
+                android:id="@+id/performe_btn_okay"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentTop="true"
                 android:background="@android:color/transparent"
                 android:text="OK"
-                android:textSize="@dimen/msg_text_view"
-                android:textColor="@color/colorBarra" />
+                android:textColor="@color/colorBarra"
+                android:textSize="@dimen/msg_text_view" />
 
         </RelativeLayout>
 

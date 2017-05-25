@@ -48,6 +48,8 @@ public class AppInfoFragment extends Fragment
     private DirectoryItemAdapter mDirectoryAdapter;
     private RecyclerView mRecyclerView;
 
+    private AppItemModel mAppItem;
+
     private List<DirectoryItemModel> mDirectoryListModels = new ArrayList<>();
 
     /*
@@ -176,7 +178,7 @@ public class AppInfoFragment extends Fragment
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PerformCopyDialog alertdFragment = new PerformCopyDialog();
+                PerformCopyDialog alertdFragment = new PerformCopyDialog(); //todo usare il bundle per passare i parametri: mAppItem
                 alertdFragment.setTargetFragment(AppInfoFragment.this, DIALOG_FRAGMENT);
 
                 // Show Alert DialogFragment
@@ -206,16 +208,16 @@ public class AppInfoFragment extends Fragment
 
         Bundle bundle = getArguments();
         if (bundle != null) {
-            AppItemModel appItem = bundle.getParcelable(APP_SELECTED_BUNDLE);
-            getActivity().setTitle(appItem.getAppName());
+            mAppItem = bundle.getParcelable(APP_SELECTED_BUNDLE);
+            getActivity().setTitle(mAppItem.getAppName());
 
-            if (appItem != null) {
+            if (mAppItem != null) {
                 /*
                 * Initialize the loader
                 */
                 mLoaderManager = getLoaderManager();
                 Bundle appInfoBundle = new Bundle();
-                appInfoBundle.putString(APP_NAME_BUNDLE, appItem.getAppName());
+                appInfoBundle.putString(APP_NAME_BUNDLE, mAppItem.getAppName());
 
                 getLoaderManager().initLoader(ID_APP_INFO_FOLDER_LOADER, appInfoBundle, mAppInfoFolderLoaderCallback);
             }
@@ -243,7 +245,13 @@ public class AppInfoFragment extends Fragment
 
     @Override
     public void onResoultDialog(String inputText) {
-        Toast.makeText(getContext(), "Hi, " + inputText, Toast.LENGTH_SHORT).show();
+
+        if (mToast != null) {
+            mToast.cancel();
+        }
+        String toastMessage = "Hi, " + inputText + " clicked.";
+        mToast = Toast.makeText(this.getContext(), toastMessage, Toast.LENGTH_LONG);
+        mToast.show();
     }
 }
 
