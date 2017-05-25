@@ -28,4 +28,15 @@
     </array>
 
     <string name="action_settings">Settings</string>
+
+
+    <string name="title_performe_copy_dialog">Titolo Applicazione</string>
+    <string name="msg_performe_copy_dialog_1">Copiare le cartelle selezionate all\'interno della cartella</string>
+    <string name="msg_performe_copy_dialog_2">della memoria esterna?</string>
+    <string name="sposta_performe_copy_dialog">sposta</string>
+    <string name="tieni_originali__performe_copy_dialog">tieni originali</string>
+
+
+
+
 </resources>

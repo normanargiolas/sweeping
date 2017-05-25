@@ -1,0 +1,137 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/app_icon"
+                android:layout_width="@dimen/icon_width_height"
+                android:layout_height="@dimen/icon_width_height"
+                android:src="@drawable/androidhappy" />
+
+            <TextView
+                android:id="@+id/title_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:ellipsize="end"
+                android:lines="1"
+                android:padding="10dp"
+                android:text="@string/title_performe_copy_dialog"
+                android:textColor="@color/colorBarra"
+                android:textSize="@dimen/title_text_view"
+                android:textStyle="bold"
+                android:layout_alignParentTop="true"
+                android:layout_toEndOf="@+id/app_icon" />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/timestamp" />
+
+        <TextView
+            android:id="@+id/msg_text_view_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:paddingLeft="10dp"
+            android:paddingTop="10dp"
+            android:text="@string/msg_performe_copy_dialog_1"
+            android:textSize="@dimen/msg_text_view" />
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="10dp">
+
+            <EditText
+                android:id="@+id/editText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:text="Name" />
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/msg_text_view_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/msg_text_view_1"
+            android:layout_alignStart="@+id/msg_text_view_1"
+            android:layout_below="@+id/editText"
+            android:layout_centerInParent="true"
+            android:paddingBottom="10dp"
+            android:paddingLeft="10dp"
+            android:text="@string/msg_performe_copy_dialog_2"
+            android:textSize="@dimen/msg_text_view" />
+
+
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp">
+
+            <RadioButton
+                android:id="@+id/radioButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+
+                android:text="@string/sposta_performe_copy_dialog" />
+
+            <RadioButton
+                android:id="@+id/radioButton2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:text="@string/tieni_originali__performe_copy_dialog" />
+
+        </RelativeLayout>
+
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="20dp">
+
+            <Button
+                android:id="@+id/button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:background="@android:color/transparent"
+                android:text="Annulla"
+                android:textSize="@dimen/msg_text_view"
+                android:textColor="@color/colorBarra" />
+
+            <Button
+                android:id="@+id/button2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:background="@android:color/transparent"
+                android:text="OK"
+                android:textSize="@dimen/msg_text_view"
+                android:textColor="@color/colorBarra" />
+
+        </RelativeLayout>
+
+
+    </LinearLayout>
+
+
+</RelativeLayout>

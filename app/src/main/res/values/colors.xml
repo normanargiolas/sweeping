@@ -5,6 +5,9 @@
     <color name="colorAccent">#FF4081</color>
     <color name="colorGreen">#FF4CAF50</color>
 
+    #33B5E5
+    <color name="colorBarra"> #33B5E5</color>
+
     <!--<color name="colorPrimary">#db4437</color>-->
     <!--<color name="colorPrimaryDark">#b93221</color>-->
     <!--<color name="colorAccent">#FFFFFF</color>-->
