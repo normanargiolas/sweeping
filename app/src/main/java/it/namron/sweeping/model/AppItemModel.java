@@ -1,10 +1,13 @@
 package it.namron.sweeping.model;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import it.namron.sweeping.sweeping.R;
 
 /**
  * Created by norman on 17/05/17.
@@ -28,6 +31,14 @@ public class AppItemModel implements Parcelable {
         txtPrimary = in.readString();
         txtSecondary = in.readString();
         infoInstallation = in.readString();
+
+
+        Bitmap bitmap = (Bitmap) in.readParcelable(getClass().getClassLoader());
+        if (bitmap != null) {
+            appIcon = new BitmapDrawable(Resources.getSystem(), bitmap);
+        } else {
+            appIcon = null;
+        }
     }
 
     public static final Creator<AppItemModel> CREATOR = new Creator<AppItemModel>() {

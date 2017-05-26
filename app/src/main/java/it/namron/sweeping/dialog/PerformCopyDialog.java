@@ -8,6 +8,9 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
@@ -15,11 +18,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import it.namron.sweeping.model.AppItemModel;
 import it.namron.sweeping.sweeping.R;
+
+import static it.namron.sweeping.utils.Constant.DIALOG_FOLDER_OUT;
+import static it.namron.sweeping.utils.Constant.DIALOG_ICON_APP_ICON;
+import static it.namron.sweeping.utils.Constant.DIALOG_TITLE_APP_NAME;
 
 public class PerformCopyDialog extends DialogFragment {
 
@@ -35,14 +44,27 @@ public class PerformCopyDialog extends DialogFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Bundle mArgs = getArguments();
+        String title = mArgs.getString(DIALOG_TITLE_APP_NAME);
+        String folder = mArgs.getString(DIALOG_FOLDER_OUT);
+
+        byte[] b = mArgs.getByteArray(DIALOG_ICON_APP_ICON);
+        Drawable iconDrawable = new BitmapDrawable(getResources(), BitmapFactory.decodeByteArray(b, 0, b.length));
+
         View rootView = inflater.inflate(R.layout.performe_copy_dialog, container, false);
 
         EditText performeEditText = (EditText) rootView.findViewById(R.id.performe_edit_text);
+        performeEditText.setText(folder, TextView.BufferType.EDITABLE);
+
+        TextView titleTextView = (TextView) rootView.findViewById(R.id.title_text_view);
+        titleTextView.setText(title);
+        ImageView dialogIcon = (ImageView) rootView.findViewById(R.id.dialog_icon);
+        dialogIcon.setImageDrawable(iconDrawable);
 
         RadioGroup performeRadioGroup = (RadioGroup) rootView.findViewById(R.id.performe_radio_group);
         RadioButton performeRdBtnSposta = (RadioButton) rootView.findViewById(R.id.performe_rdBtn_sposta);
         RadioButton performeRdBtnTieni = (RadioButton) rootView.findViewById(R.id.performe_rdBtn_tieni);
-        performeRdBtnTieni.setChecked(true);
+        performeRdBtnSposta.setChecked(true);
 
 
         performeRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -65,7 +87,6 @@ public class PerformCopyDialog extends DialogFragment {
                 }
             }
         });
-
 
 
         Button performeBtnOkay = (Button) rootView.findViewById(R.id.performe_btn_okay);

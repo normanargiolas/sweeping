@@ -1,5 +1,7 @@
 package it.namron.sweeping.fragment;
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -15,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +35,9 @@ import static it.namron.sweeping.utils.Constant.APP_NAME_BUNDLE;
 import static it.namron.sweeping.utils.Constant.APP_SELECTED_BUNDLE;
 import static it.namron.sweeping.utils.Constant.APP_TELEGRAM;
 import static it.namron.sweeping.utils.Constant.APP_WHATSAPP;
+import static it.namron.sweeping.utils.Constant.DIALOG_FOLDER_OUT;
+import static it.namron.sweeping.utils.Constant.DIALOG_ICON_APP_ICON;
+import static it.namron.sweeping.utils.Constant.DIALOG_TITLE_APP_NAME;
 import static it.namron.sweeping.utils.Constant.DIALOG_FRAGMENT;
 
 /**
@@ -178,20 +184,30 @@ public class AppInfoFragment extends Fragment
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PerformCopyDialog alertdFragment = new PerformCopyDialog(); //todo usare il bundle per passare i parametri: mAppItem
-                alertdFragment.setTargetFragment(AppInfoFragment.this, DIALOG_FRAGMENT);
+                if (mAppItem !=null){
+                    PerformCopyDialog performeCopyDialog = new PerformCopyDialog(); //todo usare il bundle per passare i parametri: mAppItem
+                    performeCopyDialog.setTargetFragment(AppInfoFragment.this, DIALOG_FRAGMENT);
 
-                // Show Alert DialogFragment
-                alertdFragment.show(fm, "Alert Dialog Fragment");
+                    Bundle bundleForDialog = new Bundle();
+                    Bitmap bitmap = ((BitmapDrawable) mAppItem.getAppIcon()).getBitmap();
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    bundleForDialog.putByteArray(DIALOG_ICON_APP_ICON, stream.toByteArray());
+                    bundleForDialog.putString(DIALOG_TITLE_APP_NAME, mAppItem.getAppName());
+                    bundleForDialog.putString(DIALOG_FOLDER_OUT, mAppItem.getAppName().toLowerCase());
 
 
+                    performeCopyDialog.setArguments(bundleForDialog);
+
+                    // Show Alert DialogFragment
+                    performeCopyDialog.show(fm, "Alert Dialog Fragment");
 
 
-                //Mostrare un menu dialog di conferma
-                //Recuperare i dati
-                //Avviare la procedura di copia
-                //Eventualmente cancellare gli originali
-
+                    //Mostrare un menu dialog di conferma
+                    //Recuperare i dati
+                    //Avviare la procedura di copia
+                    //Eventualmente cancellare gli originali
+                }
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
             }
