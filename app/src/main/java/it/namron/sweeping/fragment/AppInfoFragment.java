@@ -1,7 +1,5 @@
 package it.namron.sweeping.fragment;
 
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -17,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +22,8 @@ import it.namron.core.utility.TelegramApp;
 import it.namron.core.utility.WhatsApp;
 import it.namron.sweeping.adapter.DirectoryItemAdapter;
 import it.namron.sweeping.dialog.PerformCopyDialog;
+import it.namron.sweeping.dialog.parameter.PerformCopyDialogFromParameter;
+import it.namron.sweeping.dialog.parameter.PerformCopyDialogToParameter;
 import it.namron.sweeping.model.AppItemModel;
 import it.namron.sweeping.model.DirectoryItemModel;
 import it.namron.sweeping.sweeping.R;
@@ -35,10 +34,9 @@ import static it.namron.sweeping.utils.Constant.APP_NAME_BUNDLE;
 import static it.namron.sweeping.utils.Constant.APP_SELECTED_BUNDLE;
 import static it.namron.sweeping.utils.Constant.APP_TELEGRAM;
 import static it.namron.sweeping.utils.Constant.APP_WHATSAPP;
-import static it.namron.sweeping.utils.Constant.DIALOG_FOLDER_OUT;
-import static it.namron.sweeping.utils.Constant.DIALOG_ICON_APP_ICON;
-import static it.namron.sweeping.utils.Constant.DIALOG_TITLE_APP_NAME;
 import static it.namron.sweeping.utils.Constant.DIALOG_FRAGMENT;
+import static it.namron.sweeping.utils.Constant.PERFORM_COPY_DIALOG_PARAMETER_BUNDLE;
+import static it.namron.sweeping.utils.Constant.PERFORM_COPY_DIALOG_PARAMETER_TAG;
 
 /**
  * Created by norman on 09/05/17.
@@ -184,23 +182,14 @@ public class AppInfoFragment extends Fragment
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mAppItem !=null){
-                    PerformCopyDialog performeCopyDialog = new PerformCopyDialog(); //todo usare il bundle per passare i parametri: mAppItem
+                if (mAppItem != null) {
+                    PerformCopyDialog performeCopyDialog = new PerformCopyDialog();
                     performeCopyDialog.setTargetFragment(AppInfoFragment.this, DIALOG_FRAGMENT);
 
-                    Bundle bundleForDialog = new Bundle();
-                    Bitmap bitmap = ((BitmapDrawable) mAppItem.getAppIcon()).getBitmap();
-                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                    bundleForDialog.putByteArray(DIALOG_ICON_APP_ICON, stream.toByteArray());
-                    bundleForDialog.putString(DIALOG_TITLE_APP_NAME, mAppItem.getAppName());
-                    bundleForDialog.putString(DIALOG_FOLDER_OUT, mAppItem.getAppName().toLowerCase());
-
-
+                    Bundle bundleForDialog = createPerformCopyBundle();
                     performeCopyDialog.setArguments(bundleForDialog);
-
                     // Show Alert DialogFragment
-                    performeCopyDialog.show(fm, "Alert Dialog Fragment");
+                    performeCopyDialog.show(fm, PERFORM_COPY_DIALOG_PARAMETER_TAG);
 
 
                     //Mostrare un menu dialog di conferma
@@ -208,9 +197,22 @@ public class AppInfoFragment extends Fragment
                     //Avviare la procedura di copia
                     //Eventualmente cancellare gli originali
                 }
+
+
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
             }
+
+            private Bundle createPerformCopyBundle() {
+                PerformCopyDialogToParameter param = new PerformCopyDialogToParameter();
+                param.setIcon(mAppItem.getAppIcon());
+                param.setTitle(mAppItem.getAppName());
+                param.setFolder(mAppItem.getAppName().toLowerCase());
+                Bundle bundleForDialog = new Bundle();
+                bundleForDialog.putParcelable(PERFORM_COPY_DIALOG_PARAMETER_BUNDLE, param);
+                return bundleForDialog;
+            }
+
         });
 
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.rv_numbers);
@@ -260,12 +262,12 @@ public class AppInfoFragment extends Fragment
     }
 
     @Override
-    public void onResoultDialog(String inputText) {
+    public void onResoultDialog(PerformCopyDialogFromParameter parameter) {
 
         if (mToast != null) {
             mToast.cancel();
         }
-        String toastMessage = "Hi, " + inputText + " clicked.";
+        String toastMessage = "Folder:" + parameter.getFolder() + " Mantieni originali: " + parameter.getOriginal().toString();
         mToast = Toast.makeText(this.getContext(), toastMessage, Toast.LENGTH_LONG);
         mToast.show();
     }

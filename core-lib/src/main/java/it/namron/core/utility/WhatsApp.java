@@ -57,21 +57,21 @@ public class WhatsApp {
                 if (mediaDirectory.exists()) {
                     File[] subdirs = mediaDirectory.listFiles((FileFilter) DirectoryFileFilter.DIRECTORY);
 
-                    for (int i = 0; i < subdirs.length; i++) {
-                        String dir = subdirs[i].getPath();
+                    if (subdirs != null) {  //todo controllare i permessi dell'app
+                        for (int i = 0; i < subdirs.length; i++) {
+                            String dir = subdirs[i].getPath();
 
-                        Uri dirUri = Uri.parse(dir);
-                        String folder = dirUri.getLastPathSegment();
-                        if (!folder.startsWith(".")) {
-                            listDirectory.add(folder);
+                            Uri dirUri = Uri.parse(dir);
+                            String folder = dirUri.getLastPathSegment();
+                            if (!folder.startsWith(".")) {
+                                listDirectory.add(folder);
+                            }
                         }
                     }
-                    return listDirectory;
                 }
             }
         }
-
-        return null;
+        return listDirectory;
     }
 
 }

@@ -4,12 +4,7 @@ package it.namron.sweeping.dialog;
  * Created by norman on 24/05/17.
  */
 
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -23,19 +18,28 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import it.namron.sweeping.model.AppItemModel;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import it.namron.sweeping.dialog.parameter.PerformCopyDialogFromParameter;
+import it.namron.sweeping.dialog.parameter.PerformCopyDialogToParameter;
 import it.namron.sweeping.sweeping.R;
 
-import static it.namron.sweeping.utils.Constant.DIALOG_FOLDER_OUT;
-import static it.namron.sweeping.utils.Constant.DIALOG_ICON_APP_ICON;
-import static it.namron.sweeping.utils.Constant.DIALOG_TITLE_APP_NAME;
+import static it.namron.sweeping.utils.Constant.ALERT_FOLDER_DIALOG_TAG;
+import static it.namron.sweeping.utils.Constant.PERFORM_COPY_DIALOG_PARAMETER_BUNDLE;
 
 public class PerformCopyDialog extends DialogFragment {
 
     private ResoultDialogListener mListener;
 
+    RadioButton mPerformeRdBtnSposta;
+    RadioButton mPerformeRdBtnTieni;
+
+    EditText mPerformeEditText;
+    PerformCopyDialogFromParameter mParameterFromObj;
+
     public interface ResoultDialogListener {
-        void onResoultDialog(String inputText);
+        void onResoultDialog(PerformCopyDialogFromParameter parameter);
     }
 
     public PerformCopyDialog() {
@@ -45,68 +49,97 @@ public class PerformCopyDialog extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Bundle mArgs = getArguments();
-        String title = mArgs.getString(DIALOG_TITLE_APP_NAME);
-        String folder = mArgs.getString(DIALOG_FOLDER_OUT);
+        if (mArgs != null) {
+            PerformCopyDialogToParameter parameterObj = mArgs.getParcelable(PERFORM_COPY_DIALOG_PARAMETER_BUNDLE);
+            if (parameterObj != null) {
+                String title = parameterObj.getTitle();
+                String folder = parameterObj.getFolder();
+                Drawable iconDrawable = parameterObj.getIcon();
 
-        byte[] b = mArgs.getByteArray(DIALOG_ICON_APP_ICON);
-        Drawable iconDrawable = new BitmapDrawable(getResources(), BitmapFactory.decodeByteArray(b, 0, b.length));
+//            byte[] b = mArgs.getByteArray(DIALOG_ICON_APP_ICON);
+//            Drawable iconDrawable = new BitmapDrawable(getResources(), BitmapFactory.decodeByteArray(b, 0, b.length));
 
-        View rootView = inflater.inflate(R.layout.performe_copy_dialog, container, false);
+                View rootView = inflater.inflate(R.layout.performe_copy_dialog, container, false);
 
-        EditText performeEditText = (EditText) rootView.findViewById(R.id.performe_edit_text);
-        performeEditText.setText(folder, TextView.BufferType.EDITABLE);
+                mPerformeEditText = (EditText) rootView.findViewById(R.id.performe_edit_text);
+                mPerformeEditText.setText(folder, TextView.BufferType.EDITABLE);
 
-        TextView titleTextView = (TextView) rootView.findViewById(R.id.title_text_view);
-        titleTextView.setText(title);
-        ImageView dialogIcon = (ImageView) rootView.findViewById(R.id.dialog_icon);
-        dialogIcon.setImageDrawable(iconDrawable);
+                TextView titleTextView = (TextView) rootView.findViewById(R.id.title_text_view);
+                titleTextView.setText(title);
+                ImageView dialogIcon = (ImageView) rootView.findViewById(R.id.dialog_icon);
+                dialogIcon.setImageDrawable(iconDrawable);
 
-        RadioGroup performeRadioGroup = (RadioGroup) rootView.findViewById(R.id.performe_radio_group);
-        RadioButton performeRdBtnSposta = (RadioButton) rootView.findViewById(R.id.performe_rdBtn_sposta);
-        RadioButton performeRdBtnTieni = (RadioButton) rootView.findViewById(R.id.performe_rdBtn_tieni);
-        performeRdBtnSposta.setChecked(true);
+                RadioGroup performeRadioGroup = (RadioGroup) rootView.findViewById(R.id.performe_radio_group);
+                mPerformeRdBtnSposta = (RadioButton) rootView.findViewById(R.id.performe_rdBtn_sposta);
+                mPerformeRdBtnTieni = (RadioButton) rootView.findViewById(R.id.performe_rdBtn_tieni);
+                mPerformeRdBtnSposta.setChecked(true);
 
-
-        performeRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup performeRadioGroup, int checkedId) {
-                switch (checkedId) {
-                    case R.id.performe_rdBtn_sposta:
-                        // 'Incident' checked
+                performeRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(RadioGroup performeRadioGroup, int checkedId) {
+                        switch (checkedId) {
+                            case R.id.performe_rdBtn_sposta:
+                                // 'Incident' checked
 //                    fall.setVisibility(View.GONE);
 //                    trip.setVisibility(View.GONE);
 //                    illness.setVisibility(View.GONE);
-                        mListener.onResoultDialog("sposta");
+//                                mListener.onResoultDialog("sposta");
 
-                        break;
-                    case R.id.performe_rdBtn_tieni:
-                        mListener.onResoultDialog("tieni");
+                                break;
+                            case R.id.performe_rdBtn_tieni:
+//                                mListener.onResoultDialog("tieni");
 
-                        // 'Accident' checked
-                        break;
-                }
+                                // 'Accident' checked
+                                break;
+                        }
+                    }
+                });
+
+                Button performeBtnOkay = (Button) rootView.findViewById(R.id.performe_btn_okay);
+                performeBtnOkay.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (validFormatFolder(mPerformeEditText.getText().toString())) {
+                            mParameterFromObj = new PerformCopyDialogFromParameter();
+                            mParameterFromObj.setFolder(mPerformeEditText.getText().toString());
+                            mParameterFromObj.setOriginal(mPerformeRdBtnTieni.isChecked());
+
+                            mListener.onResoultDialog(mParameterFromObj);
+                        } else {
+                            AlertFolderDialog alertFolderDialog = new AlertFolderDialog();
+                            // Show DialogFragment
+                            alertFolderDialog.show(getFragmentManager(), ALERT_FOLDER_DIALOG_TAG);
+                        }
+                    }
+
+                    private boolean validFormatFolder(String file) {
+                        //String regex = "^[a-zA-Z\\s]*$"; //letters and spaces
+                        String regex = new String("^.*[^a-zA-Z\\s0-9._-].*$");
+//                    String fileName = file.replaceAll("[\\/:*?\"<>|]", "_");
+                        Pattern pattern = Pattern.compile(regex);
+                        Matcher matcher = pattern.matcher(file);
+                        if (matcher.matches()) {
+                            //name folder not valid
+                            return false;
+                        } else {
+                            //valid folder name
+                            return true;
+                        }
+                    }
+                });
+
+                Button performeBtnCancel = (Button) rootView.findViewById(R.id.performe_btn_cancel);
+                performeBtnCancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+//                        mListener.onResoultDialog("Cancell");
+                        dismiss();
+                    }
+                });
+                return rootView;
             }
-        });
-
-
-        Button performeBtnOkay = (Button) rootView.findViewById(R.id.performe_btn_okay);
-        performeBtnOkay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mListener.onResoultDialog("OK");
-            }
-        });
-
-        Button performeBtnCancel = (Button) rootView.findViewById(R.id.performe_btn_cancel);
-        performeBtnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mListener.onResoultDialog("Cancell");
-            }
-        });
-
-
-        return rootView;
+        }
+        return null;
     }
 
 
