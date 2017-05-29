@@ -15,6 +15,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -50,6 +51,9 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
     private NavigationView mNavigationView;
     static private List<AppItemModel> mAppItemModelList;
 //    private Context mContext;
+
+    private RecyclerView mDrawerRecyclerView;
+
 
     private Bundle mSavedInstanceState;
 
@@ -117,7 +121,15 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
 
     public void setDrawer(Context context) {
 
-//            mContext = context;
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        View header = navigationView.getHeaderView(0);
+
+        mDrawerRecyclerView = (RecyclerView) header.findViewById(R.id.drawer_list_recycler);
+
+
+
+//      mContext = context;
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 

@@ -107,7 +107,7 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
         setContentView(R.layout.activity_main);
 
 
-        setLayout(R.layout.activity_main);
+//        setLayout(R.layout.activity_main);
         setDrawer(getApplicationContext());
 
 
