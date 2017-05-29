@@ -18,8 +18,8 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.namron.core.utility.TelegramApp;
-import it.namron.core.utility.WhatsApp;
+import it.namron.sweeping.utils.TelegramApp;
+import it.namron.sweeping.utils.WhatsApp;
 import it.namron.sweeping.adapter.DirectoryItemAdapter;
 import it.namron.sweeping.dialog.PerformCopyDialog;
 import it.namron.sweeping.dialog.parameter.PerformCopyDialogFromParameter;
@@ -270,6 +270,9 @@ public class AppInfoFragment extends Fragment
         String toastMessage = "Folder:" + parameter.getFolder() + " Mantieni originali: " + parameter.getOriginal().toString();
         mToast = Toast.makeText(this.getContext(), toastMessage, Toast.LENGTH_LONG);
         mToast.show();
+
+
+
     }
 }
 

@@ -1,4 +1,4 @@
-package it.namron.core.utility;
+package it.namron.sweeping.utils;
 
 import android.net.Uri;
 import android.os.Environment;

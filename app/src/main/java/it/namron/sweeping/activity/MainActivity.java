@@ -106,6 +106,8 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        setLayout(R.layout.activity_main);
         setDrawer(getApplicationContext());
 
 
@@ -141,6 +143,8 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
 
         Log.d(LOG_TAG, "onCreate done!");
     }
+
+
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
