@@ -19,12 +19,12 @@ public class AlertSelectedFolderDialog extends DialogFragment {
                 // Set Dialog Icon
                 .setIcon(R.drawable.androidhappy)
                 // Set Dialog Title
-                .setTitle("Attenzione")
+                .setTitle(R.string.selected_folder_dialog_title)
                 // Set Dialog Message
-                .setMessage("Selezionare almeno una cartella!")
+                .setMessage(R.string.selected_folder_dialog_message)
 
                 // Positive button
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // Do something else
                         dismiss();

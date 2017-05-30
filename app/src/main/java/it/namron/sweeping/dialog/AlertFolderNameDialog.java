@@ -19,12 +19,12 @@ public class AlertFolderNameDialog extends DialogFragment {
                 // Set Dialog Icon
                 .setIcon(R.drawable.androidhappy)
                 // Set Dialog Title
-                .setTitle("Attenzione")
+                .setTitle(R.string.folder_name_dialog_title)
                 // Set Dialog Message
-                .setMessage("Nome della cartella non valido!")
+                .setMessage(R.string.folder_name_dialog_message)
 
                 // Positive button
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // Do something else
                         dismiss();

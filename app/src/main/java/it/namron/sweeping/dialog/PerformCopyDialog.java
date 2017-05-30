@@ -22,7 +22,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import it.namron.sweeping.dialog.parameter.PerformCopyDialogFromParameter;
-import it.namron.sweeping.dialog.parameter.PerformCopyDialogToParameter;
 import it.namron.sweeping.sweeping.R;
 
 import static it.namron.sweeping.utils.Constant.ALERT_FOLDER_DIALOG_TAG;

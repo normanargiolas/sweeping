@@ -30,13 +30,27 @@
     <string name="action_settings">Settings</string>
 
 
-    <string name="title_performe_copy_dialog">Titolo Applicazione</string>
-    <string name="msg_performe_copy_dialog_1">Copiare le cartelle selezionate all\'interno della cartella</string>
-    <string name="msg_performe_copy_dialog_2">della memoria esterna?</string>
-    <string name="sposta_performe_copy_dialog">sposta</string>
-    <string name="tieni_originali__performe_copy_dialog">tieni originali</string>
 
 
 
+    <!--voci alert dialog-->
+    <string name="ok">Ok</string>
+    <string name="annulla">Annulla</string>
+    <string name="rinomina">Rinomina</string>
+    <string name="continua">Continua</string>
+
+
+    <string name="folder_name_dialog_message">Nome della cartella non valido!</string>
+    <string name="folder_name_dialog_title">Attenzione</string>
+    <string name="selected_folder_dialog_message">Selezionare almeno una cartella!</string>
+    <string name="selected_folder_dialog_title">Attenzione</string>
+    <string name="main_folder_dialog_message">Nome della cartella non valido!</string>
+    <string name="main_folder_dialog_title">Attenzione</string>
+
+    <string name="performe_copy_dialog_title">Titolo Applicazione</string>
+    <string name="performe_copy_dialog_message_1">Copiare le cartelle selezionate all\'interno della cartella</string>
+    <string name="performe_copy_dialog_message_2">della memoria esterna?</string>
+    <string name="performe_copy_dialog_sposta">sposta</string>
+    <string name="performe_copy_dialog_tieni_originali">tieni originali</string>
 
 </resources>

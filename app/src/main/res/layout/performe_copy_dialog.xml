@@ -29,7 +29,7 @@
                 android:ellipsize="end"
                 android:lines="1"
                 android:padding="10dp"
-                android:text="@string/title_performe_copy_dialog"
+                android:text="@string/performe_copy_dialog_title"
                 android:textColor="@color/colorBarra"
                 android:textSize="@dimen/title_text_view"
                 android:textStyle="bold" />
@@ -47,7 +47,7 @@
             android:layout_centerInParent="true"
             android:paddingLeft="10dp"
             android:paddingTop="10dp"
-            android:text="@string/msg_performe_copy_dialog_1"
+            android:text="@string/performe_copy_dialog_message_1"
             android:textSize="@dimen/msg_text_view" />
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -75,7 +75,7 @@
             android:layout_centerInParent="true"
             android:paddingBottom="10dp"
             android:paddingLeft="10dp"
-            android:text="@string/msg_performe_copy_dialog_2"
+            android:text="@string/performe_copy_dialog_message_2"
             android:textSize="@dimen/msg_text_view" />
 
 
@@ -94,7 +94,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
-                    android:text="@string/sposta_performe_copy_dialog" />
+                    android:text="@string/performe_copy_dialog_sposta" />
 
                 <RadioButton
                     android:id="@+id/performe_rdBtn_tieni"
@@ -102,7 +102,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentTop="true"
-                    android:text="@string/tieni_originali__performe_copy_dialog" />
+                    android:text="@string/performe_copy_dialog_tieni_originali" />
             <!--</RelativeLayout>-->
 
         </RadioGroup>

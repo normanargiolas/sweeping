@@ -19,20 +19,17 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.namron.sweeping.dialog.AlertFolderNameDialog;
 import it.namron.sweeping.dialog.AlertSelectedFolderDialog;
-import it.namron.sweeping.dialog.parameter.AlertMainFolderDialog;
 import it.namron.sweeping.utils.TelegramApp;
 import it.namron.sweeping.utils.WhatsApp;
 import it.namron.sweeping.adapter.DirectoryItemAdapter;
 import it.namron.sweeping.dialog.PerformCopyDialog;
 import it.namron.sweeping.dialog.parameter.PerformCopyDialogFromParameter;
-import it.namron.sweeping.dialog.parameter.PerformCopyDialogToParameter;
+import it.namron.sweeping.dialog.PerformCopyDialogToParameter;
 import it.namron.sweeping.model.AppItemModel;
 import it.namron.sweeping.model.DirectoryItemModel;
 import it.namron.sweeping.sweeping.R;
 
-import static it.namron.sweeping.utils.Constant.ALERT_FOLDER_DIALOG_TAG;
 import static it.namron.sweeping.utils.Constant.ALERT_MAIN_FOLDER_DIALOG_TAG;
 import static it.namron.sweeping.utils.Constant.ALERT_SELECTED_FOLDER_DIALOG_TAG;
 import static it.namron.sweeping.utils.Constant.APP_FACEBOOK;
@@ -296,7 +293,7 @@ public class AppInfoFragment extends Fragment
         if (isMainFolderPresent(parameter.getFolder()) == false) {
 
         } else {
-            AlertMainFolderDialog dialog = new AlertMainFolderDialog();
+            PerformCopyDialogToParameter.AlertMainFolderDialog dialog = new PerformCopyDialogToParameter.AlertMainFolderDialog();
             // Show DialogFragment
             dialog.show(getFragmentManager(), ALERT_MAIN_FOLDER_DIALOG_TAG);
 
