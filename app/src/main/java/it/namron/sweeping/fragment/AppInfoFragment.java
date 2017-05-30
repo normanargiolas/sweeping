@@ -1,6 +1,7 @@
 package it.namron.sweeping.fragment;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -20,6 +21,7 @@ import java.util.List;
 
 import it.namron.sweeping.dialog.AlertFolderNameDialog;
 import it.namron.sweeping.dialog.AlertSelectedFolderDialog;
+import it.namron.sweeping.dialog.parameter.AlertMainFolderDialog;
 import it.namron.sweeping.utils.TelegramApp;
 import it.namron.sweeping.utils.WhatsApp;
 import it.namron.sweeping.adapter.DirectoryItemAdapter;
@@ -31,6 +33,8 @@ import it.namron.sweeping.model.DirectoryItemModel;
 import it.namron.sweeping.sweeping.R;
 
 import static it.namron.sweeping.utils.Constant.ALERT_FOLDER_DIALOG_TAG;
+import static it.namron.sweeping.utils.Constant.ALERT_MAIN_FOLDER_DIALOG_TAG;
+import static it.namron.sweeping.utils.Constant.ALERT_SELECTED_FOLDER_DIALOG_TAG;
 import static it.namron.sweeping.utils.Constant.APP_FACEBOOK;
 import static it.namron.sweeping.utils.Constant.APP_MESSENGER;
 import static it.namron.sweeping.utils.Constant.APP_NAME_BUNDLE;
@@ -205,8 +209,7 @@ public class AppInfoFragment extends Fragment
                         performeCopyDialog.show(fm, PERFORM_COPY_DIALOG_PARAMETER_TAG);
                     } else {
                         AlertSelectedFolderDialog dialog = new AlertSelectedFolderDialog();
-                        // Show DialogFragment
-                        dialog.show(getFragmentManager(), ALERT_FOLDER_DIALOG_TAG);
+                        dialog.show(getFragmentManager(), ALERT_SELECTED_FOLDER_DIALOG_TAG);
                     }
 
 
@@ -282,7 +285,7 @@ public class AppInfoFragment extends Fragment
     }
 
     @Override
-    public void onResoultDialog(PerformCopyDialogFromParameter parameter) {
+    public void onResoultDialog(@NonNull PerformCopyDialogFromParameter parameter) {
 
         if (mToast != null) {
             mToast.cancel();
@@ -290,6 +293,21 @@ public class AppInfoFragment extends Fragment
         String toastMessage = "Folder:" + parameter.getFolder() + " Mantieni originali: " + parameter.getOriginal().toString();
         mToast = Toast.makeText(this.getContext(), toastMessage, Toast.LENGTH_LONG);
         mToast.show();
+        if (isMainFolderPresent(parameter.getFolder()) == false) {
+
+        } else {
+            AlertMainFolderDialog dialog = new AlertMainFolderDialog();
+            // Show DialogFragment
+            dialog.show(getFragmentManager(), ALERT_MAIN_FOLDER_DIALOG_TAG);
+
+        }
+//        mDirectoryListModels
+
+    }
+
+    private boolean isMainFolderPresent(String folder) {
+
+        return true;
     }
 }
 

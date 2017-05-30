@@ -21,7 +21,10 @@ public class Constant {
 //    public static final String DIALOG_FOLDER_OUT = "dialog_folder_out";
     public static final String PERFORM_COPY_DIALOG_PARAMETER_BUNDLE = "perform_copy_dialog_parameter_bundle";
     public static final String PERFORM_COPY_DIALOG_PARAMETER_TAG = "perform_copy_dialog_parameter_TAG";
+
     public static final String ALERT_FOLDER_DIALOG_TAG = "alertFolderDialog_TAG";
+    public static final String ALERT_MAIN_FOLDER_DIALOG_TAG = "AlertMainFolderDialog_TAG";
+    public static final String ALERT_SELECTED_FOLDER_DIALOG_TAG = "AlertSelectedFolderDialog_TAG";
 
 
 
