@@ -26,6 +26,7 @@ import it.namron.core.utility.AppListLoader;
 import it.namron.sweeping.adapter.AppItemAdapter;
 import it.namron.sweeping.fragment.ManageFragment;
 import it.namron.sweeping.model.AppItemModel;
+import it.namron.sweeping.model.DrawerItemModel;
 import it.namron.sweeping.sweeping.R;
 import it.namron.sweeping.utils.PackageApp;
 
@@ -37,6 +38,8 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     private List<AppItemModel> mAppListModel = new ArrayList<>();
+    private List<DrawerItemModel> mDrawerListModel = new ArrayList<>();
+
     private RecyclerView mRecyclerView;
     private AppItemAdapter mAppEntryAdapter;
 //    private SwipeRefreshLayout swipeRefreshLayout;
@@ -83,15 +86,32 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
             } else {
                 //appList conteins all app installed
                 List<AppItemModel> appItemModelList = PackageApp.listOfTargetApp(appList);
-                
-                List<AppItemModel> appDirItemModelList = PackageApp.listOfTargetDir(appList);
-                if (appDirItemModelList != null)
-                    appItemModelList.addAll(appDirItemModelList);
 
-                mAppListModel = appItemModelList;
-                addDrawerItem(mAppListModel);
-                mAppEntryAdapter.swapFolder(mAppListModel);
+                List<AppItemModel> appDirItemModelList = PackageApp.listOfTargetDir(appList);
+                if (appDirItemModelList != null) {
+                    appItemModelList.addAll(appDirItemModelList);
+                }
+
+                if (appItemModelList != null) {
+                    mAppListModel = appItemModelList;
+                    mDrawerListModel = getDrawerFromApp(mAppListModel);
+                    addDrawerItem(mDrawerListModel);
+                    mAppEntryAdapter.swapFolder(mAppListModel);
+                }//todo vedere meglio se appItemModelList==null
+                Log.d(LOG_TAG, "onLoadFinished: appItemModelList=null");
+
             }
+        }
+
+        private List<DrawerItemModel> getDrawerFromApp(List<AppItemModel> mAppListModel) {
+            List<DrawerItemModel> drawerItemList = new ArrayList<>();
+            for (AppItemModel appItem : mAppListModel) {
+                DrawerItemModel drawerItem = new DrawerItemModel();
+                drawerItem.setDrawerName(appItem.getAppName());
+                drawerItem.setDrawerIcon(appItem.getAppIcon());
+                drawerItemList.add(drawerItem);
+            }
+            return drawerItemList;
         }
 
         @Override
@@ -143,7 +163,6 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
 
         Log.d(LOG_TAG, "onCreate done!");
     }
-
 
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
