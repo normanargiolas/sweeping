@@ -3,7 +3,6 @@ package it.namron.sweeping.activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -14,9 +13,8 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +35,7 @@ import static it.namron.sweeping.utils.LogUtils.makeLogTag;
  * A base activity that handles common functionality in the app. This includes the navigation
  * drawer and in the future login and authentication, Action Bar tweaks, amongst others.
  */
-public abstract class BaseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, DrawerItemAdapter.DrawerItemAdapterOnClickListener {
+public abstract class BaseActivity extends AppCompatActivity implements DrawerItemAdapter.DrawerItemAdapterOnClickListener {
 
     private static final String TAG = makeLogTag(BaseActivity.class);
 
@@ -48,15 +46,18 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
     private DrawerLayout mDrawer;
 
     private DrawerItemAdapter mDrawerEntryAdapter;
-    private List<DrawerItemModel> mDrawerListModel = new ArrayList<>();
+    static private List<DrawerItemModel> mDrawerListModel;
 
-    private NavigationView mNavigationView;
+    //    private NavigationView mNavigationView;
     static private List<AppItemModel> mAppItemModelList;
 //    private Context mContext;
 
     private RecyclerView mDrawerRecyclerView;
 
     private Bundle mSavedInstanceState;
+
+    private Toast mToast;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,13 +72,30 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         mLayout = layout;
     }
 
-    public void addDrawerItem(List<DrawerItemModel> drawerItemModelList) {
-        if (drawerItemModelList != null) {
-            mDrawerEntryAdapter.updateDrawer(drawerItemModelList);
+
+    public void addDrawerItemFromAppList(List<AppItemModel> appItemModelList) {
+        if (appItemModelList != null) {
+            mAppItemModelList = appItemModelList;
+            mDrawerListModel = getDrawerFromApp(appItemModelList);
+        }
+        if (mDrawerEntryAdapter != null && mDrawerListModel != null) {
+            mDrawerEntryAdapter.updateDrawer(mDrawerListModel);
         }
     }
 
-    public AppItemModel getAppItemById(int id) {
+    private List<DrawerItemModel> getDrawerFromApp(List<AppItemModel> mAppListModel) {
+        List<DrawerItemModel> drawerItemList = new ArrayList<>();
+        for (AppItemModel appItem : mAppListModel) {
+            DrawerItemModel drawerItem = new DrawerItemModel();
+            drawerItem.setDrawerName(appItem.getAppName());
+            drawerItem.setDrawerIcon(appItem.getAppIcon());
+            drawerItem.setId(appItem.getId());
+            drawerItemList.add(drawerItem);
+        }
+        return drawerItemList;
+    }
+
+    public AppItemModel getAppItemByDrawerId(int id) {
         if (mAppItemModelList != null && mAppItemModelList.size() >= id)
             return mAppItemModelList.get(id);
         else
@@ -150,11 +168,11 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
         LOGD(TAG, "onDestroy");
     }
 
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        LOGD(TAG, "onNavigationItemSelected");
-        return false;
-    }
+//    @Override
+//    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+//        LOGD(TAG, "onNavigationItemSelected");
+//        return false;
+//    }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -175,8 +193,16 @@ public abstract class BaseActivity extends AppCompatActivity implements Navigati
      * The interface that receives onClick messages from DrawerItemAdapter.
      */
     @Override
-    public void onDrawerListItemClick(DrawerItemModel clickedItem) {
+    public boolean onNavigationItemSelected(DrawerItemModel item) {
+        if (mToast != null) {
+            mToast.cancel();
+        }
+        String toastMessage = "Item #" + item.getId() + " clicked.";
+        mToast = Toast.makeText(getApplicationContext(), toastMessage, Toast.LENGTH_LONG);
 
+        mToast.show();
+
+        return true;
     }
 
 }

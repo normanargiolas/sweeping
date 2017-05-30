@@ -35,7 +35,7 @@ public class DrawerItemAdapter extends RecyclerView.Adapter<DrawerItemAdapter.Dr
      * The interface that receives onClick messages.
      */
     public interface DrawerItemAdapterOnClickListener {
-        void onDrawerListItemClick(DrawerItemModel clickedItem);
+        boolean onNavigationItemSelected(DrawerItemModel clickedItem);
     }
 
 
@@ -105,7 +105,7 @@ public class DrawerItemAdapter extends RecyclerView.Adapter<DrawerItemAdapter.Dr
         @Override
         public void onClick(View v) {
             int adapterPosition = getAdapterPosition();
-            mOnClickListener.onDrawerListItemClick(drawerItemList.get(adapterPosition));
+            mOnClickListener.onNavigationItemSelected(drawerItemList.get(adapterPosition));
 //            v.performHapticFeedback(HapticFeedbackConstants.CONTEXT_CLICK);
         }
     }

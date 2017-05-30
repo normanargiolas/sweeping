@@ -94,8 +94,7 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
 
                 if (appItemModelList != null) {
                     mAppListModel = appItemModelList;
-                    mDrawerListModel = getDrawerFromApp(mAppListModel);
-                    addDrawerItem(mDrawerListModel);
+                    addDrawerItemFromAppList(mAppListModel);
                     mAppEntryAdapter.swapFolder(mAppListModel);
                 }//todo vedere meglio se appItemModelList==null
                 Log.d(LOG_TAG, "onLoadFinished: appItemModelList=null");
@@ -103,16 +102,7 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
             }
         }
 
-        private List<DrawerItemModel> getDrawerFromApp(List<AppItemModel> mAppListModel) {
-            List<DrawerItemModel> drawerItemList = new ArrayList<>();
-            for (AppItemModel appItem : mAppListModel) {
-                DrawerItemModel drawerItem = new DrawerItemModel();
-                drawerItem.setDrawerName(appItem.getAppName());
-                drawerItem.setDrawerIcon(appItem.getAppIcon());
-                drawerItemList.add(drawerItem);
-            }
-            return drawerItemList;
-        }
+
 
         @Override
         public void onLoaderReset(Loader<List<AppEntry>> loader) {
@@ -292,11 +282,11 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
      * Start new Activity
      */
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(DrawerItemModel item) {
         Fragment fragment = null;
 
         // Handle navigation view item clicks here.
-        int id = item.getItemId();
+        int id = item.getId();
 
 
         switch (id) {

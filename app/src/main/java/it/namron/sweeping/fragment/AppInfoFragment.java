@@ -270,9 +270,6 @@ public class AppInfoFragment extends Fragment
         String toastMessage = "Folder:" + parameter.getFolder() + " Mantieni originali: " + parameter.getOriginal().toString();
         mToast = Toast.makeText(this.getContext(), toastMessage, Toast.LENGTH_LONG);
         mToast.show();
-
-
-
     }
 }
 

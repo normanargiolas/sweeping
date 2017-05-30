@@ -41,7 +41,9 @@
 
     </LinearLayout>
 
-    <include layout="@layout/content_frame_drawer" />
+    <include layout="@layout/content_frame_drawer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>
 
