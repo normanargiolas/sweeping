@@ -55,7 +55,7 @@ public class AppItemAdapter extends RecyclerView.Adapter<AppItemAdapter.AppItemA
 //        boolean shouldAttachToParentImmediately = false;
 //
 //        View view = inflater.inflate(layoutIdForListItem, viewGroup, shouldAttachToParentImmediately);
-//        AppItemAdapterViewHolder viewHolder = new AppItemAdapterViewHolder(view);
+//        DrawerItemAdapterViewHolder viewHolder = new DrawerItemAdapterViewHolder(view);
 //        return viewHolder;
 
         View itemView = LayoutInflater.from(viewGroup.getContext())

@@ -26,6 +26,7 @@ import it.namron.core.utility.AppListLoader;
 import it.namron.sweeping.adapter.AppItemAdapter;
 import it.namron.sweeping.fragment.ManageFragment;
 import it.namron.sweeping.model.AppItemModel;
+import it.namron.sweeping.model.DrawerItemModel;
 import it.namron.sweeping.sweeping.R;
 import it.namron.sweeping.utils.PackageApp;
 
@@ -37,6 +38,8 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     private List<AppItemModel> mAppListModel = new ArrayList<>();
+    private List<DrawerItemModel> mDrawerListModel = new ArrayList<>();
+
     private RecyclerView mRecyclerView;
     private AppItemAdapter mAppEntryAdapter;
 //    private SwipeRefreshLayout swipeRefreshLayout;
@@ -83,16 +86,23 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
             } else {
                 //appList conteins all app installed
                 List<AppItemModel> appItemModelList = PackageApp.listOfTargetApp(appList);
-                
-                List<AppItemModel> appDirItemModelList = PackageApp.listOfTargetDir(appList);
-                if (appDirItemModelList != null)
-                    appItemModelList.addAll(appDirItemModelList);
 
-                mAppListModel = appItemModelList;
-                addDrawerItem(mAppListModel);
-                mAppEntryAdapter.swapFolder(mAppListModel);
+                List<AppItemModel> appDirItemModelList = PackageApp.listOfTargetDir(appList);
+                if (appDirItemModelList != null) {
+                    appItemModelList.addAll(appDirItemModelList);
+                }
+
+                if (appItemModelList != null) {
+                    mAppListModel = appItemModelList;
+                    addDrawerItemFromAppList(mAppListModel);
+                    mAppEntryAdapter.swapFolder(mAppListModel);
+                }//todo vedere meglio se appItemModelList==null
+                Log.d(LOG_TAG, "onLoadFinished: appItemModelList=null");
+
             }
         }
+
+
 
         @Override
         public void onLoaderReset(Loader<List<AppEntry>> loader) {
@@ -107,7 +117,7 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
         setContentView(R.layout.activity_main);
 
 
-        setLayout(R.layout.activity_main);
+//        setLayout(R.layout.activity_main);
         setDrawer(getApplicationContext());
 
 
@@ -143,7 +153,6 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
 
         Log.d(LOG_TAG, "onCreate done!");
     }
-
 
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -273,11 +282,11 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
      * Start new Activity
      */
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(DrawerItemModel item) {
         Fragment fragment = null;
 
         // Handle navigation view item clicks here.
-        int id = item.getItemId();
+        int id = item.getId();
 
 
         switch (id) {

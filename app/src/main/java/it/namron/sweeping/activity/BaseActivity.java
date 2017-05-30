@@ -1,29 +1,27 @@
 package it.namron.sweeping.activity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.ScaleDrawable;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import it.namron.core.utility.WrappedDrawable;
+import it.namron.sweeping.adapter.DrawerItemAdapter;
 import it.namron.sweeping.model.AppItemModel;
+import it.namron.sweeping.model.DrawerItemModel;
 import it.namron.sweeping.sweeping.R;
 
 import static it.namron.sweeping.utils.LogUtils.LOGD;
@@ -37,7 +35,7 @@ import static it.namron.sweeping.utils.LogUtils.makeLogTag;
  * A base activity that handles common functionality in the app. This includes the navigation
  * drawer and in the future login and authentication, Action Bar tweaks, amongst others.
  */
-public class BaseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public abstract class BaseActivity extends AppCompatActivity implements DrawerItemAdapter.DrawerItemAdapterOnClickListener {
 
     private static final String TAG = makeLogTag(BaseActivity.class);
 
@@ -47,11 +45,19 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
     private ActionBarDrawerToggle mToggle;
     private DrawerLayout mDrawer;
 
-    private NavigationView mNavigationView;
+    private DrawerItemAdapter mDrawerEntryAdapter;
+    static private List<DrawerItemModel> mDrawerListModel;
+
+    //    private NavigationView mNavigationView;
     static private List<AppItemModel> mAppItemModelList;
 //    private Context mContext;
 
+    private RecyclerView mDrawerRecyclerView;
+
     private Bundle mSavedInstanceState;
+
+    private Toast mToast;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,58 +72,52 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
         mLayout = layout;
     }
 
-    public void addDrawerItem(List<AppItemModel> appItemModelList) {
+
+    public void addDrawerItemFromAppList(List<AppItemModel> appItemModelList) {
         if (appItemModelList != null) {
-//            if (mSavedInstanceState == null) {
-
             mAppItemModelList = appItemModelList;
-//            mNavigationView.getMenu().clear();
-            Menu menu = mNavigationView.getMenu();
-            for (AppItemModel appItemModel : mAppItemModelList) {
-                //params: groupId, itemId, order, title
-                MenuItem item = menu.add(R.id.homegroup_menu, appItemModel.getId(), Menu.NONE, appItemModel.getAppName());
-//
-//                WrappedDrawable wrappedDrawable = new WrappedDrawable(appItemModel.getAppIcon());
-//                wrappedDrawable.setBounds(0, 0, 10, 32);
-//                Drawable drawable = new ScaleDrawable(appItemModel.getAppIcon(), 0, 40, 40).getDrawable();
-//                drawable.setBounds(0, 0, 40, 40);
-//                Bitmap bitmap = ((BitmapDrawable) appItemModel.getAppIcon()).getBitmap();
-//                Drawable drawable = new BitmapDrawable(getResources(), Bitmap.createScaledBitmap(bitmap, 24, 24, true));
-//                item.setIcon(drawable);
-
-                item.setIcon(appItemModel.getAppIcon());
-                item.setTitle(appItemModel.getAppName());
-            }
-
-
-//            }
-
-
-            // Recycle the typed array
-//            mNavigationView.refreshDrawableState();
-//            mDrawer.refreshDrawableState();
-//            mToggle.syncState();
+            mDrawerListModel = getDrawerFromApp(appItemModelList);
+        }
+        if (mDrawerEntryAdapter != null && mDrawerListModel != null) {
+            mDrawerEntryAdapter.updateDrawer(mDrawerListModel);
         }
     }
 
-    public AppItemModel getAppItemById(int id) {
+    private List<DrawerItemModel> getDrawerFromApp(List<AppItemModel> mAppListModel) {
+        List<DrawerItemModel> drawerItemList = new ArrayList<>();
+        for (AppItemModel appItem : mAppListModel) {
+            DrawerItemModel drawerItem = new DrawerItemModel();
+            drawerItem.setDrawerName(appItem.getAppName());
+            drawerItem.setDrawerIcon(appItem.getAppIcon());
+            drawerItem.setId(appItem.getId());
+            drawerItemList.add(drawerItem);
+        }
+        return drawerItemList;
+    }
+
+    public AppItemModel getAppItemByDrawerId(int id) {
         if (mAppItemModelList != null && mAppItemModelList.size() >= id)
             return mAppItemModelList.get(id);
         else
             return null;
     }
 
-//    @Override
-//    protected void onPostCreate(Bundle savedInstanceState) {
-//        super.onPostCreate(savedInstanceState);
-//        // Sync the toggle state after onRestoreInstanceState has occurred.
-//        mToggle.syncState();
-//    }
-
-
     public void setDrawer(Context context) {
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        View header = navigationView.getHeaderView(0);
 
-//            mContext = context;
+        mDrawerRecyclerView = (RecyclerView) header.findViewById(R.id.drawer_list_recycler);
+        RecyclerView.LayoutManager mDrawerLayoutManager = new LinearLayoutManager(getApplicationContext());
+        mDrawerRecyclerView.setLayoutManager(mDrawerLayoutManager);
+        mDrawerRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mDrawerRecyclerView.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+        mDrawerRecyclerView.setHasFixedSize(true);
+
+
+        //The DrawerItemAdapter is responsible for displaying each item in the list.
+        mDrawerEntryAdapter = new DrawerItemAdapter(this, mDrawerListModel, this);
+        mDrawerRecyclerView.setAdapter(mDrawerEntryAdapter);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -127,14 +127,6 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
         mDrawer.addDrawerListener(mToggle);
         mToggle.syncState();
 
-        mDrawer.refreshDrawableState();
-        mNavigationView = (NavigationView) findViewById(R.id.nav_view);
-        mNavigationView.setItemIconTintList(null);
-        mNavigationView.setNavigationItemSelectedListener(this);
-
-
-        // adding nav mDrawer items
-//        addDrawerItem(mAppItemModelList);
     }
 
 //    @Override
@@ -176,11 +168,11 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
         LOGD(TAG, "onDestroy");
     }
 
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        LOGD(TAG, "onNavigationItemSelected");
-        return false;
-    }
+//    @Override
+//    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+//        LOGD(TAG, "onNavigationItemSelected");
+//        return false;
+//    }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -196,20 +188,21 @@ public class BaseActivity extends AppCompatActivity implements NavigationView.On
         LOGD(TAG, "onSaveInstanceState");
     }
 
-//    @Override
-//    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-//        super.onRestoreInstanceState(savedInstanceState);
-//        mNavigationView = (NavigationView) findViewById(R.id.nav_view);
-//        LOGD(TAG, "onRestoreInstanceState");
-//
-//    }
 
-//    protected Parcelable onSaveInstanceState() {
-//        Parcelable superState = super.onSaveInstanceState();
-//        NavigationView.SavedState state = new NavigationView.SavedState(superState);
-//        state.menuState = new Bundle();
-//        this.mMenu.savePresenterStates(state.menuState);
-//        return state;
-//    }
+    /**
+     * The interface that receives onClick messages from DrawerItemAdapter.
+     */
+    @Override
+    public boolean onNavigationItemSelected(DrawerItemModel item) {
+        if (mToast != null) {
+            mToast.cancel();
+        }
+        String toastMessage = "Item #" + item.getId() + " clicked.";
+        mToast = Toast.makeText(getApplicationContext(), toastMessage, Toast.LENGTH_LONG);
+
+        mToast.show();
+
+        return true;
+    }
 
 }

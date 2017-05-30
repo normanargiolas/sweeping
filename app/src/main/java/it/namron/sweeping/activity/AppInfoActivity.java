@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import it.namron.sweeping.fragment.AppInfoFragment;
 import it.namron.sweeping.fragment.ManageFragment;
 import it.namron.sweeping.model.AppItemModel;
+import it.namron.sweeping.model.DrawerItemModel;
 import it.namron.sweeping.sweeping.R;
 
 import static it.namron.sweeping.utils.Constant.APP_SELECTED_BUNDLE;
@@ -34,10 +35,6 @@ public class AppInfoActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_app_info);
 
-//        setContentView(R.layout.activity_main_f);
-
-
-        setDrawer(getApplicationContext());
 
         if (savedInstanceState != null) {
             // The activity is being re-created. Use the
@@ -59,6 +56,9 @@ public class AppInfoActivity extends BaseActivity {
 //
 //        }
 
+        //Set and populate drawer
+        setDrawer(getApplicationContext());
+        addDrawerItemFromAppList(null);
 
         //Set initial fragment
         Fragment fragment = new AppInfoFragment();
@@ -68,7 +68,6 @@ public class AppInfoActivity extends BaseActivity {
         if (bundle != null) {
             mAppItem = (AppItemModel) bundle.getParcelable(APP_SELECTED_BUNDLE);
             Log.d(LOG_TAG, "Start new Fragment-->" + mAppItem.getAppName());
-
             fragment.setArguments(bundle);
         }
         fragmentManager.beginTransaction().replace(R.id.content_frame_app_info, fragment).commit();
@@ -80,12 +79,12 @@ public class AppInfoActivity extends BaseActivity {
      * Start new Fragment
      */
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(DrawerItemModel item) {
         Fragment fragment = null;
         Bundle bundle = null;
 
         // Handle navigation view item clicks here.
-        int id = item.getItemId();
+        int id = item.getId();
 
         switch (id) {
             case R.id.nav_manage:
@@ -94,7 +93,7 @@ public class AppInfoActivity extends BaseActivity {
                 fragment = new ManageFragment();
                 break;
             default:
-                AppItemModel appItemModel = getAppItemById(id);
+                AppItemModel appItemModel = getAppItemByDrawerId(id);
                 bundle = new Bundle();
                 bundle.putParcelable(APP_SELECTED_BUNDLE, appItemModel);
 
