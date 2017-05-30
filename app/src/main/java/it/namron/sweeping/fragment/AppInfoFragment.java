@@ -19,13 +19,14 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.namron.sweeping.dialog.AlertMainFolderDialog;
 import it.namron.sweeping.dialog.AlertSelectedFolderDialog;
 import it.namron.sweeping.utils.TelegramApp;
 import it.namron.sweeping.utils.WhatsApp;
 import it.namron.sweeping.adapter.DirectoryItemAdapter;
 import it.namron.sweeping.dialog.PerformCopyDialog;
 import it.namron.sweeping.dialog.parameter.PerformCopyDialogFromParameter;
-import it.namron.sweeping.dialog.PerformCopyDialogToParameter;
+import it.namron.sweeping.dialog.parameter.PerformCopyDialogToParameter;
 import it.namron.sweeping.model.AppItemModel;
 import it.namron.sweeping.model.DirectoryItemModel;
 import it.namron.sweeping.sweeping.R;
@@ -46,8 +47,10 @@ import static it.namron.sweeping.utils.Constant.PERFORM_COPY_DIALOG_PARAMETER_TA
  * Created by norman on 09/05/17.
  */
 
-public class AppInfoFragment extends Fragment
-        implements DirectoryItemAdapter.DirectoryAdapterListener, PerformCopyDialog.ResoultDialogListener {
+public class AppInfoFragment extends Fragment implements
+        DirectoryItemAdapter.DirectoryAdapterListener,
+        PerformCopyDialog.ResoultPerformCopyDialogListener,
+        AlertMainFolderDialog.ResoultAlertMainFolderDialogListener {
 
     private static final String LOG_TAG = AppInfoFragment.class.getSimpleName();
 
@@ -70,6 +73,7 @@ public class AppInfoFragment extends Fragment
     private LoaderManager mLoaderManager;
 
     private Toast mToast;
+    PerformCopyDialog mPerformeCopyDialog;
 
     public AppInfoFragment() {
 
@@ -197,13 +201,13 @@ public class AppInfoFragment extends Fragment
             public void onClick(View view) {
                 if (mAppItem != null && mDirectoryListModels != null) {
                     if (isSelected(mDirectoryListModels) == true) {
-                        PerformCopyDialog performeCopyDialog = new PerformCopyDialog();
-                        performeCopyDialog.setTargetFragment(AppInfoFragment.this, DIALOG_FRAGMENT);
+                        mPerformeCopyDialog = new PerformCopyDialog();
+                        mPerformeCopyDialog.setTargetFragment(AppInfoFragment.this, DIALOG_FRAGMENT);
 
                         Bundle bundleForDialog = createPerformCopyBundle();
-                        performeCopyDialog.setArguments(bundleForDialog);
+                        mPerformeCopyDialog.setArguments(bundleForDialog);
                         // Show Alert DialogFragment
-                        performeCopyDialog.show(fm, PERFORM_COPY_DIALOG_PARAMETER_TAG);
+                        mPerformeCopyDialog.show(fm, PERFORM_COPY_DIALOG_PARAMETER_TAG);
                     } else {
                         AlertSelectedFolderDialog dialog = new AlertSelectedFolderDialog();
                         dialog.show(getFragmentManager(), ALERT_SELECTED_FOLDER_DIALOG_TAG);
@@ -281,8 +285,10 @@ public class AppInfoFragment extends Fragment
         mToast.show();
     }
 
+
+
     @Override
-    public void onResoultDialog(@NonNull PerformCopyDialogFromParameter parameter) {
+    public void onResoultPerformCopyDialog(@NonNull PerformCopyDialogFromParameter parameter) {
 
         if (mToast != null) {
             mToast.cancel();
@@ -290,21 +296,34 @@ public class AppInfoFragment extends Fragment
         String toastMessage = "Folder:" + parameter.getFolder() + " Mantieni originali: " + parameter.getOriginal().toString();
         mToast = Toast.makeText(this.getContext(), toastMessage, Toast.LENGTH_LONG);
         mToast.show();
-        if (isMainFolderPresent(parameter.getFolder()) == false) {
 
+
+        if (isMainFolderJustPresent(parameter.getFolder()) == false) {
+            mPerformeCopyDialog.dismiss();
+
+            
+            //inizia la porcedura di copia
+
+            Toast.makeText(this.getContext(), "Crea cartella ed inizia la procedura di copia", Toast.LENGTH_LONG).show();
         } else {
-            PerformCopyDialogToParameter.AlertMainFolderDialog dialog = new PerformCopyDialogToParameter.AlertMainFolderDialog();
-            // Show DialogFragment
+            AlertMainFolderDialog dialog = new AlertMainFolderDialog();
+            dialog.setTargetFragment(AppInfoFragment.this, DIALOG_FRAGMENT);
             dialog.show(getFragmentManager(), ALERT_MAIN_FOLDER_DIALOG_TAG);
-
         }
-//        mDirectoryListModels
-
     }
 
-    private boolean isMainFolderPresent(String folder) {
-
+    private boolean isMainFolderJustPresent(String folder) {
+        //todo da implementare
         return true;
+    }
+
+    @Override
+    public void onContinueAlertMainFolderDialog(@NonNull boolean resoult) {
+        mPerformeCopyDialog.dismiss();
+
+        //inizia la porcedura di copia
+        Toast.makeText(this.getContext(), "Cartella già presente ma inizia la procedura di copia", Toast.LENGTH_LONG).show();
+
     }
 }
 

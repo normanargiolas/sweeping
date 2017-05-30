@@ -22,14 +22,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import it.namron.sweeping.dialog.parameter.PerformCopyDialogFromParameter;
+import it.namron.sweeping.dialog.parameter.PerformCopyDialogToParameter;
 import it.namron.sweeping.sweeping.R;
 
 import static it.namron.sweeping.utils.Constant.ALERT_FOLDER_DIALOG_TAG;
 import static it.namron.sweeping.utils.Constant.PERFORM_COPY_DIALOG_PARAMETER_BUNDLE;
 
-public class PerformCopyDialog extends DialogFragment {
+public class PerformCopyDialog extends DialogFragment{
 
-    private ResoultDialogListener mListener;
+    private ResoultPerformCopyDialogListener mListener;
 
     RadioButton mPerformeRdBtnSposta;
     RadioButton mPerformeRdBtnTieni;
@@ -37,8 +38,8 @@ public class PerformCopyDialog extends DialogFragment {
     EditText mPerformeEditText;
     PerformCopyDialogFromParameter mParameterFromObj;
 
-    public interface ResoultDialogListener {
-        void onResoultDialog(PerformCopyDialogFromParameter parameter);
+    public interface ResoultPerformCopyDialogListener {
+        void onResoultPerformCopyDialog(PerformCopyDialogFromParameter parameter);
     }
 
     public PerformCopyDialog() {
@@ -82,11 +83,11 @@ public class PerformCopyDialog extends DialogFragment {
 //                    fall.setVisibility(View.GONE);
 //                    trip.setVisibility(View.GONE);
 //                    illness.setVisibility(View.GONE);
-//                                mListener.onResoultDialog("sposta");
+//                                mListener.onResoultPerformCopyDialog("sposta");
 
                                 break;
                             case R.id.performe_rdBtn_tieni:
-//                                mListener.onResoultDialog("tieni");
+//                                mListener.onResoultPerformCopyDialog("tieni");
 
                                 // 'Accident' checked
                                 break;
@@ -103,7 +104,7 @@ public class PerformCopyDialog extends DialogFragment {
                             mParameterFromObj.setFolder(mPerformeEditText.getText().toString());
                             mParameterFromObj.setOriginal(mPerformeRdBtnTieni.isChecked());
 
-                            mListener.onResoultDialog(mParameterFromObj);
+                            mListener.onResoultPerformCopyDialog(mParameterFromObj);
                         } else {
                             AlertFolderNameDialog alertFolderDialog = new AlertFolderNameDialog();
                             // Show DialogFragment
@@ -131,7 +132,7 @@ public class PerformCopyDialog extends DialogFragment {
                 performeBtnCancel.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-//                        mListener.onResoultDialog("Cancell");
+//                        mListener.onResoultPerformCopyDialog("Cancell");
                         dismiss();
                     }
                 });
@@ -165,7 +166,7 @@ public class PerformCopyDialog extends DialogFragment {
 //                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
 //                    public void onClick(DialogInterface dialog, int which) {
 //                        // Do something else
-//                        mListener.onResoultDialog("OK");
+//                        mListener.onResoultPerformCopyDialog("OK");
 //                    }
 //                })
 //
@@ -173,7 +174,7 @@ public class PerformCopyDialog extends DialogFragment {
 //                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 //                    public void onClick(DialogInterface dialog,	int which) {
 //                        // Do something else
-//                        mListener.onResoultDialog("Cancel");
+//                        mListener.onResoultPerformCopyDialog("Cancel");
 //                        PerformCopyDialog.this.getDialog().cancel();
 //                    }
 //                }).create();
@@ -185,11 +186,11 @@ public class PerformCopyDialog extends DialogFragment {
         // Verify that the host activity implements the callback interface
         try {
             // Instantiate the EditNameDialogListener so we can send events to the host
-            mListener = (ResoultDialogListener) getTargetFragment();
+            mListener = (ResoultPerformCopyDialogListener) getTargetFragment();
         } catch (ClassCastException e) {
             // The activity doesn't implement the interface, throw exception
             throw new ClassCastException(context.toString()
-                    + " must implement ResoultDialogListener");
+                    + " must implement ResoultPerformCopyDialogListener");
         }
     }
 

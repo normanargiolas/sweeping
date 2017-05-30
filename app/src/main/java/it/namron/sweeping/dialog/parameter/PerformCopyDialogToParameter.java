@@ -1,4 +1,4 @@
-package it.namron.sweeping.dialog;
+package it.namron.sweeping.dialog.parameter;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -90,50 +90,5 @@ public class PerformCopyDialogToParameter implements Parcelable {
         } else {
             dest.writeParcelable(null, flags);
         }
-
-    }
-
-    /**
-     * Created by norman on 27/05/17.
-     */
-
-    public static class AlertMainFolderDialog extends DialogFragment {
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            return new AlertDialog.Builder(getActivity())
-                    // Set Dialog Icon
-                    .setIcon(R.drawable.androidhappy)
-                    // Set Dialog Title
-                    .setTitle(R.string.main_folder_dialog_title)
-                    // Set Dialog Message
-                    .setMessage(R.string.main_folder_dialog_message)
-
-                    // Positive button
-                    .setPositiveButton(R.string.continua, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            // Do something else
-                            dismiss();
-                        }
-                    })
-                    // Neutral button
-                    .setNeutralButton(R.string.rinomina, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            // Do something else
-                            dismiss();
-                        }
-                    })
-                    // Negative button
-                    .setNegativeButton(R.string.annulla, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            // Do something else
-                            dismiss();
-                        }
-                    })
-                    .create();
-        }
-
-    //    public void show(FragmentManager fragmentManager, String s) {
-    //
-    //    }
     }
 }

@@ -5,46 +5,18 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="menu">Hello menu!</string>
 
-
-    <string-array name="nav_drawer_items">
-        <item>First</item>
-        <item>Second</item>
-        <!-- <item>Third</item>
-        <item>Fourth</item>
-        <item>Fifth</item>
-        <item>Sixth</item> -->
-    </string-array>
-
-    <array name="nav_drawer_icons">
-        <item>@drawable/ic_menu_camera</item>
-        <item>@drawable/ic_menu_gallery</item>
-        <!--
-        <item>@drawable/ic_launcher</item>
-        <item>@drawable/ic_launcher</item>
-        <item>@drawable/ic_launcher</item>
-        <item>@drawable/ic_launcher</item>
-        -->
-
-    </array>
-
     <string name="action_settings">Settings</string>
-
-
-
-
-
     <!--voci alert dialog-->
     <string name="ok">Ok</string>
     <string name="annulla">Annulla</string>
     <string name="rinomina">Rinomina</string>
     <string name="continua">Continua</string>
 
-
     <string name="folder_name_dialog_message">Nome della cartella non valido!</string>
     <string name="folder_name_dialog_title">Attenzione</string>
     <string name="selected_folder_dialog_message">Selezionare almeno una cartella!</string>
     <string name="selected_folder_dialog_title">Attenzione</string>
-    <string name="main_folder_dialog_message">Nome della cartella non valido!</string>
+    <string name="main_folder_dialog_message">Cartella già presente!</string>
     <string name="main_folder_dialog_title">Attenzione</string>
 
     <string name="performe_copy_dialog_title">Titolo Applicazione</string>
