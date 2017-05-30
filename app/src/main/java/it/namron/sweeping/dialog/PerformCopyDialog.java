@@ -106,7 +106,7 @@ public class PerformCopyDialog extends DialogFragment {
 
                             mListener.onResoultDialog(mParameterFromObj);
                         } else {
-                            AlertFolderDialog alertFolderDialog = new AlertFolderDialog();
+                            AlertFolderNameDialog alertFolderDialog = new AlertFolderNameDialog();
                             // Show DialogFragment
                             alertFolderDialog.show(getFragmentManager(), ALERT_FOLDER_DIALOG_TAG);
                         }

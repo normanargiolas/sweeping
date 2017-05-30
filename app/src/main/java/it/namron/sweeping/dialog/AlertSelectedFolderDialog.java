@@ -12,7 +12,7 @@ import it.namron.sweeping.sweeping.R;
  * Created by norman on 27/05/17.
  */
 
-public class AlertFolderDialog extends DialogFragment {
+public class AlertSelectedFolderDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         return new AlertDialog.Builder(getActivity())
@@ -21,7 +21,7 @@ public class AlertFolderDialog extends DialogFragment {
                 // Set Dialog Title
                 .setTitle("Attenzione")
                 // Set Dialog Message
-                .setMessage("Nome della cartella non valido!")
+                .setMessage("Selezionare almeno una cartella!")
 
                 // Positive button
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {

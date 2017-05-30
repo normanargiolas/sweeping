@@ -27,13 +27,13 @@ public class DirectoryItemAdapter extends RecyclerView.Adapter<DirectoryItemAdap
     private final Context mContext;
 
     private List<DirectoryItemModel> messages;
-    private MessageAdapterListener listener;
+    private DirectoryAdapterListener listener;
 
-    public interface MessageAdapterListener {
+    public interface DirectoryAdapterListener {
         void onIconDirectoryClicked(int position);
     }
 
-    public DirectoryItemAdapter(@NonNull Context context, MessageAdapterListener listener, List<DirectoryItemModel> messages) {
+    public DirectoryItemAdapter(@NonNull Context context, DirectoryAdapterListener listener, List<DirectoryItemModel> messages) {
         this.listener = listener;
         this.messages = messages;
         mContext = context;

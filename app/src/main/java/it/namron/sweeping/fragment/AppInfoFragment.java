@@ -18,6 +18,8 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.namron.sweeping.dialog.AlertFolderNameDialog;
+import it.namron.sweeping.dialog.AlertSelectedFolderDialog;
 import it.namron.sweeping.utils.TelegramApp;
 import it.namron.sweeping.utils.WhatsApp;
 import it.namron.sweeping.adapter.DirectoryItemAdapter;
@@ -28,6 +30,7 @@ import it.namron.sweeping.model.AppItemModel;
 import it.namron.sweeping.model.DirectoryItemModel;
 import it.namron.sweeping.sweeping.R;
 
+import static it.namron.sweeping.utils.Constant.ALERT_FOLDER_DIALOG_TAG;
 import static it.namron.sweeping.utils.Constant.APP_FACEBOOK;
 import static it.namron.sweeping.utils.Constant.APP_MESSENGER;
 import static it.namron.sweeping.utils.Constant.APP_NAME_BUNDLE;
@@ -43,7 +46,7 @@ import static it.namron.sweeping.utils.Constant.PERFORM_COPY_DIALOG_PARAMETER_TA
  */
 
 public class AppInfoFragment extends Fragment
-        implements DirectoryItemAdapter.MessageAdapterListener, PerformCopyDialog.ResoultDialogListener {
+        implements DirectoryItemAdapter.DirectoryAdapterListener, PerformCopyDialog.ResoultDialogListener {
 
     private static final String LOG_TAG = AppInfoFragment.class.getSimpleName();
 
@@ -171,6 +174,15 @@ public class AppInfoFragment extends Fragment
         }
     };
 
+
+    private boolean isSelected(List<DirectoryItemModel> mDirectoryListModels) {
+        for (DirectoryItemModel directory : mDirectoryListModels) {
+            if (directory.isSelected())
+                return true;
+        }
+        return false;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -182,20 +194,28 @@ public class AppInfoFragment extends Fragment
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (mAppItem != null) {
-                    PerformCopyDialog performeCopyDialog = new PerformCopyDialog();
-                    performeCopyDialog.setTargetFragment(AppInfoFragment.this, DIALOG_FRAGMENT);
+                if (mAppItem != null && mDirectoryListModels != null) {
+                    if (isSelected(mDirectoryListModels) == true) {
+                        PerformCopyDialog performeCopyDialog = new PerformCopyDialog();
+                        performeCopyDialog.setTargetFragment(AppInfoFragment.this, DIALOG_FRAGMENT);
 
-                    Bundle bundleForDialog = createPerformCopyBundle();
-                    performeCopyDialog.setArguments(bundleForDialog);
-                    // Show Alert DialogFragment
-                    performeCopyDialog.show(fm, PERFORM_COPY_DIALOG_PARAMETER_TAG);
+                        Bundle bundleForDialog = createPerformCopyBundle();
+                        performeCopyDialog.setArguments(bundleForDialog);
+                        // Show Alert DialogFragment
+                        performeCopyDialog.show(fm, PERFORM_COPY_DIALOG_PARAMETER_TAG);
+                    } else {
+                        AlertSelectedFolderDialog dialog = new AlertSelectedFolderDialog();
+                        // Show DialogFragment
+                        dialog.show(getFragmentManager(), ALERT_FOLDER_DIALOG_TAG);
+                    }
 
 
                     //Mostrare un menu dialog di conferma
                     //Recuperare i dati
                     //Avviare la procedura di copia
                     //Eventualmente cancellare gli originali
+
+
                 }
 
 
@@ -246,9 +266,9 @@ public class AppInfoFragment extends Fragment
 
     @Override
     public void onIconDirectoryClicked(int position) {
-        DirectoryItemModel message = mDirectoryListModels.get(position);
-        message.setSelected(!message.isSelected());
-        mDirectoryListModels.set(position, message);
+        DirectoryItemModel directoryItem = mDirectoryListModels.get(position);
+        directoryItem.setSelected(!directoryItem.isSelected());
+        mDirectoryListModels.set(position, directoryItem);
         mDirectoryAdapter.notifyDataSetChanged();
 
 
