@@ -2,7 +2,6 @@ package it.namron.sweeping.activity;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -21,13 +20,13 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.namron.core.utility.AppEntry;
-import it.namron.core.utility.AppListLoader;
 import it.namron.sweeping.adapter.AppItemAdapter;
 import it.namron.sweeping.fragment.ManageFragment;
 import it.namron.sweeping.model.AppItemModel;
 import it.namron.sweeping.model.DrawerItemModel;
 import it.namron.sweeping.sweeping.R;
+import it.namron.sweeping.utils.AppEntry;
+import it.namron.sweeping.utils.AppListLoader;
 import it.namron.sweeping.utils.PackageApp;
 
 import static it.namron.sweeping.utils.Constant.APP_SELECTED_BUNDLE;

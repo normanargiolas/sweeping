@@ -4,13 +4,16 @@ package it.namron.sweeping.dialog;
  * Created by norman on 24/05/17.
  */
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -99,6 +102,9 @@ public class PerformCopyDialog extends DialogFragment{
                 performeBtnOkay.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        hideKeyboard(getActivity(), mPerformeEditText.getWindowToken());
+
+
                         if (validFormatFolder(mPerformeEditText.getText().toString())) {
                             mParameterFromObj = new PerformCopyDialogFromParameter();
                             mParameterFromObj.setFolder(mPerformeEditText.getText().toString());
@@ -132,6 +138,8 @@ public class PerformCopyDialog extends DialogFragment{
                 performeBtnCancel.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        hideKeyboard(getActivity(), mPerformeEditText.getWindowToken());
+
 //                        mListener.onResoultPerformCopyDialog("Cancell");
                         dismiss();
                     }
@@ -140,6 +148,19 @@ public class PerformCopyDialog extends DialogFragment{
             }
         }
         return null;
+    }
+
+    /**
+     * This method is used to hide a keyboard after a user has
+     * finished typing the url.
+     */
+    public void hideKeyboard(Activity activity,
+                             IBinder windowToken) {
+        InputMethodManager mgr =
+                (InputMethodManager) activity.getSystemService
+                        (Context.INPUT_METHOD_SERVICE);
+        mgr.hideSoftInputFromWindow(windowToken,
+                0);
     }
 
 

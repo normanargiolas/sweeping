@@ -3,7 +3,6 @@ package it.namron.sweeping.utils;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.namron.core.utility.AppEntry;
 import it.namron.sweeping.model.AppItemModel;
 
 import static it.namron.sweeping.utils.Constant.APP_TARGET_LIST;

@@ -21,6 +21,7 @@ import java.util.List;
 
 import it.namron.sweeping.dialog.AlertMainFolderDialog;
 import it.namron.sweeping.dialog.AlertSelectedFolderDialog;
+import it.namron.sweeping.utils.Folder;
 import it.namron.sweeping.utils.TelegramApp;
 import it.namron.sweeping.utils.WhatsApp;
 import it.namron.sweeping.adapter.DirectoryItemAdapter;
@@ -286,25 +287,24 @@ public class AppInfoFragment extends Fragment implements
     }
 
 
-
     @Override
     public void onResoultPerformCopyDialog(@NonNull PerformCopyDialogFromParameter parameter) {
 
-        if (mToast != null) {
-            mToast.cancel();
-        }
-        String toastMessage = "Folder:" + parameter.getFolder() + " Mantieni originali: " + parameter.getOriginal().toString();
-        mToast = Toast.makeText(this.getContext(), toastMessage, Toast.LENGTH_LONG);
-        mToast.show();
+//        if (mToast != null) {
+//            mToast.cancel();
+//        }
+//        String toastMessage = "Folder:" + parameter.getFolder() + " Mantieni originali: " + parameter.getOriginal().toString();
+//        mToast = Toast.makeText(this.getContext(), toastMessage, Toast.LENGTH_LONG);
+//        mToast.show();
 
 
         if (isMainFolderJustPresent(parameter.getFolder()) == false) {
             mPerformeCopyDialog.dismiss();
 
-            
+            searchFolderToCopy(mDirectoryListModels);
             //inizia la porcedura di copia
 
-            Toast.makeText(this.getContext(), "Crea cartella ed inizia la procedura di copia", Toast.LENGTH_LONG).show();
+//            Toast.makeText(this.getContext(), "Crea cartella ed inizia la procedura di copia", Toast.LENGTH_LONG).show();
         } else {
             AlertMainFolderDialog dialog = new AlertMainFolderDialog();
             dialog.setTargetFragment(AppInfoFragment.this, DIALOG_FRAGMENT);
@@ -318,13 +318,24 @@ public class AppInfoFragment extends Fragment implements
     }
 
     @Override
-    public void onContinueAlertMainFolderDialog(@NonNull boolean resoult) {
+    public void onContinueAlertMainFolderDialog(boolean resoult) {
         mPerformeCopyDialog.dismiss();
 
-        //inizia la porcedura di copia
-        Toast.makeText(this.getContext(), "Cartella già presente ma inizia la procedura di copia", Toast.LENGTH_LONG).show();
-
+        searchFolderToCopy(mDirectoryListModels);
+//        Toast.makeText(this.getContext(), "Cartella già presente ma inizia la procedura di copia", Toast.LENGTH_LONG).show();
     }
+
+    private void searchFolderToCopy(List<DirectoryItemModel> mDirectoryListModels) {
+//        mDirectoryListModels contiene tutte le informazioni
+        if (mDirectoryListModels != null) {
+            List<Folder> folders = getFoldersSize();
+        }
+    }
+
+    private List<Folder> getFoldersSize() {
+        return null;
+    }
+
 }
 
 
