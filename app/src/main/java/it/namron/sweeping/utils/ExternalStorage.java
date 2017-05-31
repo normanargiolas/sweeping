@@ -38,7 +38,7 @@ public class ExternalStorage {
         return null;
     }
 
-    public Map<Integer, String> listEnvironmentVariableStoreSDCardRootDirectory(){
+    public static Map<Integer, String> listEnvironmentVariableStoreSDCardRootDirectory(){
         final String FLAG = "mnt";
         final String SECONDARY_STORAGE = System.getenv("SECONDARY_STORAGE");
         final String EXTERNAL_STORAGE_DOCOMO = System.getenv("EXTERNAL_STORAGE_DOCOMO");

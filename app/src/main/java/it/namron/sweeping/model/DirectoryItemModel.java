@@ -9,6 +9,7 @@ public class DirectoryItemModel {
 
     private boolean isSelected;
     private String folderName;
+    private String path;
 
     public DirectoryItemModel() {
     }
@@ -35,5 +36,13 @@ public class DirectoryItemModel {
 
     public void setFolderName(String folderName) {
         this.folderName = folderName;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 }

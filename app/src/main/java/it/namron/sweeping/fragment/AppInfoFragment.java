@@ -1,5 +1,7 @@
 package it.namron.sweeping.fragment;
 
+import android.app.Activity;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -18,9 +20,15 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+import it.namron.sweeping.concurrency.FolderSizeAsyncTask;
 import it.namron.sweeping.dialog.AlertMainFolderDialog;
 import it.namron.sweeping.dialog.AlertSelectedFolderDialog;
+import it.namron.sweeping.listener.FolderSizeAsyncTaskListener;
+import it.namron.sweeping.utils.ExternalStorage;
 import it.namron.sweeping.utils.Folder;
 import it.namron.sweeping.utils.TelegramApp;
 import it.namron.sweeping.utils.WhatsApp;
@@ -51,9 +59,16 @@ import static it.namron.sweeping.utils.Constant.PERFORM_COPY_DIALOG_PARAMETER_TA
 public class AppInfoFragment extends Fragment implements
         DirectoryItemAdapter.DirectoryAdapterListener,
         PerformCopyDialog.ResoultPerformCopyDialogListener,
-        AlertMainFolderDialog.ResoultAlertMainFolderDialogListener {
+        AlertMainFolderDialog.ResoultAlertMainFolderDialogListener,
+        FolderSizeAsyncTaskListener {
 
     private static final String LOG_TAG = AppInfoFragment.class.getSimpleName();
+
+    private FolderSizeAsyncTaskListener mAppInfofragmentListener;
+    FolderSizeAsyncTask mFolderSizeAsyncTask;
+    ExecutorService threadPoolExecutor = Executors.newFixedThreadPool(2);
+    private int mCurrWorking = 0;
+
 
     //References to RecyclerView and Adapter to reset the list to its
     //"pretty" state when the reset menu item is clicked.
@@ -80,6 +95,16 @@ public class AppInfoFragment extends Fragment implements
 
     }
 
+    @Override
+    public void notifyOnFolderSizeResoult(Integer result, String senderCode) {
+        Log.d(LOG_TAG, "notifyOnFolderSizeResoult: " + result);
+
+    }
+
+    @Override
+    public void notifyOnFolderSizeProgress(Integer progress, String senderCode) {
+
+    }
 
     private LoaderManager.LoaderCallbacks<List<DirectoryItemModel>> mAppInfoFolderLoaderCallback = new LoaderManager.LoaderCallbacks<List<DirectoryItemModel>>() {
 
@@ -87,6 +112,7 @@ public class AppInfoFragment extends Fragment implements
         public Loader<List<DirectoryItemModel>> onCreateLoader(int loaderId, Bundle args) {
             switch (loaderId) {
                 case ID_APP_INFO_FOLDER_LOADER:
+//                    return new FolderSizeAsyncTask(getContext());
                     return new AsyncTaskLoader<List<DirectoryItemModel>>(getContext()) {
 
                         List<DirectoryItemModel> mResponce;
@@ -139,10 +165,17 @@ public class AppInfoFragment extends Fragment implements
 
                             if (appDirList != null) {
                                 for (String dir : appDirList) {
+                                    Uri dirUri = Uri.parse(dir);
+                                    String folder = dirUri.getLastPathSegment();
                                     msg = new DirectoryItemModel();
-                                    msg.setFolderName(dir);
+                                    msg.setPath(dir);
+                                    msg.setFolderName(folder);
                                     msg.setSelected(true);
                                     mDirectoryListModels.add(msg);
+
+                                    mCurrWorking++;
+                                    mFolderSizeAsyncTask = new FolderSizeAsyncTask(getActivity(), mAppInfofragmentListener);
+                                    mFolderSizeAsyncTask.executeOnExecutor(threadPoolExecutor, dirUri);
                                 }
                             }
 
@@ -153,6 +186,7 @@ public class AppInfoFragment extends Fragment implements
                     throw new RuntimeException("Loader Not Implemented: " + loaderId);
             }
         }
+
 
         @Override
         public void onLoadFinished(Loader<List<DirectoryItemModel>> loader, List<DirectoryItemModel> data) {
@@ -179,6 +213,19 @@ public class AppInfoFragment extends Fragment implements
             }
         }
     };
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        Log.d(LOG_TAG, "onAttach");
+        try {
+            mAppInfofragmentListener = (FolderSizeAsyncTaskListener) this;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement FolderSizeAsyncTaskListener");
+        }
+    }
+
 
 
     private boolean isSelected(List<DirectoryItemModel> mDirectoryListModels) {
@@ -327,14 +374,36 @@ public class AppInfoFragment extends Fragment implements
 
     private void searchFolderToCopy(List<DirectoryItemModel> mDirectoryListModels) {
 //        mDirectoryListModels contiene tutte le informazioni
+
+
+        List<String> all = ExternalStorage.getAllStorageLocations();
+        String sd = ExternalStorage.getSDStorageLocation();
+        Map<Integer, String> list = ExternalStorage.listEnvironmentVariableStoreSDCardRootDirectory();
+
+
         if (mDirectoryListModels != null) {
-            List<Folder> folders = getFoldersSize();
+            List<Folder> foldersToCopy = new ArrayList<>();
+
+            for (DirectoryItemModel directory : mDirectoryListModels) {
+                if (directory.isSelected()) {
+
+
+                    Folder folder = getFoldersInfo(foldersToCopy);
+                    if (folder != null) {
+                        folder.setName(directory.getFolderName());
+                        foldersToCopy.add(folder);
+                    }
+                }
+            }
+
+
         }
     }
 
-    private List<Folder> getFoldersSize() {
+    private Folder getFoldersInfo(List<Folder> foldersToCopy) {
         return null;
     }
+
 
 }
 
