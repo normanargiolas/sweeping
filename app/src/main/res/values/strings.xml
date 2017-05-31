@@ -11,6 +11,8 @@
     <string name="annulla">Annulla</string>
     <string name="rinomina">Rinomina</string>
     <string name="continua">Continua</string>
+    <string name="calcolo">Calcolo...</string>
+
 
     <string name="folder_name_dialog_message">Nome della cartella non valido!</string>
     <string name="folder_name_dialog_title">Attenzione</string>

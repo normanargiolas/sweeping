@@ -1,6 +1,5 @@
 package it.namron.sweeping.fragment;
 
-import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -25,21 +24,20 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import it.namron.sweeping.adapter.DirectoryItemAdapter;
 import it.namron.sweeping.concurrency.FolderSizeAsyncTask;
 import it.namron.sweeping.dialog.AlertMainFolderDialog;
 import it.namron.sweeping.dialog.AlertSelectedFolderDialog;
-import it.namron.sweeping.listener.FolderSizeAsyncTaskListener;
-import it.namron.sweeping.utils.ExternalStorage;
-import it.namron.sweeping.utils.Folder;
-import it.namron.sweeping.utils.TelegramApp;
-import it.namron.sweeping.utils.WhatsApp;
-import it.namron.sweeping.adapter.DirectoryItemAdapter;
 import it.namron.sweeping.dialog.PerformCopyDialog;
 import it.namron.sweeping.dialog.parameter.PerformCopyDialogFromParameter;
 import it.namron.sweeping.dialog.parameter.PerformCopyDialogToParameter;
+import it.namron.sweeping.listener.FolderSizeAsyncTaskListener;
 import it.namron.sweeping.model.AppItemModel;
 import it.namron.sweeping.model.DirectoryItemModel;
 import it.namron.sweeping.sweeping.R;
+import it.namron.sweeping.utils.ExternalStorage;
+import it.namron.sweeping.utils.TelegramApp;
+import it.namron.sweeping.utils.WhatsApp;
 
 import static it.namron.sweeping.utils.Constant.ALERT_MAIN_FOLDER_DIALOG_TAG;
 import static it.namron.sweeping.utils.Constant.ALERT_SELECTED_FOLDER_DIALOG_TAG;
@@ -68,7 +66,7 @@ public class AppInfoFragment extends Fragment implements
     private FolderSizeAsyncTaskListener mAppInfofragmentListener;
     FolderSizeAsyncTask mFolderSizeAsyncTask;
     ExecutorService threadPoolExecutor = Executors.newFixedThreadPool(2);
-    private int mCurrWorking = 0;
+    private int mCurrWorking = -1;
 
 
     //References to RecyclerView and Adapter to reset the list to its
@@ -101,9 +99,9 @@ public class AppInfoFragment extends Fragment implements
      * FolderSizeAsyncTask has finished.
      */
     @Override
-    public void notifyOnFolderSizeResoult(Integer result, String senderCode) {
+    public void notifyOnFolderSizeResoult(Long result, int index, String senderCode) {
         Log.d(LOG_TAG, "notifyOnFolderSizeResoult: " + result);
-
+        mDirectoryAdapter.updateSize(result, index);
     }
 
     @Override
@@ -173,12 +171,14 @@ public class AppInfoFragment extends Fragment implements
                                     String folder = dirUri.getLastPathSegment();
                                     msg = new DirectoryItemModel();
                                     msg.setPath(dir);
-                                    msg.setFolderName(folder);
+                                    msg.setName(folder);
                                     msg.setSelected(true);
                                     mDirectoryListModels.add(msg);
 
                                     mCurrWorking++;
-                                    mFolderSizeAsyncTask = new FolderSizeAsyncTask(getActivity(), mAppInfofragmentListener);
+                                    mFolderSizeAsyncTask = new FolderSizeAsyncTask(getActivity(),
+                                            mAppInfofragmentListener,
+                                            mCurrWorking);
                                     mFolderSizeAsyncTask.executeOnExecutor(threadPoolExecutor, dirUri);
                                 }
                             }
@@ -202,7 +202,7 @@ public class AppInfoFragment extends Fragment implements
 
                 Toast.makeText(getActivity(), log, Toast.LENGTH_SHORT).show();
             } else {
-                mDirectoryAdapter.swapFolder(data);
+                mDirectoryAdapter.populateDirectoryItem(data);
             }
         }
 
@@ -210,7 +210,7 @@ public class AppInfoFragment extends Fragment implements
         public void onLoaderReset(Loader<List<DirectoryItemModel>> loader) {
             switch (loader.getId()) {
                 case ID_APP_INFO_FOLDER_LOADER:
-                    mDirectoryAdapter.swapFolder(null);
+                    mDirectoryAdapter.populateDirectoryItem(null);
                     break;
                 default:
                     break;
@@ -229,7 +229,6 @@ public class AppInfoFragment extends Fragment implements
                     + " must implement FolderSizeAsyncTaskListener");
         }
     }
-
 
 
     private boolean isSelected(List<DirectoryItemModel> mDirectoryListModels) {
@@ -393,17 +392,17 @@ public class AppInfoFragment extends Fragment implements
 
 
         if (mDirectoryListModels != null) {
-            List<Folder> foldersToCopy = new ArrayList<>();
+//            List<Folder> foldersToCopy = new ArrayList<>();
 
             for (DirectoryItemModel directory : mDirectoryListModels) {
                 if (directory.isSelected()) {
 
 
-                    Folder folder = getFoldersInfo(foldersToCopy);
-                    if (folder != null) {
-                        folder.setName(directory.getFolderName());
-                        foldersToCopy.add(folder);
-                    }
+//                    Folder folder = getFoldersInfo(foldersToCopy);
+//                    if (folder != null) {
+//                        folder.setName(directory.getName());
+//                        foldersToCopy.add(folder);
+//                    }
                 }
             }
 
@@ -411,9 +410,9 @@ public class AppInfoFragment extends Fragment implements
         }
     }
 
-    private Folder getFoldersInfo(List<Folder> foldersToCopy) {
-        return null;
-    }
+//    private Folder getFoldersInfo(List<Folder> foldersToCopy) {
+//        return null;
+//    }
 
 
 }

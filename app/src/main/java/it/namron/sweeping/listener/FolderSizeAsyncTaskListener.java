@@ -7,6 +7,7 @@ import android.net.Uri;
  */
 
 public interface FolderSizeAsyncTaskListener {
-    void notifyOnFolderSizeResoult(Integer resoult, String senderCode);
+    void notifyOnFolderSizeResoult(Long resoult, int index, String senderCode);
+
     void notifyOnFolderSizeProgress(Integer progress, String senderCode);
 }

@@ -61,9 +61,9 @@ public class WhatsApp {
                         for (int i = 0; i < subdirs.length; i++) {
                             String dir = subdirs[i].getPath();
 
-//                            Uri dirUri = Uri.parse(dir);
-//                            String folder = dirUri.getLastPathSegment();
-                            if (!dir.startsWith(".")) {
+                            Uri dirUri = Uri.parse(dir);
+                            String folder = dirUri.getLastPathSegment();
+                            if (!folder.startsWith(".")) {
                                 listDirectory.add(dir);
                             }
                         }

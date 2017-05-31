@@ -8,8 +8,9 @@ public class DirectoryItemModel {
     private int id;
 
     private boolean isSelected;
-    private String folderName;
+    private String name;
     private String path;
+    private long size;
 
     public DirectoryItemModel() {
     }
@@ -30,12 +31,12 @@ public class DirectoryItemModel {
         isSelected = selected;
     }
 
-    public String getFolderName() {
-        return folderName;
+    public String getName() {
+        return name;
     }
 
-    public void setFolderName(String folderName) {
-        this.folderName = folderName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getPath() {
@@ -44,5 +45,13 @@ public class DirectoryItemModel {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public long getSize() {
+        return size;
+    }
+
+    public void setSize(long size) {
+        this.size = size;
     }
 }

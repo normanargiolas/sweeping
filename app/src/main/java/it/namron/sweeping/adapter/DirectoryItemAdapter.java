@@ -15,6 +15,7 @@ import java.util.List;
 
 import it.namron.sweeping.model.DirectoryItemModel;
 import it.namron.sweeping.sweeping.R;
+import it.namron.sweeping.utils.WrappedDirectorySize;
 
 /**
  * Created by norman on 11/05/17.
@@ -26,16 +27,16 @@ public class DirectoryItemAdapter extends RecyclerView.Adapter<DirectoryItemAdap
 
     private final Context mContext;
 
-    private List<DirectoryItemModel> messages;
+    private List<DirectoryItemModel> mDirectoryItemList;
     private DirectoryAdapterListener listener;
 
     public interface DirectoryAdapterListener {
         void onIconDirectoryClicked(int position);
     }
 
-    public DirectoryItemAdapter(@NonNull Context context, DirectoryAdapterListener listener, List<DirectoryItemModel> messages) {
+    public DirectoryItemAdapter(@NonNull Context context, DirectoryAdapterListener listener, List<DirectoryItemModel> directoryItemList) {
         this.listener = listener;
-        this.messages = messages;
+        mDirectoryItemList = directoryItemList;
         mContext = context;
     }
 
@@ -53,12 +54,17 @@ public class DirectoryItemAdapter extends RecyclerView.Adapter<DirectoryItemAdap
     @Override
     public void onBindViewHolder(DirectoryItemAdapterViewHolder directoryItemAdapterViewHolder, int position) {
         Log.d(TAG, "#" + position);
-        DirectoryItemModel message = messages.get(position);
+        DirectoryItemModel directoryItem = mDirectoryItemList.get(position);
 
-        directoryItemAdapterViewHolder.listItemDirectoryView.setText(message.getFolderName());
+        directoryItemAdapterViewHolder.listItemDirectoryView.setText(directoryItem.getName());
+
+
+        directoryItemAdapterViewHolder.directorySize.setText(WrappedDirectorySize.size(directoryItem.getSize()));
+
+//        directoryItemAdapterViewHolder.directorySize.setText(String.valueOf(directoryItem.getSize()));
 
 //        directoryAdapterViewHolder.bind(position);
-        applyDirectory(directoryItemAdapterViewHolder, message);
+        applyDirectory(directoryItemAdapterViewHolder, directoryItem);
 
         applyClickEvents(directoryItemAdapterViewHolder, position);
     }
@@ -82,43 +88,44 @@ public class DirectoryItemAdapter extends RecyclerView.Adapter<DirectoryItemAdap
         });
     }
 
+    public void updateSize(long size, int position) {
+        mDirectoryItemList.get(position).setSize(size);
+        notifyDataSetChanged();
+    }
+
+    public void populateDirectoryItem(List<DirectoryItemModel> directoryItemList) {
+        mDirectoryItemList = directoryItemList;
+        notifyDataSetChanged();
+    }
+
     @Override
     public long getItemId(int position) {
-        return messages.get(position).getId();
+        return mDirectoryItemList.get(position).getId();
     }
 
     @Override
     public int getItemCount() {
-        if (null == messages) return 0;
-        return messages.size();
+        if (null == mDirectoryItemList) return 0;
+        return mDirectoryItemList.size();
 
 //        if (null == mCursor) return 0;
 //        return mCursor.getColumnCount();
     }
 
-//    public void swapCursor(Cursor newCursor) {
-//        mCursor = newCursor;
-//        notifyDataSetChanged();
-//    }
-
-    public void swapFolder(List<DirectoryItemModel> messages) {
-        this.messages = messages;
-        notifyDataSetChanged();
-    }
-
-
     public class DirectoryItemAdapterViewHolder extends RecyclerView.ViewHolder {
 
         // Will display the position in the list, ie 0 through getItemCount() - 1
         final TextView listItemDirectoryView;
+        final TextView directorySize;
         final ImageView directoryIcon;
 
 
         public DirectoryItemAdapterViewHolder(View itemView) {
             super(itemView);
             directoryIcon = (ImageView) itemView.findViewById(R.id.directory_icon);
-
             listItemDirectoryView = (TextView) itemView.findViewById(R.id.directory_folder);
+            directorySize = (TextView) itemView.findViewById(R.id.directory_size);
+
 //            itemView.setOnClickListener(this);
         }
 

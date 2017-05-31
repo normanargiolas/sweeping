@@ -36,7 +36,7 @@ import it.namron.sweeping.sweeping.R;
 
 public class ManageFragment extends Fragment {
 
-    public static final String LOG_TAG = "ManageFragment";
+    public static final String LOG_TAG = ManageFragment.class.getSimpleName();
 
     /*
      * This number will uniquely identify our FilePickerActivity Intent for get directory path
