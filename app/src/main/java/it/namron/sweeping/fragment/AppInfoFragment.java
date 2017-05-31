@@ -1,6 +1,7 @@
 package it.namron.sweeping.fragment;
 
 import android.app.Activity;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -95,6 +96,10 @@ public class AppInfoFragment extends Fragment implements
 
     }
 
+    /**
+     * This method is used to notify after a doInBackground that implement
+     * FolderSizeAsyncTask has finished.
+     */
     @Override
     public void notifyOnFolderSizeResoult(Integer result, String senderCode) {
         Log.d(LOG_TAG, "notifyOnFolderSizeResoult: " + result);
@@ -117,7 +122,6 @@ public class AppInfoFragment extends Fragment implements
 
                         List<DirectoryItemModel> mResponce;
                         String mAppName;
-
 
                         @Override
                         protected void onStartLoading() {
@@ -215,13 +219,13 @@ public class AppInfoFragment extends Fragment implements
     };
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
         Log.d(LOG_TAG, "onAttach");
         try {
             mAppInfofragmentListener = (FolderSizeAsyncTaskListener) this;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
+            throw new ClassCastException(context.toString()
                     + " must implement FolderSizeAsyncTaskListener");
         }
     }
@@ -316,6 +320,10 @@ public class AppInfoFragment extends Fragment implements
         return rootView;
     }
 
+    /**
+     * This method is used to notify from onBindViewHolder that implement
+     * DirectoryAdapterListener has clicked.
+     */
     @Override
     public void onIconDirectoryClicked(int position) {
         DirectoryItemModel directoryItem = mDirectoryListModels.get(position);
@@ -333,7 +341,10 @@ public class AppInfoFragment extends Fragment implements
         mToast.show();
     }
 
-
+    /**
+     * This method is used to notify after a onClick positive buttn that implement
+     * PerformCopyDialog has clicked.
+     */
     @Override
     public void onResoultPerformCopyDialog(@NonNull PerformCopyDialogFromParameter parameter) {
 
