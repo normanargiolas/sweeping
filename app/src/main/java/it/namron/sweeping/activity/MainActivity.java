@@ -28,6 +28,7 @@ import it.namron.sweeping.sweeping.R;
 import it.namron.sweeping.utils.AppEntry;
 import it.namron.sweeping.utils.AppListLoader;
 import it.namron.sweeping.utils.PackageApp;
+import it.namron.sweeping.utils.ResourceHashCode;
 
 import static it.namron.sweeping.utils.Constant.APP_SELECTED_BUNDLE;
 
@@ -150,6 +151,9 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
 
 //        populateNavigationDrawer(navigationView);
 
+
+        //Set singleton resource hash code
+        ResourceHashCode.getInstance(getApplicationContext());
         Log.d(LOG_TAG, "onCreate done!");
     }
 

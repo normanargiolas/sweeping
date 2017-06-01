@@ -27,7 +27,13 @@ public class Constant {
     public static final String ALERT_SELECTED_FOLDER_DIALOG_TAG = "AlertSelectedFolderDialog_TAG";
 
 
-
+    /**
+     * Valori per gestire size_byte della classe DirectoryItemModel
+     *
+     * */
+    public static final int NOT_INITIALIZED_FOLDER_SIZE = -2;
+    public static final int ILLEGAL_ARGUMENT_FOLDER_SIZE = -1;
+    public static final int NULL_ARGUMENT_FOLDER_SIZE = -3;
 
 
     public static final int DIALOG_FRAGMENT = 1;

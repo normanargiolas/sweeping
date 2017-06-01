@@ -10,7 +10,8 @@ public class DirectoryItemModel {
     private boolean isSelected;
     private String name;
     private String path;
-    private long size;
+    private String sizeString;
+    private long sizeByte;
 
     public DirectoryItemModel() {
     }
@@ -47,11 +48,19 @@ public class DirectoryItemModel {
         this.path = path;
     }
 
-    public long getSize() {
-        return size;
+    public long getSizeByte() {
+        return sizeByte;
     }
 
-    public void setSize(long size) {
-        this.size = size;
+    public void setSizeByte(long sizeByte) {
+        this.sizeByte = sizeByte;
+    }
+
+    public String getSizeString() {
+        return sizeString;
+    }
+
+    public void setSizeString(String sizeString) {
+        this.sizeString = sizeString;
     }
 }

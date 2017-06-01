@@ -12,6 +12,8 @@
     <string name="rinomina">Rinomina</string>
     <string name="continua">Continua</string>
     <string name="calcolo">Calcolo...</string>
+    <string name="illegal_folder">Percorso non valido</string>
+
 
 
     <string name="folder_name_dialog_message">Nome della cartella non valido!</string>

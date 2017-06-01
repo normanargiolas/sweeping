@@ -38,6 +38,7 @@ import it.namron.sweeping.sweeping.R;
 import it.namron.sweeping.utils.ExternalStorage;
 import it.namron.sweeping.utils.TelegramApp;
 import it.namron.sweeping.utils.WhatsApp;
+import it.namron.sweeping.utils.WrappedDirectorySize;
 
 import static it.namron.sweeping.utils.Constant.ALERT_MAIN_FOLDER_DIALOG_TAG;
 import static it.namron.sweeping.utils.Constant.ALERT_SELECTED_FOLDER_DIALOG_TAG;
@@ -48,6 +49,7 @@ import static it.namron.sweeping.utils.Constant.APP_SELECTED_BUNDLE;
 import static it.namron.sweeping.utils.Constant.APP_TELEGRAM;
 import static it.namron.sweeping.utils.Constant.APP_WHATSAPP;
 import static it.namron.sweeping.utils.Constant.DIALOG_FRAGMENT;
+import static it.namron.sweeping.utils.Constant.NOT_INITIALIZED_FOLDER_SIZE;
 import static it.namron.sweeping.utils.Constant.PERFORM_COPY_DIALOG_PARAMETER_BUNDLE;
 import static it.namron.sweeping.utils.Constant.PERFORM_COPY_DIALOG_PARAMETER_TAG;
 
@@ -146,7 +148,7 @@ public class AppInfoFragment extends Fragment implements
                         public List<DirectoryItemModel> loadInBackground() {
 
                             mDirectoryListModels.clear();
-                            DirectoryItemModel msg;
+                            DirectoryItemModel dirItem;
                             List<String> appDirList = null;
 
                             switch (mAppName) {
@@ -169,11 +171,14 @@ public class AppInfoFragment extends Fragment implements
                                 for (String dir : appDirList) {
                                     Uri dirUri = Uri.parse(dir);
                                     String folder = dirUri.getLastPathSegment();
-                                    msg = new DirectoryItemModel();
-                                    msg.setPath(dir);
-                                    msg.setName(folder);
-                                    msg.setSelected(true);
-                                    mDirectoryListModels.add(msg);
+                                    dirItem = new DirectoryItemModel();
+                                    dirItem.setPath(dir);
+                                    dirItem.setName(folder);
+                                    dirItem.setSelected(true);
+                                    dirItem.setSizeByte(NOT_INITIALIZED_FOLDER_SIZE);
+                                    dirItem.setSizeString(WrappedDirectorySize.size(dirItem.getSizeByte()));
+
+                                    mDirectoryListModels.add(dirItem);
 
                                     mCurrWorking++;
                                     mFolderSizeAsyncTask = new FolderSizeAsyncTask(getActivity(),
@@ -190,7 +195,6 @@ public class AppInfoFragment extends Fragment implements
                     throw new RuntimeException("Loader Not Implemented: " + loaderId);
             }
         }
-
 
         @Override
         public void onLoadFinished(Loader<List<DirectoryItemModel>> loader, List<DirectoryItemModel> data) {

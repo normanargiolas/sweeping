@@ -11,12 +11,17 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 
 import it.namron.sweeping.listener.FolderSizeAsyncTaskListener;
+import it.namron.sweeping.utils.ResourceHashCode;
+
+import static it.namron.sweeping.utils.Constant.ILLEGAL_ARGUMENT_FOLDER_SIZE;
+import static it.namron.sweeping.utils.Constant.NULL_ARGUMENT_FOLDER_SIZE;
 
 /**
  * Created by norman on 31/05/17.
  */
 //AsyncTask<Params, Progress, Result>
 public class FolderSizeAsyncTask extends AsyncTask<Uri, Integer, Long> {
+    private final String CLASS_NAME_HASH_CODE = getClass().getSimpleName() + super.hashCode();
 
     private final String LOG_TAG = getClass().getSimpleName();
 
@@ -26,6 +31,12 @@ public class FolderSizeAsyncTask extends AsyncTask<Uri, Integer, Long> {
     private final int mIndex;
 
     public FolderSizeAsyncTask(Activity activityContext, FolderSizeAsyncTaskListener mCallback, int index) {
+        try{
+            ResourceHashCode.setFolderSizeAsyncTaskCode(CLASS_NAME_HASH_CODE);
+        } catch (NullPointerException e) {
+            Log.e(LOG_TAG, "FolderSizeAsyncTask: " + "ResourceHashCode not initialized");
+            e.printStackTrace();
+        }
         this.mActivityContext = activityContext;
         this.mCallback = mCallback;
         this.mIndex = index;
@@ -57,8 +68,8 @@ public class FolderSizeAsyncTask extends AsyncTask<Uri, Integer, Long> {
 
         } catch (IllegalArgumentException e) {
             Log.e(LOG_TAG, "Exception: ", e);
+            return (long) ILLEGAL_ARGUMENT_FOLDER_SIZE;
         }
-        return null;
     }
 
     @Override
@@ -69,8 +80,7 @@ public class FolderSizeAsyncTask extends AsyncTask<Uri, Integer, Long> {
 
     @Override
     protected void onPostExecute(Long result) {
-        mCallback.notifyOnFolderSizeResoult(result, mIndex, "senderCode");
+        mCallback.notifyOnFolderSizeResoult(result, mIndex, ResourceHashCode.getFolderSizeAsyncTaskCode());
     }
-
 
 }
