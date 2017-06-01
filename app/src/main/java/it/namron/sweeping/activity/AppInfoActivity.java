@@ -6,12 +6,11 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
-import android.view.MenuItem;
 
 import it.namron.sweeping.fragment.AppInfoFragment;
 import it.namron.sweeping.fragment.ManageFragment;
-import it.namron.sweeping.model.AppItemModel;
-import it.namron.sweeping.model.DrawerItemModel;
+import it.namron.sweeping.dto.AppItemDTO;
+import it.namron.sweeping.dto.DrawerItemDTO;
 import it.namron.sweeping.sweeping.R;
 
 import static it.namron.sweeping.utils.Constant.APP_SELECTED_BUNDLE;
@@ -26,7 +25,7 @@ public class AppInfoActivity extends BaseActivity {
 
 //    private RecyclerView mRecyclerView;
 
-    AppItemModel mAppItem;
+    AppItemDTO mAppItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +65,7 @@ public class AppInfoActivity extends BaseActivity {
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            mAppItem = (AppItemModel) bundle.getParcelable(APP_SELECTED_BUNDLE);
+            mAppItem = (AppItemDTO) bundle.getParcelable(APP_SELECTED_BUNDLE);
             Log.d(LOG_TAG, "Start new Fragment-->" + mAppItem.getAppName());
             fragment.setArguments(bundle);
         }
@@ -79,7 +78,7 @@ public class AppInfoActivity extends BaseActivity {
      * Start new Fragment
      */
     @Override
-    public boolean onNavigationItemSelected(DrawerItemModel item) {
+    public boolean onNavigationItemSelected(DrawerItemDTO item) {
         Fragment fragment = null;
         Bundle bundle = null;
 
@@ -93,7 +92,7 @@ public class AppInfoActivity extends BaseActivity {
                 fragment = new ManageFragment();
                 break;
             default:
-                AppItemModel appItemModel = getAppItemByDrawerId(id);
+                AppItemDTO appItemModel = getAppItemByDrawerId(id);
                 bundle = new Bundle();
                 bundle.putParcelable(APP_SELECTED_BUNDLE, appItemModel);
 

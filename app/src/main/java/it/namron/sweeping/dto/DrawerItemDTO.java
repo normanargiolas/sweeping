@@ -1,4 +1,4 @@
-package it.namron.sweeping.model;
+package it.namron.sweeping.dto;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -11,16 +11,16 @@ import android.os.Parcelable;
  * Created by norman on 17/05/17.
  */
 
-public class DrawerItemModel implements Parcelable {
+public class DrawerItemDTO implements Parcelable {
     private String drawerName;
     private Drawable drawerIcon;
     private int id;
 
-    public DrawerItemModel() {
+    public DrawerItemDTO() {
 
     }
 
-    protected DrawerItemModel(Parcel in) {
+    protected DrawerItemDTO(Parcel in) {
         drawerName = in.readString();
         Bitmap bitmap = (Bitmap) in.readParcelable(getClass().getClassLoader());
         if (bitmap != null) {
@@ -30,15 +30,15 @@ public class DrawerItemModel implements Parcelable {
         }
     }
 
-    public static final Creator<DrawerItemModel> CREATOR = new Creator<DrawerItemModel>() {
+    public static final Creator<DrawerItemDTO> CREATOR = new Creator<DrawerItemDTO>() {
         @Override
-        public DrawerItemModel createFromParcel(Parcel in) {
-            return new DrawerItemModel(in);
+        public DrawerItemDTO createFromParcel(Parcel in) {
+            return new DrawerItemDTO(in);
         }
 
         @Override
-        public DrawerItemModel[] newArray(int size) {
-            return new DrawerItemModel[size];
+        public DrawerItemDTO[] newArray(int size) {
+            return new DrawerItemDTO[size];
         }
     };
 

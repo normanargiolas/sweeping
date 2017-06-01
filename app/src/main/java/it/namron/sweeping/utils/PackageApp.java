@@ -3,7 +3,7 @@ package it.namron.sweeping.utils;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.namron.sweeping.model.AppItemModel;
+import it.namron.sweeping.dto.AppItemDTO;
 
 import static it.namron.sweeping.utils.Constant.APP_TARGET_LIST;
 
@@ -15,7 +15,7 @@ public class PackageApp {
 
 
 
-    public static List<AppItemModel> listOfTargetDir(List<AppEntry> appList) {
+    public static List<AppItemDTO> listOfTargetDir(List<AppEntry> appList) {
         /**
          * todo inserire le cartelle
          * download
@@ -25,15 +25,15 @@ public class PackageApp {
         return null;
     }
 
-        public static List<AppItemModel> listOfTargetApp(List<AppEntry> appList) {
-        List<AppItemModel> appItemModelList = new ArrayList<>();
-        AppItemModel appItemModel;
+        public static List<AppItemDTO> listOfTargetApp(List<AppEntry> appList) {
+        List<AppItemDTO> appItemModelList = new ArrayList<>();
+        AppItemDTO appItemModel;
         int mId = 0;
         for (AppEntry appEntry : appList) {
             String appPackage = appEntry.getApplicationInfo().packageName;
             for (String app : APP_TARGET_LIST) {
                 if (appPackage.contains(app)) {
-                    appItemModel = new AppItemModel();
+                    appItemModel = new AppItemDTO();
                     appItemModel.setId(mId++);
                     appItemModel.setAppName(appEntry.getLabel());
                     appItemModel.setTxtPrimary(appEntry.getApplicationInfo().processName);

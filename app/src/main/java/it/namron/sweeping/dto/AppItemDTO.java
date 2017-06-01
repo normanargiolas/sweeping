@@ -1,4 +1,4 @@
-package it.namron.sweeping.model;
+package it.namron.sweeping.dto;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -7,13 +7,11 @@ import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import it.namron.sweeping.sweeping.R;
-
 /**
  * Created by norman on 17/05/17.
  */
 
-public class AppItemModel implements Parcelable {
+public class AppItemDTO implements Parcelable {
     private String appName;
     private String txtPrimary;
     private String txtSecondary;
@@ -22,11 +20,11 @@ public class AppItemModel implements Parcelable {
     private Drawable appIcon;
     private int id;
 
-    public AppItemModel() {
+    public AppItemDTO() {
 
     }
 
-    protected AppItemModel(Parcel in) {
+    protected AppItemDTO(Parcel in) {
         appName = in.readString();
         txtPrimary = in.readString();
         txtSecondary = in.readString();
@@ -41,15 +39,15 @@ public class AppItemModel implements Parcelable {
         }
     }
 
-    public static final Creator<AppItemModel> CREATOR = new Creator<AppItemModel>() {
+    public static final Creator<AppItemDTO> CREATOR = new Creator<AppItemDTO>() {
         @Override
-        public AppItemModel createFromParcel(Parcel in) {
-            return new AppItemModel(in);
+        public AppItemDTO createFromParcel(Parcel in) {
+            return new AppItemDTO(in);
         }
 
         @Override
-        public AppItemModel[] newArray(int size) {
-            return new AppItemModel[size];
+        public AppItemDTO[] newArray(int size) {
+            return new AppItemDTO[size];
         }
     };
 

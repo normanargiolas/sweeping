@@ -1,10 +1,10 @@
-package it.namron.sweeping.model;
+package it.namron.sweeping.dto;
 
 /**
  * Created by norman on 15/05/17.
  */
 
-public class DirectoryItemModel {
+public class DirectoryItemDTO {
     private int id;
 
     private boolean isSelected;
@@ -13,7 +13,7 @@ public class DirectoryItemModel {
     private String sizeString;
     private long sizeByte;
 
-    public DirectoryItemModel() {
+    public DirectoryItemDTO() {
     }
 
     public int getId() {

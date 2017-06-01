@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import it.namron.sweeping.model.DirectoryItemModel;
+import it.namron.sweeping.dto.DirectoryItemDTO;
 import it.namron.sweeping.sweeping.R;
 import it.namron.sweeping.utils.WrappedDirectorySize;
 
@@ -27,14 +27,14 @@ public class DirectoryItemAdapter extends RecyclerView.Adapter<DirectoryItemAdap
 
     private final Context mContext;
 
-    private List<DirectoryItemModel> mDirectoryItemList;
+    private List<DirectoryItemDTO> mDirectoryItemList;
     private DirectoryAdapterListener listener;
 
     public interface DirectoryAdapterListener {
         void onIconDirectoryClicked(int position);
     }
 
-    public DirectoryItemAdapter(@NonNull Context context, DirectoryAdapterListener listener, List<DirectoryItemModel> directoryItemList) {
+    public DirectoryItemAdapter(@NonNull Context context, DirectoryAdapterListener listener, List<DirectoryItemDTO> directoryItemList) {
         this.listener = listener;
         mDirectoryItemList = directoryItemList;
         mContext = context;
@@ -54,7 +54,7 @@ public class DirectoryItemAdapter extends RecyclerView.Adapter<DirectoryItemAdap
     @Override
     public void onBindViewHolder(DirectoryItemAdapterViewHolder directoryItemAdapterViewHolder, int position) {
         Log.d(TAG, "#" + position);
-        DirectoryItemModel directoryItem = mDirectoryItemList.get(position);
+        DirectoryItemDTO directoryItem = mDirectoryItemList.get(position);
 
         directoryItemAdapterViewHolder.listItemDirectoryView.setText(directoryItem.getName());
 
@@ -65,7 +65,7 @@ public class DirectoryItemAdapter extends RecyclerView.Adapter<DirectoryItemAdap
         applyClickEvents(directoryItemAdapterViewHolder, position);
     }
 
-    private void applyDirectory(DirectoryItemAdapterViewHolder holder, DirectoryItemModel message) {
+    private void applyDirectory(DirectoryItemAdapterViewHolder holder, DirectoryItemDTO message) {
         if (message.isSelected()) {
             holder.directoryIcon.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.folder_selected));
 //            holder.directoryIcon.setColorFilter(ContextCompat.getColor(mContext, R.color.icon_tint_selected));
@@ -90,7 +90,7 @@ public class DirectoryItemAdapter extends RecyclerView.Adapter<DirectoryItemAdap
         notifyDataSetChanged();
     }
 
-    public void populateDirectoryItem(List<DirectoryItemModel> directoryItemList) {
+    public void populateDirectoryItem(List<DirectoryItemDTO> directoryItemList) {
         mDirectoryItemList = directoryItemList;
         notifyDataSetChanged();
     }

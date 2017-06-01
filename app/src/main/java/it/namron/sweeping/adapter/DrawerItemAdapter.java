@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import it.namron.sweeping.model.DrawerItemModel;
+import it.namron.sweeping.dto.DrawerItemDTO;
 import it.namron.sweeping.sweeping.R;
 
 /**
@@ -23,7 +23,7 @@ public class DrawerItemAdapter extends RecyclerView.Adapter<DrawerItemAdapter.Dr
     private static final String TAG = DrawerItemAdapter.class.getSimpleName();
 
     private final Context mContext;
-    List<DrawerItemModel> drawerItemList;
+    List<DrawerItemDTO> drawerItemList;
 
     /*
        * An on-click listener that we've defined to make it easy for an Activity to interface with
@@ -35,11 +35,11 @@ public class DrawerItemAdapter extends RecyclerView.Adapter<DrawerItemAdapter.Dr
      * The interface that receives onClick messages.
      */
     public interface DrawerItemAdapterOnClickListener {
-        boolean onNavigationItemSelected(DrawerItemModel clickedItem);
+        boolean onNavigationItemSelected(DrawerItemDTO clickedItem);
     }
 
 
-    public DrawerItemAdapter(@NonNull Context context, List<DrawerItemModel> drawerItemList, DrawerItemAdapterOnClickListener clickListener) {
+    public DrawerItemAdapter(@NonNull Context context, List<DrawerItemDTO> drawerItemList, DrawerItemAdapterOnClickListener clickListener) {
         this.drawerItemList = drawerItemList;
         mContext = context;
         mOnClickListener = clickListener;
@@ -64,7 +64,7 @@ public class DrawerItemAdapter extends RecyclerView.Adapter<DrawerItemAdapter.Dr
     @Override
     public void onBindViewHolder(DrawerItemAdapterViewHolder drawerItemAdapterViewHolder, int position) {
         Log.d(TAG, "#" + position);
-        DrawerItemModel drawerModel = drawerItemList.get(position);
+        DrawerItemDTO drawerModel = drawerItemList.get(position);
 
         drawerItemAdapterViewHolder.title.setText(drawerModel.getDrawerName());
         ImageView drawerIcon = new ImageView(mContext);
@@ -83,7 +83,7 @@ public class DrawerItemAdapter extends RecyclerView.Adapter<DrawerItemAdapter.Dr
         return drawerItemList.size();
     }
 
-    public void updateDrawer(List<DrawerItemModel> drawerItemList) {
+    public void updateDrawer(List<DrawerItemDTO> drawerItemList) {
         this.drawerItemList = drawerItemList;
         notifyDataSetChanged();
     }

@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import it.namron.sweeping.model.AppItemModel;
+import it.namron.sweeping.dto.AppItemDTO;
 import it.namron.sweeping.sweeping.R;
 
 /**
@@ -25,7 +25,7 @@ public class AppItemAdapter extends RecyclerView.Adapter<AppItemAdapter.AppItemA
     private static final String TAG = AppItemAdapter.class.getSimpleName();
 
     private final Context mContext;
-    List<AppItemModel> appItemList;
+    List<AppItemDTO> appItemList;
 
     /*
        * An on-click listener that we've defined to make it easy for an Activity to interface with
@@ -37,11 +37,11 @@ public class AppItemAdapter extends RecyclerView.Adapter<AppItemAdapter.AppItemA
      * The interface that receives onClick messages.
      */
     public interface AppItemAdapterOnClickListener {
-        void onListItemClick(AppItemModel clickedItem);
+        void onListItemClick(AppItemDTO clickedItem);
     }
 
 
-    public AppItemAdapter(@NonNull Context context, List<AppItemModel> appItemList, AppItemAdapterOnClickListener clickListener) {
+    public AppItemAdapter(@NonNull Context context, List<AppItemDTO> appItemList, AppItemAdapterOnClickListener clickListener) {
         this.appItemList = appItemList;
         mContext = context;
         mOnClickListener = clickListener;
@@ -67,7 +67,7 @@ public class AppItemAdapter extends RecyclerView.Adapter<AppItemAdapter.AppItemA
     @Override
     public void onBindViewHolder(AppItemAdapterViewHolder appItemAdapterViewHolder, int position) {
         Log.d(TAG, "#" + position);
-        AppItemModel appModel = appItemList.get(position);
+        AppItemDTO appModel = appItemList.get(position);
 
         appItemAdapterViewHolder.appName.setText(appModel.getAppName());
         appItemAdapterViewHolder.txtPrimary.setText(appModel.getTxtPrimary());
@@ -92,7 +92,7 @@ public class AppItemAdapter extends RecyclerView.Adapter<AppItemAdapter.AppItemA
         return appItemList.size();
     }
 
-    public void swapFolder(List<AppItemModel> appItemList) {
+    public void swapFolder(List<AppItemDTO> appItemList) {
         this.appItemList = appItemList;
         notifyDataSetChanged();
     }

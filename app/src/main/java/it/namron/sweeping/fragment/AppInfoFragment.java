@@ -31,9 +31,9 @@ import it.namron.sweeping.dialog.AlertSelectedFolderDialog;
 import it.namron.sweeping.dialog.PerformCopyDialog;
 import it.namron.sweeping.dialog.parameter.PerformCopyDialogFromParameter;
 import it.namron.sweeping.dialog.parameter.PerformCopyDialogToParameter;
+import it.namron.sweeping.dto.DirectoryItemDTO;
 import it.namron.sweeping.listener.FolderSizeAsyncTaskListener;
-import it.namron.sweeping.model.AppItemModel;
-import it.namron.sweeping.model.DirectoryItemModel;
+import it.namron.sweeping.dto.AppItemDTO;
 import it.namron.sweeping.sweeping.R;
 import it.namron.sweeping.utils.ExternalStorage;
 import it.namron.sweeping.utils.TelegramApp;
@@ -70,15 +70,17 @@ public class AppInfoFragment extends Fragment implements
     ExecutorService threadPoolExecutor = Executors.newFixedThreadPool(2);
     private int mCurrWorking = -1;
 
+    private long mTotalSize = 0;
+
 
     //References to RecyclerView and Adapter to reset the list to its
     //"pretty" state when the reset menu item is clicked.
     private DirectoryItemAdapter mDirectoryAdapter;
     private RecyclerView mRecyclerView;
 
-    private AppItemModel mAppItem;
+    private AppItemDTO mAppItem;
 
-    private List<DirectoryItemModel> mDirectoryListModels = new ArrayList<>();
+    private List<DirectoryItemDTO> mDirectoryListModels = new ArrayList<>();
 
     /*
      * This number will uniquely identify our Loader
@@ -111,16 +113,16 @@ public class AppInfoFragment extends Fragment implements
 
     }
 
-    private LoaderManager.LoaderCallbacks<List<DirectoryItemModel>> mAppInfoFolderLoaderCallback = new LoaderManager.LoaderCallbacks<List<DirectoryItemModel>>() {
+    private LoaderManager.LoaderCallbacks<List<DirectoryItemDTO>> mAppInfoFolderLoaderCallback = new LoaderManager.LoaderCallbacks<List<DirectoryItemDTO>>() {
 
         @Override
-        public Loader<List<DirectoryItemModel>> onCreateLoader(int loaderId, Bundle args) {
+        public Loader<List<DirectoryItemDTO>> onCreateLoader(int loaderId, Bundle args) {
             switch (loaderId) {
                 case ID_APP_INFO_FOLDER_LOADER:
 //                    return new FolderSizeAsyncTask(getContext());
-                    return new AsyncTaskLoader<List<DirectoryItemModel>>(getContext()) {
+                    return new AsyncTaskLoader<List<DirectoryItemDTO>>(getContext()) {
 
-                        List<DirectoryItemModel> mResponce;
+                        List<DirectoryItemDTO> mResponce;
                         String mAppName;
 
                         @Override
@@ -139,16 +141,16 @@ public class AppInfoFragment extends Fragment implements
                         }
 
                         @Override
-                        public void deliverResult(List<DirectoryItemModel> data) {
+                        public void deliverResult(List<DirectoryItemDTO> data) {
                             mResponce = data;
                             super.deliverResult(data);
                         }
 
                         @Override
-                        public List<DirectoryItemModel> loadInBackground() {
+                        public List<DirectoryItemDTO> loadInBackground() {
 
                             mDirectoryListModels.clear();
-                            DirectoryItemModel dirItem;
+                            DirectoryItemDTO dirItem;
                             List<String> appDirList = null;
 
                             switch (mAppName) {
@@ -171,7 +173,7 @@ public class AppInfoFragment extends Fragment implements
                                 for (String dir : appDirList) {
                                     Uri dirUri = Uri.parse(dir);
                                     String folder = dirUri.getLastPathSegment();
-                                    dirItem = new DirectoryItemModel();
+                                    dirItem = new DirectoryItemDTO();
                                     dirItem.setPath(dir);
                                     dirItem.setName(folder);
                                     dirItem.setSelected(true);
@@ -197,7 +199,7 @@ public class AppInfoFragment extends Fragment implements
         }
 
         @Override
-        public void onLoadFinished(Loader<List<DirectoryItemModel>> loader, List<DirectoryItemModel> data) {
+        public void onLoadFinished(Loader<List<DirectoryItemDTO>> loader, List<DirectoryItemDTO> data) {
             if (null == data) {
                 int currentLine = Thread.currentThread().getStackTrace()[0].getLineNumber();
                 String mthd = Thread.currentThread().getStackTrace()[0].getMethodName();
@@ -211,7 +213,7 @@ public class AppInfoFragment extends Fragment implements
         }
 
         @Override
-        public void onLoaderReset(Loader<List<DirectoryItemModel>> loader) {
+        public void onLoaderReset(Loader<List<DirectoryItemDTO>> loader) {
             switch (loader.getId()) {
                 case ID_APP_INFO_FOLDER_LOADER:
                     mDirectoryAdapter.populateDirectoryItem(null);
@@ -235,8 +237,8 @@ public class AppInfoFragment extends Fragment implements
     }
 
 
-    private boolean isSelected(List<DirectoryItemModel> mDirectoryListModels) {
-        for (DirectoryItemModel directory : mDirectoryListModels) {
+    private boolean isSelected(List<DirectoryItemDTO> mDirectoryListModels) {
+        for (DirectoryItemDTO directory : mDirectoryListModels) {
             if (directory.isSelected())
                 return true;
         }
@@ -329,7 +331,7 @@ public class AppInfoFragment extends Fragment implements
      */
     @Override
     public void onIconDirectoryClicked(int position) {
-        DirectoryItemModel directoryItem = mDirectoryListModels.get(position);
+        DirectoryItemDTO directoryItem = mDirectoryListModels.get(position);
         directoryItem.setSelected(!directoryItem.isSelected());
         mDirectoryListModels.set(position, directoryItem);
         mDirectoryAdapter.notifyDataSetChanged();
@@ -375,6 +377,7 @@ public class AppInfoFragment extends Fragment implements
 
     private boolean isMainFolderJustPresent(String folder) {
         //todo da implementare
+
         return true;
     }
 
@@ -386,9 +389,8 @@ public class AppInfoFragment extends Fragment implements
 //        Toast.makeText(this.getContext(), "Cartella già presente ma inizia la procedura di copia", Toast.LENGTH_LONG).show();
     }
 
-    private void searchFolderToCopy(List<DirectoryItemModel> mDirectoryListModels) {
+    private void searchFolderToCopy(List<DirectoryItemDTO> mDirectoryListModels) {
 //        mDirectoryListModels contiene tutte le informazioni
-
 
         List<String> all = ExternalStorage.getAllStorageLocations();
         String sd = ExternalStorage.getSDStorageLocation();
@@ -396,17 +398,9 @@ public class AppInfoFragment extends Fragment implements
 
 
         if (mDirectoryListModels != null) {
-//            List<Folder> foldersToCopy = new ArrayList<>();
-
-            for (DirectoryItemModel directory : mDirectoryListModels) {
+            for (DirectoryItemDTO directory : mDirectoryListModels) {
                 if (directory.isSelected()) {
-
-
-//                    Folder folder = getFoldersInfo(foldersToCopy);
-//                    if (folder != null) {
-//                        folder.setName(directory.getName());
-//                        foldersToCopy.add(folder);
-//                    }
+                    mTotalSize += directory.getSizeByte();
                 }
             }
 

@@ -28,7 +28,7 @@ public class Constant {
 
 
     /**
-     * Valori per gestire size_byte della classe DirectoryItemModel
+     * Valori per gestire size_byte della classe DirectoryItemDTO
      *
      * */
     public static final int NOT_INITIALIZED_FOLDER_SIZE = -2;

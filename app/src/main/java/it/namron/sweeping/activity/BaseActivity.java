@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.namron.sweeping.adapter.DrawerItemAdapter;
-import it.namron.sweeping.model.AppItemModel;
-import it.namron.sweeping.model.DrawerItemModel;
+import it.namron.sweeping.dto.AppItemDTO;
+import it.namron.sweeping.dto.DrawerItemDTO;
 import it.namron.sweeping.sweeping.R;
 
 import static it.namron.sweeping.utils.LogUtils.LOGD;
@@ -46,10 +46,10 @@ public abstract class BaseActivity extends AppCompatActivity implements DrawerIt
     private DrawerLayout mDrawer;
 
     private DrawerItemAdapter mDrawerEntryAdapter;
-    static private List<DrawerItemModel> mDrawerListModel;
+    static private List<DrawerItemDTO> mDrawerListModel;
 
     //    private NavigationView mNavigationView;
-    static private List<AppItemModel> mAppItemModelList;
+    static private List<AppItemDTO> mAppItemModelList;
 //    private Context mContext;
 
     private RecyclerView mDrawerRecyclerView;
@@ -73,7 +73,7 @@ public abstract class BaseActivity extends AppCompatActivity implements DrawerIt
     }
 
 
-    public void addDrawerItemFromAppList(List<AppItemModel> appItemModelList) {
+    public void addDrawerItemFromAppList(List<AppItemDTO> appItemModelList) {
         if (appItemModelList != null) {
             mAppItemModelList = appItemModelList;
             mDrawerListModel = getDrawerFromApp(appItemModelList);
@@ -83,10 +83,10 @@ public abstract class BaseActivity extends AppCompatActivity implements DrawerIt
         }
     }
 
-    private List<DrawerItemModel> getDrawerFromApp(List<AppItemModel> mAppListModel) {
-        List<DrawerItemModel> drawerItemList = new ArrayList<>();
-        for (AppItemModel appItem : mAppListModel) {
-            DrawerItemModel drawerItem = new DrawerItemModel();
+    private List<DrawerItemDTO> getDrawerFromApp(List<AppItemDTO> mAppListModel) {
+        List<DrawerItemDTO> drawerItemList = new ArrayList<>();
+        for (AppItemDTO appItem : mAppListModel) {
+            DrawerItemDTO drawerItem = new DrawerItemDTO();
             drawerItem.setDrawerName(appItem.getAppName());
             drawerItem.setDrawerIcon(appItem.getAppIcon());
             drawerItem.setId(appItem.getId());
@@ -95,7 +95,7 @@ public abstract class BaseActivity extends AppCompatActivity implements DrawerIt
         return drawerItemList;
     }
 
-    public AppItemModel getAppItemByDrawerId(int id) {
+    public AppItemDTO getAppItemByDrawerId(int id) {
         if (mAppItemModelList != null && mAppItemModelList.size() >= id)
             return mAppItemModelList.get(id);
         else
@@ -193,7 +193,7 @@ public abstract class BaseActivity extends AppCompatActivity implements DrawerIt
      * The interface that receives onClick messages from DrawerItemAdapter.
      */
     @Override
-    public boolean onNavigationItemSelected(DrawerItemModel item) {
+    public boolean onNavigationItemSelected(DrawerItemDTO item) {
         if (mToast != null) {
             mToast.cancel();
         }

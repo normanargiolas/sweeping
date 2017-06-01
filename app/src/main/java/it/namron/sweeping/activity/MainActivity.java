@@ -22,8 +22,8 @@ import java.util.List;
 
 import it.namron.sweeping.adapter.AppItemAdapter;
 import it.namron.sweeping.fragment.ManageFragment;
-import it.namron.sweeping.model.AppItemModel;
-import it.namron.sweeping.model.DrawerItemModel;
+import it.namron.sweeping.dto.AppItemDTO;
+import it.namron.sweeping.dto.DrawerItemDTO;
 import it.namron.sweeping.sweeping.R;
 import it.namron.sweeping.utils.AppEntry;
 import it.namron.sweeping.utils.AppListLoader;
@@ -37,8 +37,8 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
-    private List<AppItemModel> mAppListModel = new ArrayList<>();
-    private List<DrawerItemModel> mDrawerListModel = new ArrayList<>();
+    private List<AppItemDTO> mAppListModel = new ArrayList<>();
+    private List<DrawerItemDTO> mDrawerListModel = new ArrayList<>();
 
     private RecyclerView mRecyclerView;
     private AppItemAdapter mAppEntryAdapter;
@@ -85,9 +85,9 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
                 Toast.makeText(getApplicationContext(), log, Toast.LENGTH_SHORT).show();
             } else {
                 //appList conteins all app installed
-                List<AppItemModel> appItemModelList = PackageApp.listOfTargetApp(appList);
+                List<AppItemDTO> appItemModelList = PackageApp.listOfTargetApp(appList);
 
-                List<AppItemModel> appDirItemModelList = PackageApp.listOfTargetDir(appList);
+                List<AppItemDTO> appDirItemModelList = PackageApp.listOfTargetDir(appList);
                 if (appDirItemModelList != null) {
                     appItemModelList.addAll(appDirItemModelList);
                 }
@@ -238,7 +238,7 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
 
 
     @Override
-    public void onListItemClick(AppItemModel clickedItem) {
+    public void onListItemClick(AppItemDTO clickedItem) {
 
         /*
          * Even if a Toast isn't showing, it's okay to cancel it. Doing so
@@ -260,7 +260,7 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
         startAppInfoActivity(clickedItem);
     }
 
-    private void startAppInfoActivity(AppItemModel clickedItem) {
+    private void startAppInfoActivity(AppItemDTO clickedItem) {
         try {
             Intent appInfoIntent = makeAppInfoIntent(clickedItem);
             if (appInfoIntent != null)
@@ -270,7 +270,7 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
         }
     }
 
-    private Intent makeAppInfoIntent(AppItemModel clickedItem) {
+    private Intent makeAppInfoIntent(AppItemDTO clickedItem) {
         Class destinationActivity = AppInfoActivity.class;
         Bundle bundle = new Bundle();
         bundle.putParcelable(APP_SELECTED_BUNDLE, clickedItem);
@@ -285,7 +285,7 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
      * Start new Activity
      */
     @Override
-    public boolean onNavigationItemSelected(DrawerItemModel item) {
+    public boolean onNavigationItemSelected(DrawerItemDTO item) {
         Fragment fragment = null;
 
         // Handle navigation view item clicks here.
@@ -300,7 +300,7 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
                 break;
             default:
                 if (mAppListModel != null) {
-                    AppItemModel appItemModel = mAppListModel.get(id);
+                    AppItemDTO appItemModel = mAppListModel.get(id);
                     Log.d(LOG_TAG, "Start new Activity-->" + appItemModel.getAppName());
 
                     startAppInfoActivity(appItemModel);
