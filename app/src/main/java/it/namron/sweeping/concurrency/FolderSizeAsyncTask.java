@@ -3,7 +3,9 @@ package it.namron.sweeping.concurrency;
 import android.app.Activity;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.StatFs;
 import android.support.annotation.NonNull;
+import android.text.format.Formatter;
 import android.util.Log;
 
 import org.apache.commons.io.FileUtils;

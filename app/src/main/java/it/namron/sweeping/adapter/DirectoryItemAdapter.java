@@ -58,12 +58,8 @@ public class DirectoryItemAdapter extends RecyclerView.Adapter<DirectoryItemAdap
 
         directoryItemAdapterViewHolder.listItemDirectoryView.setText(directoryItem.getName());
 
-
         directoryItemAdapterViewHolder.directorySize.setText(WrappedDirectorySize.size(directoryItem.getSizeByte()));
 
-//        directoryItemAdapterViewHolder.directorySize.setText(String.valueOf(directoryItem.getSizeByte()));
-
-//        directoryAdapterViewHolder.bind(position);
         applyDirectory(directoryItemAdapterViewHolder, directoryItem);
 
         applyClickEvents(directoryItemAdapterViewHolder, position);
@@ -90,6 +86,7 @@ public class DirectoryItemAdapter extends RecyclerView.Adapter<DirectoryItemAdap
 
     public void updateSize(long size, int position) {
         mDirectoryItemList.get(position).setSizeByte(size);
+        mDirectoryItemList.get(position).setSizeString(WrappedDirectorySize.size(size));
         notifyDataSetChanged();
     }
 
@@ -107,9 +104,6 @@ public class DirectoryItemAdapter extends RecyclerView.Adapter<DirectoryItemAdap
     public int getItemCount() {
         if (null == mDirectoryItemList) return 0;
         return mDirectoryItemList.size();
-
-//        if (null == mCursor) return 0;
-//        return mCursor.getColumnCount();
     }
 
     public class DirectoryItemAdapterViewHolder extends RecyclerView.ViewHolder {

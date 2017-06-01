@@ -2,6 +2,8 @@ package it.namron.sweeping.utils;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.os.StatFs;
+import android.text.format.Formatter;
 
 import it.namron.sweeping.sweeping.R;
 
@@ -14,15 +16,22 @@ import static it.namron.sweeping.utils.Constant.NOT_INITIALIZED_FOLDER_SIZE;
 
 public class WrappedDirectorySize {
 
-    public static String size(long size) {
-        if (size == NOT_INITIALIZED_FOLDER_SIZE) {
+    public static String size(long bytes) {
+        String unita;
+
+        if (bytes == NOT_INITIALIZED_FOLDER_SIZE) {
             return ResourceHashCode.getContext().getString(R.string.calcolo);
         }
 
-        if (size == ILLEGAL_ARGUMENT_FOLDER_SIZE) {
+        if (bytes == ILLEGAL_ARGUMENT_FOLDER_SIZE) {
             return ResourceHashCode.getContext().getString(R.string.illegal_folder);
         }
 
-        return String.valueOf(size);
+        //todo vedere StatFs
+//        StatFs stat = new StatFs(path.getPath());
+//        long blockSize = stat.getBlockSizeLong();
+//        long availableBlocks = stat.getAvailableBlocksLong();
+        String s = Formatter.formatFileSize(ResourceHashCode.getContext(), bytes);
+        return s;
     }
 }
