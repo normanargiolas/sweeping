@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +39,7 @@ import it.namron.sweeping.sweeping.R;
 import it.namron.sweeping.utils.ExternalStorage;
 import it.namron.sweeping.utils.TelegramApp;
 import it.namron.sweeping.utils.WhatsApp;
-import it.namron.sweeping.utils.WrappedDirectorySize;
+import it.namron.sweeping.wrapper.WrappedDirectorySize;
 
 import static it.namron.sweeping.utils.Constant.ALERT_MAIN_FOLDER_DIALOG_TAG;
 import static it.namron.sweeping.utils.Constant.ALERT_SELECTED_FOLDER_DIALOG_TAG;
@@ -392,10 +393,15 @@ public class AppInfoFragment extends Fragment implements
     private void searchFolderToCopy(List<DirectoryItemDTO> mDirectoryListModels) {
 //        mDirectoryListModels contiene tutte le informazioni
 
-        List<String> all = ExternalStorage.getAllStorageLocations();
         String sd = ExternalStorage.getSDStorageLocation();
+
         Map<Integer, String> list = ExternalStorage.listEnvironmentVariableStoreSDCardRootDirectory();
 
+        List<String> all = ExternalStorage.getAllStorageLocations();
+
+        Map<String, File> allStorageLocationsAvailable = ExternalStorage.getAllStorageLocationsAvailable();
+
+        String removableSDCardAvailable = ExternalStorage.isRemovableSDCardAvailable(getContext());
 
         if (mDirectoryListModels != null) {
             for (DirectoryItemDTO directory : mDirectoryListModels) {

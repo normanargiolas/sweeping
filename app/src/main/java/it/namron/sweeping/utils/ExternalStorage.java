@@ -2,6 +2,7 @@ package it.namron.sweeping.utils;
 
 import android.content.Context;
 import android.os.Environment;
+import android.os.StatFs;
 import android.util.Log;
 
 import java.io.File;
@@ -17,6 +18,19 @@ import java.util.Scanner;
  */
 
 public class ExternalStorage {
+
+
+
+    public static long getFreeExternalMemorySize() {
+        String secStore = System.getenv("SECONDARY_STORAGE");
+        File path = new File(secStore);
+        StatFs stat = new StatFs(path.getPath());
+
+        long blockSize = stat.getBlockSizeLong();
+        long availableBlocks = stat.getAvailableBlocksLong();
+
+        return availableBlocks * blockSize;
+    }
 
     /**
      * @return A String of SD storage location available
@@ -214,7 +228,7 @@ public class ExternalStorage {
 
 //----------------------------------------
 
-    public String isRemovableSDCardAvailable(Context context) {
+    public static String isRemovableSDCardAvailable(Context context) {
         final String FLAG = "mnt";
         final String SECONDARY_STORAGE = System.getenv("SECONDARY_STORAGE");
         final String EXTERNAL_STORAGE_DOCOMO = System.getenv("EXTERNAL_STORAGE_DOCOMO");
@@ -245,13 +259,13 @@ public class ExternalStorage {
             if (directory != null && directory.length() != 0) {
                 if (i == size - 1) {
                     if (directory.contains(FLAG)) {
-                        Log.e(getClass().getSimpleName(), "SD Card's directory: " + directory);
+//                        Log.e(getClass().getSimpleName(), "SD Card's directory: " + directory);
                         return directory;
                     } else {
                         return null;
                     }
                 }
-                Log.e(getClass().getSimpleName(), "SD Card's directory: " + directory);
+//                Log.e(getClass().getSimpleName(), "SD Card's directory: " + directory);
                 return directory;
             }
         }
@@ -266,7 +280,7 @@ public class ExternalStorage {
 //     * @param directory
 //     * @return
 //     */
-    public String canCreateFile(String directory) {
+    public static String canCreateFile(String directory) {
         final String FILE_DIR = directory + File.separator + "hoang.txt";
         File tempFlie = null;
         try {
@@ -275,9 +289,9 @@ public class ExternalStorage {
             fos.write(new byte[1024]);
             fos.flush();
             fos.close();
-            Log.e(getClass().getSimpleName(), "Can write file on this directory: " + FILE_DIR);
+//            Log.e(getClass().getSimpleName(), "Can write file on this directory: " + FILE_DIR);
         } catch (Exception e) {
-            Log.e(getClass().getSimpleName(), "Write file error: " + e.getMessage());
+//            Log.e(getClass().getSimpleName(), "Write file error: " + e.getMessage());
             return null;
         } finally {
             if (tempFlie != null && tempFlie.exists() && tempFlie.isFile()) {

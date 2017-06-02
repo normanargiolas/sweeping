@@ -15,7 +15,7 @@ import java.util.List;
 
 import it.namron.sweeping.dto.DirectoryItemDTO;
 import it.namron.sweeping.sweeping.R;
-import it.namron.sweeping.utils.WrappedDirectorySize;
+import it.namron.sweeping.wrapper.WrappedDirectorySize;
 
 /**
  * Created by norman on 11/05/17.

@@ -1,4 +1,4 @@
-package it.namron.sweeping.utils;
+package it.namron.sweeping.wrapper;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -6,6 +6,7 @@ import android.os.StatFs;
 import android.text.format.Formatter;
 
 import it.namron.sweeping.sweeping.R;
+import it.namron.sweeping.utils.ResourceHashCode;
 
 import static it.namron.sweeping.utils.Constant.ILLEGAL_ARGUMENT_FOLDER_SIZE;
 import static it.namron.sweeping.utils.Constant.NOT_INITIALIZED_FOLDER_SIZE;

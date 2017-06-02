@@ -1,4 +1,4 @@
-package it.namron.sweeping.utils;
+package it.namron.sweeping.wrapper;
 
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
