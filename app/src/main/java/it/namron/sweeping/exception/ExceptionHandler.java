@@ -26,6 +26,8 @@ public class ExceptionHandler implements Thread.UncaughtExceptionHandler {
     public void uncaughtException(final Thread thread, final Throwable ex) {
         if (ex instanceof CustomException) {
 
+            android.os.Process.killProcess(android.os.Process.myPid());
+            System.exit(10);
         } else {
             mRootHandler.uncaughtException(thread, ex);
         }

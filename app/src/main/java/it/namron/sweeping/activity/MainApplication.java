@@ -2,7 +2,7 @@ package it.namron.sweeping.activity;
 
 import android.app.Application;
 
-import it.namron.sweeping.exception.GlobalExceptionHandler;
+import it.namron.sweeping.exception.UncaughtHandler;
 
 /**
  * Created by norman on 02/06/17.
@@ -16,6 +16,6 @@ public class MainApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        new GlobalExceptionHandler(this);
+        new UncaughtHandler(this);
     }
 }
