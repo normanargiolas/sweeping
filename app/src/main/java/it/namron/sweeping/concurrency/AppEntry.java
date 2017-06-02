@@ -1,10 +1,12 @@
-package it.namron.sweeping.utils;
+package it.namron.sweeping.concurrency;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.graphics.drawable.Drawable;
 
 import java.io.File;
+
+import it.namron.sweeping.concurrency.AppListLoader;
 
 /**
  * Created by norman on 16/05/17.

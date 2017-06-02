@@ -1,4 +1,4 @@
-package it.namron.sweeping.utils;
+package it.namron.sweeping.concurrency;
 
 /**
  * Created by norman on 17/05/17.

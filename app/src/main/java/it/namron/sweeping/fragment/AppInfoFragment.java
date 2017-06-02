@@ -36,23 +36,22 @@ import it.namron.sweeping.dto.DirectoryItemDTO;
 import it.namron.sweeping.listener.FolderSizeAsyncTaskListener;
 import it.namron.sweeping.dto.AppItemDTO;
 import it.namron.sweeping.sweeping.R;
-import it.namron.sweeping.utils.ExternalStorage;
-import it.namron.sweeping.utils.TelegramApp;
-import it.namron.sweeping.utils.WhatsApp;
+import it.namron.sweeping.utils.AppUtils;
+import it.namron.sweeping.utils.ExternalStorageUtils;
 import it.namron.sweeping.wrapper.WrappedDirectorySize;
 
-import static it.namron.sweeping.utils.Constant.ALERT_MAIN_FOLDER_DIALOG_TAG;
-import static it.namron.sweeping.utils.Constant.ALERT_SELECTED_FOLDER_DIALOG_TAG;
-import static it.namron.sweeping.utils.Constant.APP_FACEBOOK;
-import static it.namron.sweeping.utils.Constant.APP_MESSENGER;
-import static it.namron.sweeping.utils.Constant.APP_NAME_BUNDLE;
-import static it.namron.sweeping.utils.Constant.APP_SELECTED_BUNDLE;
-import static it.namron.sweeping.utils.Constant.APP_TELEGRAM;
-import static it.namron.sweeping.utils.Constant.APP_WHATSAPP;
-import static it.namron.sweeping.utils.Constant.DIALOG_FRAGMENT;
-import static it.namron.sweeping.utils.Constant.NOT_INITIALIZED_FOLDER_SIZE;
-import static it.namron.sweeping.utils.Constant.PERFORM_COPY_DIALOG_PARAMETER_BUNDLE;
-import static it.namron.sweeping.utils.Constant.PERFORM_COPY_DIALOG_PARAMETER_TAG;
+import static it.namron.sweeping.constant.Constant.ALERT_MAIN_FOLDER_DIALOG_TAG;
+import static it.namron.sweeping.constant.Constant.ALERT_SELECTED_FOLDER_DIALOG_TAG;
+import static it.namron.sweeping.constant.Constant.APP_FACEBOOK;
+import static it.namron.sweeping.constant.Constant.APP_MESSENGER;
+import static it.namron.sweeping.constant.Constant.APP_NAME_BUNDLE;
+import static it.namron.sweeping.constant.Constant.APP_SELECTED_BUNDLE;
+import static it.namron.sweeping.constant.Constant.APP_TELEGRAM;
+import static it.namron.sweeping.constant.Constant.APP_WHATSAPP;
+import static it.namron.sweeping.constant.Constant.DIALOG_FRAGMENT;
+import static it.namron.sweeping.constant.Constant.NOT_INITIALIZED_FOLDER_SIZE;
+import static it.namron.sweeping.constant.Constant.PERFORM_COPY_DIALOG_PARAMETER_BUNDLE;
+import static it.namron.sweeping.constant.Constant.PERFORM_COPY_DIALOG_PARAMETER_TAG;
 
 /**
  * Created by norman on 09/05/17.
@@ -156,10 +155,10 @@ public class AppInfoFragment extends Fragment implements
 
                             switch (mAppName) {
                                 case APP_WHATSAPP:
-                                    appDirList = WhatsApp.listOfWhatsAppDirectory();
+                                    appDirList = AppUtils.listOfWhatsAppDirectory();
                                     break;
                                 case APP_TELEGRAM:
-                                    appDirList = TelegramApp.listOfTelegramAppDirectory();
+                                    appDirList = AppUtils.listOfTelegramAppDirectory();
                                     break;
                                 case APP_FACEBOOK:
                                     break;
@@ -393,15 +392,15 @@ public class AppInfoFragment extends Fragment implements
     private void searchFolderToCopy(List<DirectoryItemDTO> mDirectoryListModels) {
 //        mDirectoryListModels contiene tutte le informazioni
 
-        String sd = ExternalStorage.getSDStorageLocation();
+        String sd = ExternalStorageUtils.getSDStorageLocation();
 
-        Map<Integer, String> list = ExternalStorage.listEnvironmentVariableStoreSDCardRootDirectory();
+        Map<Integer, String> list = ExternalStorageUtils.listEnvironmentVariableStoreSDCardRootDirectory();
 
-        List<String> all = ExternalStorage.getAllStorageLocations();
+        List<String> all = ExternalStorageUtils.getAllStorageLocations();
 
-        Map<String, File> allStorageLocationsAvailable = ExternalStorage.getAllStorageLocationsAvailable();
+        Map<String, File> allStorageLocationsAvailable = ExternalStorageUtils.getAllStorageLocationsAvailable();
 
-        String removableSDCardAvailable = ExternalStorage.isRemovableSDCardAvailable(getContext());
+        String removableSDCardAvailable = ExternalStorageUtils.isRemovableSDCardAvailable(getContext());
 
         if (mDirectoryListModels != null) {
             for (DirectoryItemDTO directory : mDirectoryListModels) {

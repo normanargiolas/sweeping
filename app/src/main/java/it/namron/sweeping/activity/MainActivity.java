@@ -25,12 +25,12 @@ import it.namron.sweeping.fragment.ManageFragment;
 import it.namron.sweeping.dto.AppItemDTO;
 import it.namron.sweeping.dto.DrawerItemDTO;
 import it.namron.sweeping.sweeping.R;
-import it.namron.sweeping.utils.AppEntry;
-import it.namron.sweeping.utils.AppListLoader;
-import it.namron.sweeping.utils.PackageApp;
+import it.namron.sweeping.concurrency.AppEntry;
+import it.namron.sweeping.concurrency.AppListLoader;
+import it.namron.sweeping.utils.AppUtils;
 import it.namron.sweeping.utils.ResourceHashCode;
 
-import static it.namron.sweeping.utils.Constant.APP_SELECTED_BUNDLE;
+import static it.namron.sweeping.constant.Constant.APP_SELECTED_BUNDLE;
 
 
 public class MainActivity extends BaseActivity implements AppItemAdapter.AppItemAdapterOnClickListener {
@@ -85,9 +85,9 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
                 Toast.makeText(getApplicationContext(), log, Toast.LENGTH_SHORT).show();
             } else {
                 //appList conteins all app installed
-                List<AppItemDTO> appItemModelList = PackageApp.listOfTargetApp(appList);
+                List<AppItemDTO> appItemModelList = AppUtils.listOfTargetApp(appList);
 
-                List<AppItemDTO> appDirItemModelList = PackageApp.listOfTargetDir(appList);
+                List<AppItemDTO> appDirItemModelList = AppUtils.listOfTargetDir(appList);
                 if (appDirItemModelList != null) {
                     appItemModelList.addAll(appDirItemModelList);
                 }
@@ -166,12 +166,12 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
 //    private void populateNavigationDrawer(NavigationView navigationView) {
 //        Menu menu = navigationView.getMenu();
 //
-//        if (appInstalledOrNot(PackageApp.WHATSAPP)) {
+//        if (appInstalledOrNot(AppUtils.WHATSAPP)) {
 //            Drawable icon = ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_whatsapp);
 //            menu.findItem(R.id.nav_whatsapp).setIcon(icon);
 //        }
 //
-//        if (appInstalledOrNot(PackageApp.TELEGRAM)) {
+//        if (appInstalledOrNot(AppUtils.TELEGRAM)) {
 //            Drawable icon = ContextCompat.getDrawable(getApplicationContext(), R.drawable.active_telegram);
 //            menu.findItem(R.id.nav_telegram).setIcon(icon);
 //        }

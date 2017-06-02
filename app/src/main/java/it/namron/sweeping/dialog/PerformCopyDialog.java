@@ -28,8 +28,8 @@ import it.namron.sweeping.dialog.parameter.PerformCopyDialogFromParameter;
 import it.namron.sweeping.dialog.parameter.PerformCopyDialogToParameter;
 import it.namron.sweeping.sweeping.R;
 
-import static it.namron.sweeping.utils.Constant.ALERT_FOLDER_DIALOG_TAG;
-import static it.namron.sweeping.utils.Constant.PERFORM_COPY_DIALOG_PARAMETER_BUNDLE;
+import static it.namron.sweeping.constant.Constant.ALERT_FOLDER_DIALOG_TAG;
+import static it.namron.sweeping.constant.Constant.PERFORM_COPY_DIALOG_PARAMETER_BUNDLE;
 
 public class PerformCopyDialog extends DialogFragment{
 

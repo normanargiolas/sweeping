@@ -1,4 +1,4 @@
-package it.namron.sweeping.utils;
+package it.namron.sweeping.constant;
 
 import java.util.ArrayList;
 import java.util.Collections;

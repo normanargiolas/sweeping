@@ -9,7 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 
-import it.namron.sweeping.utils.AppListLoader;
+import it.namron.sweeping.concurrency.AppListLoader;
 
 /**
  * Helper class to look for interesting changes to the installed apps

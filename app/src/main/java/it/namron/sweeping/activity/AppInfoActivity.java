@@ -13,7 +13,7 @@ import it.namron.sweeping.dto.AppItemDTO;
 import it.namron.sweeping.dto.DrawerItemDTO;
 import it.namron.sweeping.sweeping.R;
 
-import static it.namron.sweeping.utils.Constant.APP_SELECTED_BUNDLE;
+import static it.namron.sweeping.constant.Constant.APP_SELECTED_BUNDLE;
 
 /**
  * Created by norman on 19/05/17.

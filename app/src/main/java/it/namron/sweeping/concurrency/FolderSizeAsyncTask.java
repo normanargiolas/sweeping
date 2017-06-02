@@ -3,9 +3,7 @@ package it.namron.sweeping.concurrency;
 import android.app.Activity;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.StatFs;
 import android.support.annotation.NonNull;
-import android.text.format.Formatter;
 import android.util.Log;
 
 import org.apache.commons.io.FileUtils;
@@ -15,8 +13,7 @@ import java.io.File;
 import it.namron.sweeping.listener.FolderSizeAsyncTaskListener;
 import it.namron.sweeping.utils.ResourceHashCode;
 
-import static it.namron.sweeping.utils.Constant.ILLEGAL_ARGUMENT_FOLDER_SIZE;
-import static it.namron.sweeping.utils.Constant.NULL_ARGUMENT_FOLDER_SIZE;
+import static it.namron.sweeping.constant.Constant.ILLEGAL_ARGUMENT_FOLDER_SIZE;
 
 /**
  * Created by norman on 31/05/17.

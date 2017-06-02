@@ -17,7 +17,7 @@ import java.util.Scanner;
  * Created by norman on 15/05/17.
  */
 
-public class ExternalStorage {
+public class ExternalStorageUtils {
 
 
 
