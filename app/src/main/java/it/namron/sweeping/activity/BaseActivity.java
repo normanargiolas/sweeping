@@ -22,6 +22,7 @@ import java.util.List;
 import it.namron.sweeping.adapter.DrawerItemAdapter;
 import it.namron.sweeping.dto.AppItemDTO;
 import it.namron.sweeping.dto.DrawerItemDTO;
+import it.namron.sweeping.exception.ExceptionHandler;
 import it.namron.sweeping.sweeping.R;
 
 import static it.namron.sweeping.utils.LogUtils.LOGD;
@@ -62,6 +63,13 @@ public abstract class BaseActivity extends AppCompatActivity implements DrawerIt
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        /**
+         *Attach our Exception handler in base activity
+         * in order to have each activity with this ExceptionHandler
+         */
+        new ExceptionHandler(BaseActivity.this);
+
+
         if (savedInstanceState != null) {
             super.onRestoreInstanceState(savedInstanceState);
             mSavedInstanceState = savedInstanceState;
