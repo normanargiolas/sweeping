@@ -4,7 +4,7 @@ package it.namron.sweeping.exception;
  * Created by norman on 02/06/17.
  */
 
-public abstract class CustomException extends RuntimeException{
+public class CustomException extends RuntimeException{
     public CustomException() {
     }
 

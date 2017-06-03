@@ -24,13 +24,12 @@ import static it.namron.sweeping.constant.Constant.APP_TARGET_LIST;
 public class AppUtils {
     private static final String LOG_TAG = AppUtils.class.getSimpleName();
 
-    public static Boolean isExternalStorageCompatible(){
-        if (Environment.getExternalStorageState() == null) {
-            LogUtils.LOGD_N(LOG_TAG, LogErrorMsg.EXTERNAL_STORAGE_STATE, false);
-            return false;
-        } else if (Environment.getExternalStorageState() != null) {
+    public static Boolean isExternalStorageCompatible() {
+        if (Environment.getExternalStorageState() != null) {
             LogUtils.LOGD_N(LOG_TAG, Environment.getExternalStorageDirectory().getPath(), true);
+            return true;
         }
+        LogUtils.LOGD_N(LOG_TAG, LogErrorMsg.EXTERNAL_STORAGE_STATE, false);
         return false;
     }
 
@@ -75,7 +74,7 @@ public class AppUtils {
         File whatsAppDirectory;
         File mediaDirectory;
 
-        if (Environment.getExternalStorageState() == null) {
+        if (Environment.getExternalStorageState() == null || Environment.isExternalStorageRemovable()) {
             LogUtils.LOGD_N(LOG_TAG, LogErrorMsg.EXTERNAL_STORAGE_STATE);
             return null;
         } else if (Environment.getExternalStorageState() != null) {

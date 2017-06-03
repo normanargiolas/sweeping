@@ -96,7 +96,11 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
                     mAppListModel = appItemModelList;
                     addDrawerItemFromAppList(mAppListModel);
                     mAppEntryAdapter.swapFolder(mAppListModel);
-                }//todo vedere meglio se appItemModelList==null
+                } else {
+                    //todo vedere meglio se appItemModelList==null
+                    //nessuna applicazione supportata
+
+                }
                 Log.d(LOG_TAG, "onLoadFinished: appItemModelList=null");
 
             }

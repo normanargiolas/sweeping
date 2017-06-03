@@ -1,24 +1,31 @@
 package it.namron.sweeping.utils;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Environment;
 import android.os.StatFs;
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * Created by norman on 15/05/17.
  */
 
 public class ExternalStorageUtils {
-
 
 
     public static long getFreeExternalMemorySize() {
@@ -56,7 +63,86 @@ public class ExternalStorageUtils {
         return null;
     }
 
-    public static Map<Integer, String> listEnvironmentVariableStoreSDCardRootDirectory(){
+    private static final Pattern DIR_SEPORATOR = Pattern.compile("/");
+
+    /**
+     * Raturns all available SD-Cards in the system (include emulated)
+     *
+     * Warning: Hack! Based on Android source code of version 4.3 (API 18)
+     * Because there is no standart way to get it.
+     * TODO: Test on future Android versions 4.4+
+     *
+     * @return paths to all available SD-Cards in the system (include emulated)
+     */
+    public static String[] getStorageDirectories()
+    {
+        // Final set of paths
+        final Set<String> rv = new HashSet<String>();
+        // Primary physical SD-CARD (not emulated)
+        final String rawExternalStorage = System.getenv("EXTERNAL_STORAGE");
+        // All Secondary SD-CARDs (all exclude primary) separated by ":"
+        final String rawSecondaryStoragesStr = System.getenv("SECONDARY_STORAGE");
+        // Primary emulated SD-CARD
+        final String rawEmulatedStorageTarget = System.getenv("EMULATED_STORAGE_TARGET");
+        if(TextUtils.isEmpty(rawEmulatedStorageTarget))
+        {
+            // Device has physical external storage; use plain paths.
+            if(TextUtils.isEmpty(rawExternalStorage))
+            {
+                // EXTERNAL_STORAGE undefined; falling back to default.
+                rv.add("/storage/sdcard0");
+            }
+            else
+            {
+                rv.add(rawExternalStorage);
+            }
+        }
+        else
+        {
+            // Device has emulated storage; external storage paths should have
+            // userId burned into them.
+            final String rawUserId;
+            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1)
+            {
+                rawUserId = "";
+            }
+            else
+            {
+                final String path = Environment.getExternalStorageDirectory().getAbsolutePath();
+                final String[] folders = DIR_SEPORATOR.split(path);
+                final String lastFolder = folders[folders.length - 1];
+                boolean isDigit = false;
+                try
+                {
+                    Integer.valueOf(lastFolder);
+                    isDigit = true;
+                }
+                catch(NumberFormatException ignored)
+                {
+                }
+                rawUserId = isDigit ? lastFolder : "";
+            }
+            // /storage/emulated/0[1,2,...]
+            if(TextUtils.isEmpty(rawUserId))
+            {
+                rv.add(rawEmulatedStorageTarget);
+            }
+            else
+            {
+                rv.add(rawEmulatedStorageTarget + File.separator + rawUserId);
+            }
+        }
+        // Add all secondary storages
+        if(!TextUtils.isEmpty(rawSecondaryStoragesStr))
+        {
+            // All Secondary SD-CARDs splited into array
+            final String[] rawSecondaryStorages = rawSecondaryStoragesStr.split(File.pathSeparator);
+            Collections.addAll(rv, rawSecondaryStorages);
+        }
+        return rv.toArray(new String[rv.size()]);
+    }
+
+    public static Map<Integer, String> listEnvironmentVariableStoreSDCardRootDirectory() {
         final String FLAG = "mnt";
         final String SECONDARY_STORAGE = System.getenv("SECONDARY_STORAGE");
         final String EXTERNAL_STORAGE_DOCOMO = System.getenv("EXTERNAL_STORAGE_DOCOMO");
@@ -74,13 +160,47 @@ public class ExternalStorageUtils {
         return listEnvironmentVariableStoreSDCardRootDirectory;
     }
 
+    public static HashSet<String> getExternalMounts() {
+        final HashSet<String> out = new HashSet<String>();
+        String reg = "(?i).*vold.*(vfat|ntfs|exfat|fat32|ext3|ext4).*rw.*";
+        String s = "";
+        try {
+            final Process process = new ProcessBuilder().command("mount")
+                    .redirectErrorStream(true).start();
+            process.waitFor();
+            final InputStream is = process.getInputStream();
+            final byte[] buffer = new byte[1024];
+            while (is.read(buffer) != -1) {
+                s = s + new String(buffer);
+            }
+            is.close();
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
+
+        // parse output
+        final String[] lines = s.split("\n");
+        for (String line : lines) {
+            if (!line.toLowerCase(Locale.US).contains("asec")) {
+                if (line.matches(reg)) {
+                    String[] parts = line.split(" ");
+                    for (String part : parts) {
+                        if (part.startsWith("/"))
+                            if (!part.toLowerCase(Locale.US).contains("vold"))
+                                out.add(part);
+                    }
+                }
+            }
+        }
+        return out;
+    }
+
 
     /**
      * @return A map of all storage locations available
      */
     public static List<String> getAllStorageLocations() {
         List<String> map = new ArrayList<String>();
-
 
 
         String removableStoragePath;
@@ -272,7 +392,7 @@ public class ExternalStorageUtils {
         return null;
     }
 
-//    /**
+    //    /**
 //     * Check if can create file on given directory. Use this enclose with method
 //     * {@link BeginScreenFragement#isRemovableSDCardAvailable()} to check sd
 //     * card is available on device or not.

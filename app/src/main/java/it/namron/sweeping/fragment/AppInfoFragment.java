@@ -2,13 +2,16 @@ package it.namron.sweeping.fragment;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,6 +23,7 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -34,12 +38,14 @@ import it.namron.sweeping.dialog.PerformCopyDialog;
 import it.namron.sweeping.dialog.parameter.PerformCopyDialogFromParameter;
 import it.namron.sweeping.dialog.parameter.PerformCopyDialogToParameter;
 import it.namron.sweeping.dto.DirectoryItemDTO;
+import it.namron.sweeping.exception.CustomException;
 import it.namron.sweeping.listener.FolderSizeAsyncTaskListener;
 import it.namron.sweeping.dto.AppItemDTO;
 import it.namron.sweeping.sweeping.R;
 import it.namron.sweeping.utils.AppUtils;
 import it.namron.sweeping.utils.ExternalStorageUtils;
 import it.namron.sweeping.utils.LogUtils;
+import it.namron.sweeping.utils.StorageUtils;
 import it.namron.sweeping.wrapper.WrappedDirectorySize;
 
 import static it.namron.sweeping.constant.Constant.ALERT_MAIN_FOLDER_DIALOG_TAG;
@@ -375,7 +381,7 @@ public class AppInfoFragment extends Fragment implements
      */
     @Override
     public void onSendFeedbackExternalStorageCompatibilityDialog(boolean resoult) {
-        if(resoult)
+        if (resoult)
             Toast.makeText(this.getContext(), "inviare feedbak", Toast.LENGTH_SHORT).show();
         else
             Toast.makeText(this.getContext(), "non inviare", Toast.LENGTH_SHORT).show();
@@ -413,9 +419,31 @@ public class AppInfoFragment extends Fragment implements
     }
 
     private boolean isMainFolderJustPresent(String folder) {
-        //todo da implementare
+        String[] removibleSDPath = StorageUtils.getRemovibleSDStorageDirectory(getContext());
+//        String[] removibleSDPath = StorageUtils.getStorageDirectories(getContext());
 
-        return true;
+        if (removibleSDPath != null && removibleSDPath.length > 0) {
+            String rootSD = removibleSDPath[0];
+            long freeSpace;
+
+            for (int n = 0; removibleSDPath.length - 1 > n; n++) {
+                rootSD = removibleSDPath[n + 1];
+                if (StorageUtils.getFreeMemorySize(removibleSDPath[n]) > StorageUtils.getFreeMemorySize(removibleSDPath[n + 1])) {
+                    rootSD = removibleSDPath[n];
+                }
+
+            }
+            File baseDirectory = new File(rootSD, folder);
+            if (baseDirectory.exists() && baseDirectory.isDirectory()) {
+                return true;
+            } else {
+                return false;
+            }
+
+        }
+        //todo vedere meglio
+        LogUtils.LOGD_N(LOG_TAG, "removible SD path error!");
+        throw new CustomException("Errore inaspettato");
     }
 
     @Override
@@ -429,15 +457,16 @@ public class AppInfoFragment extends Fragment implements
     private void searchFolderToCopy(List<DirectoryItemDTO> mDirectoryListModels) {
 //        mDirectoryListModels contiene tutte le informazioni
 
-        String sd = ExternalStorageUtils.getSDStorageLocation();
 
-        Map<Integer, String> list = ExternalStorageUtils.listEnvironmentVariableStoreSDCardRootDirectory();
+        String[] storageDirectories = StorageUtils.getStorageDirectories(getContext());
 
-        List<String> all = ExternalStorageUtils.getAllStorageLocations();
 
-        Map<String, File> allStorageLocationsAvailable = ExternalStorageUtils.getAllStorageLocationsAvailable();
+        String app_root_dir = Environment.getExternalStorageDirectory().getPath();
 
-        String removableSDCardAvailable = ExternalStorageUtils.isRemovableSDCardAvailable(getContext());
+
+        File[] externalFilesDirs = ContextCompat.getExternalFilesDirs(getActivity(), null);
+        File[] externalCacheDirs = ContextCompat.getExternalCacheDirs(getActivity());
+
 
         if (mDirectoryListModels != null) {
             for (DirectoryItemDTO directory : mDirectoryListModels) {
