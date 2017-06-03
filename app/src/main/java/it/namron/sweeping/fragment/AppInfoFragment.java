@@ -76,6 +76,8 @@ public class AppInfoFragment extends Fragment implements
 
     private long mTotalSize = 0;
 
+    private boolean isCompatible;
+
 
     //References to RecyclerView and Adapter to reset the list to its
     //"pretty" state when the reset menu item is clicked.
@@ -250,95 +252,102 @@ public class AppInfoFragment extends Fragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (!AppUtils.isExternalStorageCompatible()) {
+        if (!AppUtils.isExternalStorageCompatible())
+            isCompatible = false;
+        else
+            isCompatible = true;
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        if (isCompatible) {
+
+
+            View rootView = inflater.inflate(R.layout.fragment_app_info, container, false);
+
+            FragmentManager fm = getFragmentManager();
+
+            FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (mAppItem != null && mDirectoryListModels != null) {
+                        if (isSelected(mDirectoryListModels) == true) {
+                            mPerformeCopyDialog = new PerformCopyDialog();
+                            mPerformeCopyDialog.setTargetFragment(AppInfoFragment.this, DIALOG_FRAGMENT);
+
+                            Bundle bundleForDialog = createPerformCopyBundle();
+                            mPerformeCopyDialog.setArguments(bundleForDialog);
+                            // Show Alert DialogFragment
+                            mPerformeCopyDialog.show(fm, PERFORM_COPY_DIALOG_PARAMETER_TAG);
+                        } else {
+                            AlertSelectedFolderDialog dialog = new AlertSelectedFolderDialog();
+                            dialog.show(getFragmentManager(), ALERT_SELECTED_FOLDER_DIALOG_TAG);
+                        }
+
+
+                        //Mostrare un menu dialog di conferma
+                        //Recuperare i dati
+                        //Avviare la procedura di copia
+                        //Eventualmente cancellare gli originali
+
+
+                    }
+
+
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+                }
+
+                private Bundle createPerformCopyBundle() {
+                    PerformCopyDialogToParameter param = new PerformCopyDialogToParameter();
+                    param.setIcon(mAppItem.getAppIcon());
+                    param.setTitle(mAppItem.getAppName());
+                    param.setFolder(mAppItem.getAppName().toLowerCase());
+                    Bundle bundleForDialog = new Bundle();
+                    bundleForDialog.putParcelable(PERFORM_COPY_DIALOG_PARAMETER_BUNDLE, param);
+                    return bundleForDialog;
+                }
+
+            });
+
+            mRecyclerView = (RecyclerView) rootView.findViewById(R.id.rv_numbers);
+            LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+            mRecyclerView.setLayoutManager(layoutManager);
+            mRecyclerView.setHasFixedSize(true);
+
+            //The DirectoryItemAdapter is responsible for displaying each item in the list.
+            mDirectoryAdapter = new DirectoryItemAdapter(getContext(), this, mDirectoryListModels);
+            mRecyclerView.setAdapter(mDirectoryAdapter);
+
+            Bundle bundle = getArguments();
+            if (bundle != null) {
+                mAppItem = bundle.getParcelable(APP_SELECTED_BUNDLE);
+                getActivity().setTitle(mAppItem.getAppName());
+
+                if (mAppItem != null) {
+                /*
+                * Initialize the loader
+                */
+                    mLoaderManager = getLoaderManager();
+                    Bundle appInfoBundle = new Bundle();
+                    appInfoBundle.putString(APP_NAME_BUNDLE, mAppItem.getAppName());
+
+                    getLoaderManager().initLoader(ID_APP_INFO_FOLDER_LOADER, appInfoBundle, mAppInfoFolderLoaderCallback);
+                }
+            }
+
+            return rootView;
+        } else {
             LogUtils.LOGD_N(LOG_TAG, "Device non compatibile!");
             ExternalStorageCompatibilityDialog dialog = new ExternalStorageCompatibilityDialog();
 
             dialog.setTargetFragment(AppInfoFragment.this, DIALOG_FRAGMENT);
             dialog.show(getFragmentManager(), EXTERNAL_STORAGE_COMPATIBILITY_DIALOG_TAG);
 
-            //todo uscire dal fragment
+            return null;
         }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-        View rootView = inflater.inflate(R.layout.fragment_app_info, container, false);
-
-        FragmentManager fm = getFragmentManager();
-
-        FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mAppItem != null && mDirectoryListModels != null) {
-                    if (isSelected(mDirectoryListModels) == true) {
-                        mPerformeCopyDialog = new PerformCopyDialog();
-                        mPerformeCopyDialog.setTargetFragment(AppInfoFragment.this, DIALOG_FRAGMENT);
-
-                        Bundle bundleForDialog = createPerformCopyBundle();
-                        mPerformeCopyDialog.setArguments(bundleForDialog);
-                        // Show Alert DialogFragment
-                        mPerformeCopyDialog.show(fm, PERFORM_COPY_DIALOG_PARAMETER_TAG);
-                    } else {
-                        AlertSelectedFolderDialog dialog = new AlertSelectedFolderDialog();
-                        dialog.show(getFragmentManager(), ALERT_SELECTED_FOLDER_DIALOG_TAG);
-                    }
-
-
-                    //Mostrare un menu dialog di conferma
-                    //Recuperare i dati
-                    //Avviare la procedura di copia
-                    //Eventualmente cancellare gli originali
-
-
-                }
-
-
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-            }
-
-            private Bundle createPerformCopyBundle() {
-                PerformCopyDialogToParameter param = new PerformCopyDialogToParameter();
-                param.setIcon(mAppItem.getAppIcon());
-                param.setTitle(mAppItem.getAppName());
-                param.setFolder(mAppItem.getAppName().toLowerCase());
-                Bundle bundleForDialog = new Bundle();
-                bundleForDialog.putParcelable(PERFORM_COPY_DIALOG_PARAMETER_BUNDLE, param);
-                return bundleForDialog;
-            }
-
-        });
-
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.rv_numbers);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerView.setHasFixedSize(true);
-
-        //The DirectoryItemAdapter is responsible for displaying each item in the list.
-        mDirectoryAdapter = new DirectoryItemAdapter(getContext(), this, mDirectoryListModels);
-        mRecyclerView.setAdapter(mDirectoryAdapter);
-
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            mAppItem = bundle.getParcelable(APP_SELECTED_BUNDLE);
-            getActivity().setTitle(mAppItem.getAppName());
-
-            if (mAppItem != null) {
-                /*
-                * Initialize the loader
-                */
-                mLoaderManager = getLoaderManager();
-                Bundle appInfoBundle = new Bundle();
-                appInfoBundle.putString(APP_NAME_BUNDLE, mAppItem.getAppName());
-
-                getLoaderManager().initLoader(ID_APP_INFO_FOLDER_LOADER, appInfoBundle, mAppInfoFolderLoaderCallback);
-            }
-        }
-
-        return rootView;
     }
 
     /**
@@ -368,7 +377,13 @@ public class AppInfoFragment extends Fragment implements
      */
     @Override
     public void onSendFeedbackExternalStorageCompatibilityDialog(boolean resoult) {
-        Toast.makeText(this.getContext(), "inviare feedbak", Toast.LENGTH_SHORT).show();
+        if(resoult)
+            Toast.makeText(this.getContext(), "inviare feedbak", Toast.LENGTH_SHORT).show();
+        else
+            Toast.makeText(this.getContext(), "non inviare", Toast.LENGTH_SHORT).show();
+
+
+        getActivity().finish();
     }
 
     /**
