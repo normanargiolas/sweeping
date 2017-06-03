@@ -26,6 +26,7 @@ public class Constant {
     public static final String ALERT_MAIN_FOLDER_DIALOG_TAG = "AlertMainFolderDialog_TAG";
     public static final String ALERT_SELECTED_FOLDER_DIALOG_TAG = "AlertSelectedFolderDialog_TAG";
     public static final String EXTERNAL_STORAGE_COMPATIBILITY_DIALOG_TAG = "ExternalStorageCompatibilityDialog_TAG";
+    public static final String ENOUGHT_FREE_MEMORY_DIALOG_TAG = "EnoughtFreeMemoryDialog_TAG";
 
 
     /**
@@ -38,6 +39,9 @@ public class Constant {
 
 
     public static final int DIALOG_FRAGMENT = 1;
+
+
+    public static final long MB_MARGIN = 1048576;
 
 
     /**

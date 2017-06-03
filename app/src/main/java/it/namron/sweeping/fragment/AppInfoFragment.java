@@ -2,16 +2,13 @@ package it.namron.sweeping.fragment;
 
 import android.content.Context;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,9 +20,7 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -35,15 +30,15 @@ import it.namron.sweeping.dialog.AlertMainFolderDialog;
 import it.namron.sweeping.dialog.AlertSelectedFolderDialog;
 import it.namron.sweeping.dialog.ExternalStorageCompatibilityDialog;
 import it.namron.sweeping.dialog.PerformCopyDialog;
+import it.namron.sweeping.dialog.EnoughtFreeMemoryDialog;
 import it.namron.sweeping.dialog.parameter.PerformCopyDialogFromParameter;
 import it.namron.sweeping.dialog.parameter.PerformCopyDialogToParameter;
+import it.namron.sweeping.dto.AppItemDTO;
 import it.namron.sweeping.dto.DirectoryItemDTO;
 import it.namron.sweeping.exception.CustomException;
 import it.namron.sweeping.listener.FolderSizeAsyncTaskListener;
-import it.namron.sweeping.dto.AppItemDTO;
 import it.namron.sweeping.sweeping.R;
 import it.namron.sweeping.utils.AppUtils;
-import it.namron.sweeping.utils.ExternalStorageUtils;
 import it.namron.sweeping.utils.LogUtils;
 import it.namron.sweeping.utils.StorageUtils;
 import it.namron.sweeping.wrapper.WrappedDirectorySize;
@@ -57,7 +52,9 @@ import static it.namron.sweeping.constant.Constant.APP_SELECTED_BUNDLE;
 import static it.namron.sweeping.constant.Constant.APP_TELEGRAM;
 import static it.namron.sweeping.constant.Constant.APP_WHATSAPP;
 import static it.namron.sweeping.constant.Constant.DIALOG_FRAGMENT;
+import static it.namron.sweeping.constant.Constant.ENOUGHT_FREE_MEMORY_DIALOG_TAG;
 import static it.namron.sweeping.constant.Constant.EXTERNAL_STORAGE_COMPATIBILITY_DIALOG_TAG;
+import static it.namron.sweeping.constant.Constant.MB_MARGIN;
 import static it.namron.sweeping.constant.Constant.NOT_INITIALIZED_FOLDER_SIZE;
 import static it.namron.sweeping.constant.Constant.PERFORM_COPY_DIALOG_PARAMETER_BUNDLE;
 import static it.namron.sweeping.constant.Constant.PERFORM_COPY_DIALOG_PARAMETER_TAG;
@@ -83,6 +80,9 @@ public class AppInfoFragment extends Fragment implements
     private long mTotalSize = 0;
 
     private boolean isCompatible;
+
+    private long mSDFreeMemory;
+    private String mSDPath;
 
 
     //References to RecyclerView and Adapter to reset the list to its
@@ -366,13 +366,13 @@ public class AppInfoFragment extends Fragment implements
         mDirectoryAdapter.notifyDataSetChanged();
 
 
-        if (mToast != null) {
-            mToast.cancel();
-        }
-        String toastMessage = "Item #" + position + " clicked.";
-        mToast = Toast.makeText(this.getContext(), toastMessage, Toast.LENGTH_LONG);
-
-        mToast.show();
+//        if (mToast != null) {
+//            mToast.cancel();
+//        }
+//        String toastMessage = "Item #" + position + " clicked.";
+//        mToast = Toast.makeText(this.getContext(), toastMessage, Toast.LENGTH_LONG);
+//
+//        mToast.show();
     }
 
     /**
@@ -407,8 +407,10 @@ public class AppInfoFragment extends Fragment implements
         if (isMainFolderJustPresent(parameter.getFolder()) == false) {
             mPerformeCopyDialog.dismiss();
 
-            searchFolderToCopy(mDirectoryListModels);
-            //inizia la porcedura di copia
+            if (isEnoughtFreeMemory(mDirectoryListModels) == true) {
+                copySelectedFolder();
+            }
+
 
 //            Toast.makeText(this.getContext(), "Crea cartella ed inizia la procedura di copia", Toast.LENGTH_LONG).show();
         } else {
@@ -431,14 +433,27 @@ public class AppInfoFragment extends Fragment implements
                 if (StorageUtils.getFreeMemorySize(removibleSDPath[n]) > StorageUtils.getFreeMemorySize(removibleSDPath[n + 1])) {
                     rootSD = removibleSDPath[n];
                 }
-
             }
+
+            mSDFreeMemory = StorageUtils.getFreeMemorySize(rootSD);
+            mSDPath = rootSD;
+
             File baseDirectory = new File(rootSD, folder);
             if (baseDirectory.exists() && baseDirectory.isDirectory()) {
                 return true;
             } else {
                 return false;
             }
+
+
+//            String[] storageDirectories = StorageUtils.getStorageDirectories(getContext());
+//
+//
+//            String app_root_dir = Environment.getExternalStorageDirectory().getPath();
+//
+//
+//            File[] externalFilesDirs = ContextCompat.getExternalFilesDirs(getActivity(), null);
+//            File[] externalCacheDirs = ContextCompat.getExternalCacheDirs(getActivity());
 
         }
         //todo vedere meglio
@@ -450,39 +465,38 @@ public class AppInfoFragment extends Fragment implements
     public void onContinueAlertMainFolderDialog(boolean resoult) {
         mPerformeCopyDialog.dismiss();
 
-        searchFolderToCopy(mDirectoryListModels);
-//        Toast.makeText(this.getContext(), "Cartella già presente ma inizia la procedura di copia", Toast.LENGTH_LONG).show();
+        isEnoughtFreeMemory(mDirectoryListModels);
+        if (isEnoughtFreeMemory(mDirectoryListModels) == true) {
+            copySelectedFolder();
+        }
     }
 
-    private void searchFolderToCopy(List<DirectoryItemDTO> mDirectoryListModels) {
+    private void copySelectedFolder() {
+        Toast.makeText(this.getContext(), "Inizia la procedura di copia", Toast.LENGTH_LONG).show();
+
+    }
+
+    private boolean isEnoughtFreeMemory(List<DirectoryItemDTO> mDirectoryListModels) {
 //        mDirectoryListModels contiene tutte le informazioni
 
-
-        String[] storageDirectories = StorageUtils.getStorageDirectories(getContext());
-
-
-        String app_root_dir = Environment.getExternalStorageDirectory().getPath();
-
-
-        File[] externalFilesDirs = ContextCompat.getExternalFilesDirs(getActivity(), null);
-        File[] externalCacheDirs = ContextCompat.getExternalCacheDirs(getActivity());
-
-
         if (mDirectoryListModels != null) {
+            mTotalSize = 0;
             for (DirectoryItemDTO directory : mDirectoryListModels) {
                 if (directory.isSelected()) {
                     mTotalSize += directory.getSizeByte();
                 }
             }
-
-
+            //check if there is enought free memory
+            if (mTotalSize + MB_MARGIN > mSDFreeMemory) {
+                EnoughtFreeMemoryDialog dialog = new EnoughtFreeMemoryDialog();
+                dialog.show(getFragmentManager(), ENOUGHT_FREE_MEMORY_DIALOG_TAG);
+                return false;
+            } else {
+                return true;
+            }
         }
+        throw new CustomException();
     }
-
-//    private Folder getFoldersInfo(List<Folder> foldersToCopy) {
-//        return null;
-//    }
-
 
 }
 

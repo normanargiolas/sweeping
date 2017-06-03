@@ -27,6 +27,7 @@
     <string name="main_folder_dialog_message">Cartella già presente!</string>
     <!--<string name="main_folder_dialog_title">Attenzione</string>-->
     <string name="external_storage_compatibility_dialog_message">Swepper non è supportata dal dispositivo corrente! Inviare un feedback per aggiornare l\'applicazione?</string>
+    <string name="enought_free_memory_dialog_message">Spazio non disponibile per copiare tutte le cartelle selezionate!</string>
 
 
 
