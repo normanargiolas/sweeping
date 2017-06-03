@@ -29,7 +29,7 @@ public class LogUtils {
     }
 
     public static void LOGD(final String tag, String message) {
-        if (LOGGING_ENABLED){
+        if (LOGGING_ENABLED) {
             if (Log.isLoggable(tag, Log.DEBUG)) {
                 Log.d(tag, message);
             }
@@ -37,7 +37,7 @@ public class LogUtils {
     }
 
     public static void LOGD(final String tag, String message, Throwable cause) {
-        if (LOGGING_ENABLED){
+        if (LOGGING_ENABLED) {
             if (Log.isLoggable(tag, Log.DEBUG)) {
                 Log.d(tag, message, cause);
             }
@@ -90,4 +90,46 @@ public class LogUtils {
 
     private LogUtils() {
     }
+
+    /**
+     * Log with info trace
+     */
+    public static void LOGD_N(final String tag, final String message, final Object... arguments) {
+        if (LOGGING_ENABLED) {
+            String msg = message;
+            String m;
+            Throwable cause = null;
+            for (Object arg : arguments) {
+                m = null;
+                if (arg instanceof Throwable) {
+                    cause = (Throwable) arg;
+                } else {
+                    m = arg.toString();
+                    msg = msg + " " + m;
+                }
+            }
+            String fullClassName = Thread.currentThread().getStackTrace()[3].getClassName();
+            String className = fullClassName.substring(fullClassName.lastIndexOf(".") + 1);
+            String methodName = Thread.currentThread().getStackTrace()[3].getMethodName();
+            int lineNumber = Thread.currentThread().getStackTrace()[3].getLineNumber();
+            String log = className + "." + methodName + "():" + lineNumber + " -->   " + msg;
+
+            Log.d(tag, log, cause);
+        }
+    }
+
+
+//    public static void LOGD_N(final String tag, String message, Throwable cause) {
+//        if (LOGGING_ENABLED) {
+////            if (Log.isLoggable(tag, Log.DEBUG)) {
+//            String fullClassName = Thread.currentThread().getStackTrace()[3].getClassName();
+//            String className = fullClassName.substring(fullClassName.lastIndexOf(".") + 1);
+//            String methodName = Thread.currentThread().getStackTrace()[3].getMethodName();
+//            int lineNumber = Thread.currentThread().getStackTrace()[3].getLineNumber();
+//            String log = className + "." + methodName + "():" + lineNumber + " -->   " + message;
+//            Log.d(tag, log, cause);
+//
+////            }
+//        }
+//    }
 }

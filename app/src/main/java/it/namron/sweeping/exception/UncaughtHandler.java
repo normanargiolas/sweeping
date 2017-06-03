@@ -3,7 +3,6 @@ package it.namron.sweeping.exception;
 import android.app.ApplicationErrorReport;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;

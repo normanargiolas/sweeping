@@ -2,6 +2,7 @@ package it.namron.sweeping.utils;
 
 import android.net.Uri;
 import android.os.Environment;
+import android.util.Log;
 
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.namron.sweeping.concurrency.AppEntry;
+import it.namron.sweeping.constant.LogErrorMsg;
 import it.namron.sweeping.dto.AppItemDTO;
 
 import static it.namron.sweeping.constant.Constant.APP_TARGET_LIST;
@@ -20,6 +22,17 @@ import static it.namron.sweeping.constant.Constant.APP_TARGET_LIST;
  */
 
 public class AppUtils {
+    private static final String LOG_TAG = AppUtils.class.getSimpleName();
+
+    public static Boolean isExternalStorageCompatible(){
+        if (Environment.getExternalStorageState() == null) {
+            LogUtils.LOGD_N(LOG_TAG, LogErrorMsg.EXTERNAL_STORAGE_STATE, false);
+            return false;
+        } else if (Environment.getExternalStorageState() != null) {
+            LogUtils.LOGD_N(LOG_TAG, Environment.getExternalStorageDirectory().getPath(), true);
+        }
+        return false;
+    }
 
 
     public static enum folder {
@@ -63,11 +76,14 @@ public class AppUtils {
         File mediaDirectory;
 
         if (Environment.getExternalStorageState() == null) {
-//            todo da pensare come procedere
-            //cercare nella memoria interna del dispositivo
+            LogUtils.LOGD_N(LOG_TAG, LogErrorMsg.EXTERNAL_STORAGE_STATE);
+            return null;
         } else if (Environment.getExternalStorageState() != null) {
             // search for directory on SD card
             File baseDirectory = new File(Environment.getExternalStorageDirectory().getPath());
+
+            LogUtils.LOGD_N(LOG_TAG, "baseDirectory", baseDirectory);
+
             whatsAppDirectory = new File(baseDirectory, AppUtils.folder.WHATSAPP_DIRECTORY.getText());
             if (whatsAppDirectory.exists()) {
                 mediaDirectory = new File(whatsAppDirectory, AppUtils.folder.WHATSAPP_MEDIA.getText());

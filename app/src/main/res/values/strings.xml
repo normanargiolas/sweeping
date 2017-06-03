@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Sweeping</string>
     <string name="app_info_activity">AppInfoActivity</string>
@@ -13,15 +14,19 @@
     <string name="continua">Continua</string>
     <string name="calcolo">Calcolo...</string>
     <string name="illegal_folder">Percorso non valido</string>
+    <string name="attenzione">Attenzione</string>
 
 
 
     <string name="folder_name_dialog_message">Nome della cartella non valido!</string>
-    <string name="folder_name_dialog_title">Attenzione</string>
+    <!--<string name="folder_name_dialog_title">Attenzione</string>-->
     <string name="selected_folder_dialog_message">Selezionare almeno una cartella!</string>
-    <string name="selected_folder_dialog_title">Attenzione</string>
+    <!--<string name="selected_folder_dialog_title">Attenzione</string>-->
     <string name="main_folder_dialog_message">Cartella già presente!</string>
-    <string name="main_folder_dialog_title">Attenzione</string>
+    <!--<string name="main_folder_dialog_title">Attenzione</string>-->
+    <string name="external_storage_compatibility_dialog_message">Swepper non è supportata dal dispositivo corrente! Inviare un feedback per aggiornare l\'applicazione?</string>
+
+
 
     <string name="performe_copy_dialog_title">Titolo Applicazione</string>
     <string name="performe_copy_dialog_message_1">Copiare le cartelle selezionate all\'interno della cartella</string>

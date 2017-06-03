@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+
 import it.namron.sweeping.sweeping.R;
 
 /**
@@ -13,12 +14,12 @@ import it.namron.sweeping.sweeping.R;
  */
 
 
-public class AlertMainFolderDialog extends DialogFragment {
+public class ExternalStorageCompatibilityDialog extends DialogFragment {
 
-    private ResoultAlertMainFolderDialogListener mListener;
+    private ResoultExternalStorageCompatibilityDialogListener mListener;
 
-    public interface ResoultAlertMainFolderDialogListener {
-        void onContinueAlertMainFolderDialog(boolean resoult);
+    public interface ResoultExternalStorageCompatibilityDialogListener {
+        void onSendFeedbackExternalStorageCompatibilityDialog(boolean resoult);
     }
 
     @Override
@@ -29,14 +30,14 @@ public class AlertMainFolderDialog extends DialogFragment {
                 // Set Dialog Title
                 .setTitle(R.string.attenzione)
                 // Set Dialog Message
-                .setMessage(R.string.main_folder_dialog_message)
+                .setMessage(R.string.external_storage_compatibility_dialog_message)
 
                 // Positive button
                 .setPositiveButton(R.string.continua, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // Do something else
                         dismiss();
-                        mListener.onContinueAlertMainFolderDialog(true);
+                        mListener.onSendFeedbackExternalStorageCompatibilityDialog(true);
                     }
                 })
                 // Neutral button
@@ -46,13 +47,6 @@ public class AlertMainFolderDialog extends DialogFragment {
                         dismiss();
                     }
                 })
-                // Negative button
-//                .setNegativeButton(R.string.annulla, new DialogInterface.OnClickListener() {
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        // Do something else
-//                        dismiss();
-//                    }
-//                })
                 .create();
     }
 
@@ -62,11 +56,11 @@ public class AlertMainFolderDialog extends DialogFragment {
         // Verify that the host activity implements the callback interface
         try {
             // Instantiate the EditNameDialogListener so we can send events to the host
-            mListener = (AlertMainFolderDialog.ResoultAlertMainFolderDialogListener) getTargetFragment();
+            mListener = (ExternalStorageCompatibilityDialog.ResoultExternalStorageCompatibilityDialogListener) getTargetFragment();
         } catch (ClassCastException e) {
             // The activity doesn't implement the interface, throw exception
             throw new ClassCastException(context.toString()
-                    + " must implement ResoultPerformCopyDialogListener");
+                    + " must implement ResoultExternalStorageCompatibilityDialogListener");
         }
     }
 }

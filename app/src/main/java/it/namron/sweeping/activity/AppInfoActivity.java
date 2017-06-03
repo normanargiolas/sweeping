@@ -1,19 +1,26 @@
 package it.namron.sweeping.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.widget.Toast;
 
-import it.namron.sweeping.fragment.AppInfoFragment;
-import it.namron.sweeping.fragment.ManageFragment;
+import it.namron.sweeping.dialog.ExternalStorageCompatibilityDialog;
 import it.namron.sweeping.dto.AppItemDTO;
 import it.namron.sweeping.dto.DrawerItemDTO;
+import it.namron.sweeping.fragment.AppInfoFragment;
+import it.namron.sweeping.fragment.ManageFragment;
 import it.namron.sweeping.sweeping.R;
+import it.namron.sweeping.utils.AppUtils;
+import it.namron.sweeping.utils.LogUtils;
 
 import static it.namron.sweeping.constant.Constant.APP_SELECTED_BUNDLE;
+import static it.namron.sweeping.constant.Constant.DIALOG_FRAGMENT;
+import static it.namron.sweeping.constant.Constant.EXTERNAL_STORAGE_COMPATIBILITY_DIALOG_TAG;
 
 /**
  * Created by norman on 19/05/17.
@@ -71,6 +78,7 @@ public class AppInfoActivity extends BaseActivity {
         }
         fragmentManager.beginTransaction().replace(R.id.content_frame_app_info, fragment).commit();
 
+
     }
 
 
@@ -110,5 +118,12 @@ public class AppInfoActivity extends BaseActivity {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Toast.makeText(getApplicationContext(), "inviare feedbak", Toast.LENGTH_SHORT).show();
+
     }
 }

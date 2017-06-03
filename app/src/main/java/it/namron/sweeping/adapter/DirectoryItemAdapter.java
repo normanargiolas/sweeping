@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,7 +52,7 @@ public class DirectoryItemAdapter extends RecyclerView.Adapter<DirectoryItemAdap
 
     @Override
     public void onBindViewHolder(DirectoryItemAdapterViewHolder directoryItemAdapterViewHolder, int position) {
-        Log.d(TAG, "#" + position);
+//        Log.d(TAG, "#" + position);
         DirectoryItemDTO directoryItem = mDirectoryItemList.get(position);
 
         directoryItemAdapterViewHolder.listItemDirectoryView.setText(directoryItem.getName());

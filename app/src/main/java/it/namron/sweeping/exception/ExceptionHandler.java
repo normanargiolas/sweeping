@@ -1,15 +1,17 @@
 package it.namron.sweeping.exception;
 
 import android.content.Context;
+import android.os.Environment;
 
 import it.namron.sweeping.activity.BaseActivity;
+import it.namron.sweeping.utils.LogUtils;
 
 /**
  * Created by norman on 02/06/17.
  */
 
 public class ExceptionHandler implements Thread.UncaughtExceptionHandler {
-    private final static String TAG = ExceptionHandler.class.getSimpleName();
+    private final static String LOG_TAG = ExceptionHandler.class.getSimpleName();
 
     private final Context mContext;
     private final Thread.UncaughtExceptionHandler mRootHandler;
@@ -25,6 +27,7 @@ public class ExceptionHandler implements Thread.UncaughtExceptionHandler {
     @Override
     public void uncaughtException(final Thread thread, final Throwable ex) {
         if (ex instanceof CustomException) {
+            LogUtils.LOGD_N(LOG_TAG, "Gestisco la mia eccezione senza killare il processo");
 
             android.os.Process.killProcess(android.os.Process.myPid());
             System.exit(10);

@@ -19,7 +19,7 @@ public class AlertSelectedFolderDialog extends DialogFragment {
                 // Set Dialog Icon
                 .setIcon(R.drawable.androidhappy)
                 // Set Dialog Title
-                .setTitle(R.string.selected_folder_dialog_title)
+                .setTitle(R.string.attenzione)
                 // Set Dialog Message
                 .setMessage(R.string.selected_folder_dialog_message)
 

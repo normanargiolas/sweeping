@@ -29,6 +29,7 @@ import it.namron.sweeping.adapter.DirectoryItemAdapter;
 import it.namron.sweeping.concurrency.FolderSizeAsyncTask;
 import it.namron.sweeping.dialog.AlertMainFolderDialog;
 import it.namron.sweeping.dialog.AlertSelectedFolderDialog;
+import it.namron.sweeping.dialog.ExternalStorageCompatibilityDialog;
 import it.namron.sweeping.dialog.PerformCopyDialog;
 import it.namron.sweeping.dialog.parameter.PerformCopyDialogFromParameter;
 import it.namron.sweeping.dialog.parameter.PerformCopyDialogToParameter;
@@ -38,6 +39,7 @@ import it.namron.sweeping.dto.AppItemDTO;
 import it.namron.sweeping.sweeping.R;
 import it.namron.sweeping.utils.AppUtils;
 import it.namron.sweeping.utils.ExternalStorageUtils;
+import it.namron.sweeping.utils.LogUtils;
 import it.namron.sweeping.wrapper.WrappedDirectorySize;
 
 import static it.namron.sweeping.constant.Constant.ALERT_MAIN_FOLDER_DIALOG_TAG;
@@ -49,6 +51,7 @@ import static it.namron.sweeping.constant.Constant.APP_SELECTED_BUNDLE;
 import static it.namron.sweeping.constant.Constant.APP_TELEGRAM;
 import static it.namron.sweeping.constant.Constant.APP_WHATSAPP;
 import static it.namron.sweeping.constant.Constant.DIALOG_FRAGMENT;
+import static it.namron.sweeping.constant.Constant.EXTERNAL_STORAGE_COMPATIBILITY_DIALOG_TAG;
 import static it.namron.sweeping.constant.Constant.NOT_INITIALIZED_FOLDER_SIZE;
 import static it.namron.sweeping.constant.Constant.PERFORM_COPY_DIALOG_PARAMETER_BUNDLE;
 import static it.namron.sweeping.constant.Constant.PERFORM_COPY_DIALOG_PARAMETER_TAG;
@@ -61,6 +64,7 @@ public class AppInfoFragment extends Fragment implements
         DirectoryItemAdapter.DirectoryAdapterListener,
         PerformCopyDialog.ResoultPerformCopyDialogListener,
         AlertMainFolderDialog.ResoultAlertMainFolderDialogListener,
+        ExternalStorageCompatibilityDialog.ResoultExternalStorageCompatibilityDialogListener,
         FolderSizeAsyncTaskListener {
 
     private static final String LOG_TAG = AppInfoFragment.class.getSimpleName();
@@ -201,12 +205,9 @@ public class AppInfoFragment extends Fragment implements
         @Override
         public void onLoadFinished(Loader<List<DirectoryItemDTO>> loader, List<DirectoryItemDTO> data) {
             if (null == data) {
-                int currentLine = Thread.currentThread().getStackTrace()[0].getLineNumber();
-                String mthd = Thread.currentThread().getStackTrace()[0].getMethodName();
-                String log = mthd.concat(": ").concat(String.valueOf(currentLine));
-                Log.d(LOG_TAG, log);
-
-                Toast.makeText(getActivity(), log, Toast.LENGTH_SHORT).show();
+                LogUtils.LOGD_N(LOG_TAG, "data non deve essere nullo null");
+                //todo gestire il caso
+//                Toast.makeText(getActivity(), log, Toast.LENGTH_SHORT).show();
             } else {
                 mDirectoryAdapter.populateDirectoryItem(data);
             }
@@ -243,6 +244,21 @@ public class AppInfoFragment extends Fragment implements
                 return true;
         }
         return false;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (!AppUtils.isExternalStorageCompatible()) {
+            LogUtils.LOGD_N(LOG_TAG, "Device non compatibile!");
+            ExternalStorageCompatibilityDialog dialog = new ExternalStorageCompatibilityDialog();
+
+            dialog.setTargetFragment(AppInfoFragment.this, DIALOG_FRAGMENT);
+            dialog.show(getFragmentManager(), EXTERNAL_STORAGE_COMPATIBILITY_DIALOG_TAG);
+
+            //todo uscire dal fragment
+        }
     }
 
     @Override
@@ -344,6 +360,15 @@ public class AppInfoFragment extends Fragment implements
         mToast = Toast.makeText(this.getContext(), toastMessage, Toast.LENGTH_LONG);
 
         mToast.show();
+    }
+
+    /**
+     * This method is used to notify after a sendFeedback buttn that implement
+     * ExternalStorageCompatibilityDialog has clicked.
+     */
+    @Override
+    public void onSendFeedbackExternalStorageCompatibilityDialog(boolean resoult) {
+        Toast.makeText(this.getContext(), "inviare feedbak", Toast.LENGTH_SHORT).show();
     }
 
     /**

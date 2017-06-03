@@ -25,6 +25,7 @@ public class Constant {
     public static final String ALERT_FOLDER_DIALOG_TAG = "alertFolderDialog_TAG";
     public static final String ALERT_MAIN_FOLDER_DIALOG_TAG = "AlertMainFolderDialog_TAG";
     public static final String ALERT_SELECTED_FOLDER_DIALOG_TAG = "AlertSelectedFolderDialog_TAG";
+    public static final String EXTERNAL_STORAGE_COMPATIBILITY_DIALOG_TAG = "ExternalStorageCompatibilityDialog_TAG";
 
 
     /**

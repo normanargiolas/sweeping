@@ -67,7 +67,8 @@ public abstract class BaseActivity extends AppCompatActivity implements DrawerIt
          *Attach our Exception handler in base activity
          * in order to have each activity with this ExceptionHandler
          */
-        new ExceptionHandler(BaseActivity.this);
+        //todo decommentare in futuro
+//        new ExceptionHandler(BaseActivity.this);
 
 
         if (savedInstanceState != null) {

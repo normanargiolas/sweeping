@@ -19,7 +19,7 @@ public class AlertFolderNameDialog extends DialogFragment {
                 // Set Dialog Icon
                 .setIcon(R.drawable.androidhappy)
                 // Set Dialog Title
-                .setTitle(R.string.folder_name_dialog_title)
+                .setTitle(R.string.attenzione)
                 // Set Dialog Message
                 .setMessage(R.string.folder_name_dialog_message)
 
