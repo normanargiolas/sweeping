@@ -103,7 +103,6 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
         }
 
 
-
         @Override
         public void onLoaderReset(Loader<List<AppEntry>> loader) {
 
@@ -116,10 +115,8 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
 //        setLayout(R.layout.activity_main);
         setDrawer(getApplicationContext());
-
 
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);

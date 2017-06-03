@@ -40,12 +40,6 @@ public class AppInfoActivity extends BaseActivity {
         // initialization/implementation.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_app_info);
-//        if (!AppUtils.isExternalStorageCompatible()) {
-//            onBackPressed();
-//            return;
-//        }
-
-
 
         if (savedInstanceState != null) {
             // The activity is being re-created. Use the

@@ -33,7 +33,7 @@ public class ExternalStorageCompatibilityDialog extends DialogFragment {
                 .setMessage(R.string.external_storage_compatibility_dialog_message)
 
                 // Positive button
-                .setPositiveButton(R.string.continua, new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.invia, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // Do something else
                         dismiss();
@@ -41,9 +41,10 @@ public class ExternalStorageCompatibilityDialog extends DialogFragment {
                     }
                 })
                 // Neutral button
-                .setNeutralButton(R.string.rinomina, new DialogInterface.OnClickListener() {
+                .setNeutralButton(R.string.annulla, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // Do something else
+                        mListener.onSendFeedbackExternalStorageCompatibilityDialog(false);
                         dismiss();
                     }
                 })

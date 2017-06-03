@@ -262,8 +262,6 @@ public class AppInfoFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         if (isCompatible) {
-
-
             View rootView = inflater.inflate(R.layout.fragment_app_info, container, false);
 
             FragmentManager fm = getFragmentManager();
@@ -381,7 +379,6 @@ public class AppInfoFragment extends Fragment implements
             Toast.makeText(this.getContext(), "inviare feedbak", Toast.LENGTH_SHORT).show();
         else
             Toast.makeText(this.getContext(), "non inviare", Toast.LENGTH_SHORT).show();
-
 
         getActivity().finish();
     }
