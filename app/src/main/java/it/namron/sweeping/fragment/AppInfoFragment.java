@@ -421,8 +421,30 @@ public class AppInfoFragment extends Fragment implements
     }
 
     private boolean isMainFolderJustPresent(String folder) {
+
+        //String removibleSDPath = StorageUtils.getStorageDirectories(getContext());
+        String removibleSDPath = getPathOfRemovibleSDWithMoreFreeMemory(folder);
+
+        File baseDirectory = new File(removibleSDPath, folder);
+        if (baseDirectory.exists() && baseDirectory.isDirectory()) {
+            return true;
+        } else {
+            return false;
+        }
+
+
+//            String[] storageDirectories = StorageUtils.getStorageDirectories(getContext());
+//
+//
+//            String app_root_dir = Environment.getExternalStorageDirectory().getPath();
+//
+//
+//            File[] externalFilesDirs = ContextCompat.getExternalFilesDirs(getActivity(), null);
+//            File[] externalCacheDirs = ContextCompat.getExternalCacheDirs(getActivity());
+    }
+
+    private String getPathOfRemovibleSDWithMoreFreeMemory(String folder) {
         String[] removibleSDPath = StorageUtils.getRemovibleSDStorageDirectory(getContext());
-//        String[] removibleSDPath = StorageUtils.getStorageDirectories(getContext());
 
         if (removibleSDPath != null && removibleSDPath.length > 0) {
             String rootSD = removibleSDPath[0];
@@ -437,24 +459,7 @@ public class AppInfoFragment extends Fragment implements
 
             mSDFreeMemory = StorageUtils.getFreeMemorySize(rootSD);
             mSDPath = rootSD;
-
-            File baseDirectory = new File(rootSD, folder);
-            if (baseDirectory.exists() && baseDirectory.isDirectory()) {
-                return true;
-            } else {
-                return false;
-            }
-
-
-//            String[] storageDirectories = StorageUtils.getStorageDirectories(getContext());
-//
-//
-//            String app_root_dir = Environment.getExternalStorageDirectory().getPath();
-//
-//
-//            File[] externalFilesDirs = ContextCompat.getExternalFilesDirs(getActivity(), null);
-//            File[] externalCacheDirs = ContextCompat.getExternalCacheDirs(getActivity());
-
+            return rootSD;
         }
         //todo vedere meglio
         LogUtils.LOGD_N(LOG_TAG, "removible SD path error!");
