@@ -58,10 +58,13 @@ public class ExternalStorageCompatibilityDialog extends DialogFragment {
         try {
             // Instantiate the EditNameDialogListener so we can send events to the host
             mListener = (ExternalStorageCompatibilityDialog.ResoultExternalStorageCompatibilityDialogListener) getTargetFragment();
+            if(mListener == null)
+                throw new NullPointerException(context.toString()
+                        + " listener in ResoultExternalStorageCompatibilityDialogListener must not be null!");
         } catch (ClassCastException e) {
             // The activity doesn't implement the interface, throw exception
             throw new ClassCastException(context.toString()
-                    + " must implement ResoultExternalStorageCompatibilityDialogListener");
+                    + " must implement ResoultExternalStorageCompatibilityDialogListener!");
         }
     }
 }

@@ -27,10 +27,8 @@ import java.util.concurrent.Executors;
 import it.namron.sweeping.adapter.DirectoryItemAdapter;
 import it.namron.sweeping.concurrency.FolderSizeAsyncTask;
 import it.namron.sweeping.dialog.AlertMainFolderDialog;
-import it.namron.sweeping.dialog.AlertSelectedFolderDialog;
-import it.namron.sweeping.dialog.ExternalStorageCompatibilityDialog;
+import it.namron.sweeping.dialog.DialogHandler;
 import it.namron.sweeping.dialog.PerformCopyDialog;
-import it.namron.sweeping.dialog.EnoughtFreeMemoryDialog;
 import it.namron.sweeping.dialog.parameter.PerformCopyDialogFromParameter;
 import it.namron.sweeping.dialog.parameter.PerformCopyDialogToParameter;
 import it.namron.sweeping.dto.AppItemDTO;
@@ -44,7 +42,6 @@ import it.namron.sweeping.utils.StorageUtils;
 import it.namron.sweeping.wrapper.WrappedDirectorySize;
 
 import static it.namron.sweeping.constant.Constant.ALERT_MAIN_FOLDER_DIALOG_TAG;
-import static it.namron.sweeping.constant.Constant.ALERT_SELECTED_FOLDER_DIALOG_TAG;
 import static it.namron.sweeping.constant.Constant.APP_FACEBOOK;
 import static it.namron.sweeping.constant.Constant.APP_MESSENGER;
 import static it.namron.sweeping.constant.Constant.APP_NAME_BUNDLE;
@@ -52,7 +49,6 @@ import static it.namron.sweeping.constant.Constant.APP_SELECTED_BUNDLE;
 import static it.namron.sweeping.constant.Constant.APP_TELEGRAM;
 import static it.namron.sweeping.constant.Constant.APP_WHATSAPP;
 import static it.namron.sweeping.constant.Constant.DIALOG_FRAGMENT;
-import static it.namron.sweeping.constant.Constant.ENOUGHT_FREE_MEMORY_DIALOG_TAG;
 import static it.namron.sweeping.constant.Constant.EXTERNAL_STORAGE_COMPATIBILITY_DIALOG_TAG;
 import static it.namron.sweeping.constant.Constant.MB_MARGIN;
 import static it.namron.sweeping.constant.Constant.NOT_INITIALIZED_FOLDER_SIZE;
@@ -65,12 +61,15 @@ import static it.namron.sweeping.constant.Constant.PERFORM_COPY_DIALOG_PARAMETER
 
 public class AppInfoFragment extends Fragment implements
         DirectoryItemAdapter.DirectoryAdapterListener,
-        PerformCopyDialog.ResoultPerformCopyDialogListener,
+//        PerformCopyDialog.ResoultPerformCopyDialogListener,
         AlertMainFolderDialog.ResoultAlertMainFolderDialogListener,
-        ExternalStorageCompatibilityDialog.ResoultExternalStorageCompatibilityDialogListener,
+//        ExternalStorageCompatibilityDialog.ResoultExternalStorageCompatibilityDialogListener,
+        DialogHandler.DialogHandlerListener,
         FolderSizeAsyncTaskListener {
 
     private static final String LOG_TAG = AppInfoFragment.class.getSimpleName();
+
+    private DialogHandler mDialogHandler;
 
     private FolderSizeAsyncTaskListener mAppInfofragmentListener;
     FolderSizeAsyncTask mFolderSizeAsyncTask;
@@ -104,7 +103,7 @@ public class AppInfoFragment extends Fragment implements
     private LoaderManager mLoaderManager;
 
     private Toast mToast;
-    PerformCopyDialog mPerformeCopyDialog;
+//    PerformCopyDialog mPerformeCopyDialog;
 
     public AppInfoFragment() {
 
@@ -258,6 +257,10 @@ public class AppInfoFragment extends Fragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        mDialogHandler = new DialogHandler();
+        mDialogHandler.setTargetFragment(AppInfoFragment.this, DIALOG_FRAGMENT);
+        mDialogHandler.initialize(getContext(), getFragmentManager());
+
         if (!AppUtils.isExternalStorageCompatible())
             isCompatible = false;
         else
@@ -267,7 +270,7 @@ public class AppInfoFragment extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        if (isCompatible) {
+        if (isCompatible) {  
             View rootView = inflater.inflate(R.layout.fragment_app_info, container, false);
 
             FragmentManager fm = getFragmentManager();
@@ -278,16 +281,17 @@ public class AppInfoFragment extends Fragment implements
                 public void onClick(View view) {
                     if (mAppItem != null && mDirectoryListModels != null) {
                         if (isSelected(mDirectoryListModels) == true) {
-                            mPerformeCopyDialog = new PerformCopyDialog();
-                            mPerformeCopyDialog.setTargetFragment(AppInfoFragment.this, DIALOG_FRAGMENT);
+//                            mPerformeCopyDialog = new PerformCopyDialog();
+//                            mPerformeCopyDialog.setTargetFragment(AppInfoFragment.this, DIALOG_FRAGMENT);
 
                             Bundle bundleForDialog = createPerformCopyBundle();
-                            mPerformeCopyDialog.setArguments(bundleForDialog);
+//                            mPerformeCopyDialog.setArguments(bundleForDialog);
                             // Show Alert DialogFragment
-                            mPerformeCopyDialog.show(fm, PERFORM_COPY_DIALOG_PARAMETER_TAG);
+//                            mPerformeCopyDialog.show(fm, PERFORM_COPY_DIALOG_PARAMETER_TAG);
+
+                            mDialogHandler.showPerformCopyDialog(bundleForDialog);
                         } else {
-                            AlertSelectedFolderDialog dialog = new AlertSelectedFolderDialog();
-                            dialog.show(getFragmentManager(), ALERT_SELECTED_FOLDER_DIALOG_TAG);
+                            mDialogHandler.showAlertSelectedFolderDialog();
                         }
 
 
@@ -345,10 +349,11 @@ public class AppInfoFragment extends Fragment implements
             return rootView;
         } else {
             LogUtils.LOGD_N(LOG_TAG, "Device non compatibile!");
-            ExternalStorageCompatibilityDialog dialog = new ExternalStorageCompatibilityDialog();
+//            ExternalStorageCompatibilityDialog dialog = new ExternalStorageCompatibilityDialog();
+//            dialog.setTargetFragment(AppInfoFragment.this, DIALOG_FRAGMENT);
+//            dialog.show(getFragmentManager(), EXTERNAL_STORAGE_COMPATIBILITY_DIALOG_TAG);
 
-            dialog.setTargetFragment(AppInfoFragment.this, DIALOG_FRAGMENT);
-            dialog.show(getFragmentManager(), EXTERNAL_STORAGE_COMPATIBILITY_DIALOG_TAG);
+            mDialogHandler.showExternalStorageCompatibility();
 
             return null;
         }
@@ -375,50 +380,36 @@ public class AppInfoFragment extends Fragment implements
 //        mToast.show();
     }
 
-    /**
-     * This method is used to notify after a sendFeedback buttn that implement
-     * ExternalStorageCompatibilityDialog has clicked.
-     */
-    @Override
-    public void onSendFeedbackExternalStorageCompatibilityDialog(boolean resoult) {
-        if (resoult)
-            Toast.makeText(this.getContext(), "inviare feedbak", Toast.LENGTH_SHORT).show();
-        else
-            Toast.makeText(this.getContext(), "non inviare", Toast.LENGTH_SHORT).show();
-
-        getActivity().finish();
-    }
-
-    /**
-     * This method is used to notify after a onClick positive buttn that implement
-     * PerformCopyDialog has clicked.
-     */
-    @Override
-    public void onResoultPerformCopyDialog(@NonNull PerformCopyDialogFromParameter parameter) {
-
-//        if (mToast != null) {
-//            mToast.cancel();
+//    /**
+//     * This method is used to notify after a onClick positive buttn that implement
+//     * PerformCopyDialog has clicked.
+//     */
+//    @Override
+//    public void onResoultPerformCopyDialog(@NonNull PerformCopyDialogFromParameter parameter) {
+//
+////        if (mToast != null) {
+////            mToast.cancel();
+////        }
+////        String toastMessage = "Folder:" + parameter.getFolder() + " Mantieni originali: " + parameter.getOriginal().toString();
+////        mToast = Toast.makeText(this.getContext(), toastMessage, Toast.LENGTH_LONG);
+////        mToast.show();
+//
+//
+//        if (isMainFolderJustPresent(parameter.getFolder()) == false) {
+//            mDialogHandler.dismissPerformCopyDialog();
+//
+//            if (isEnoughtFreeMemory(mDirectoryListModels) == true) {
+//                copySelectedFolder();
+//            }
+//
+//
+////            Toast.makeText(this.getContext(), "Crea cartella ed inizia la procedura di copia", Toast.LENGTH_LONG).show();
+//        } else {
+//            AlertMainFolderDialog dialog = new AlertMainFolderDialog();
+//            dialog.setTargetFragment(AppInfoFragment.this, DIALOG_FRAGMENT);
+//            dialog.show(getFragmentManager(), ALERT_MAIN_FOLDER_DIALOG_TAG);
 //        }
-//        String toastMessage = "Folder:" + parameter.getFolder() + " Mantieni originali: " + parameter.getOriginal().toString();
-//        mToast = Toast.makeText(this.getContext(), toastMessage, Toast.LENGTH_LONG);
-//        mToast.show();
-
-
-        if (isMainFolderJustPresent(parameter.getFolder()) == false) {
-            mPerformeCopyDialog.dismiss();
-
-            if (isEnoughtFreeMemory(mDirectoryListModels) == true) {
-                copySelectedFolder();
-            }
-
-
-//            Toast.makeText(this.getContext(), "Crea cartella ed inizia la procedura di copia", Toast.LENGTH_LONG).show();
-        } else {
-            AlertMainFolderDialog dialog = new AlertMainFolderDialog();
-            dialog.setTargetFragment(AppInfoFragment.this, DIALOG_FRAGMENT);
-            dialog.show(getFragmentManager(), ALERT_MAIN_FOLDER_DIALOG_TAG);
-        }
-    }
+//    }
 
     private boolean isMainFolderJustPresent(String folder) {
 
@@ -466,11 +457,15 @@ public class AppInfoFragment extends Fragment implements
         throw new CustomException("Errore inaspettato");
     }
 
+
+    /**
+     * This method is used to notify after a onClick "continue" buttn that implement
+     * ContinueAlertMainFolderDialog has clicked.
+     */
     @Override
     public void onContinueAlertMainFolderDialog(boolean resoult) {
-        mPerformeCopyDialog.dismiss();
+        mDialogHandler.dismissPerformCopyDialog();
 
-        isEnoughtFreeMemory(mDirectoryListModels);
         if (isEnoughtFreeMemory(mDirectoryListModels) == true) {
             copySelectedFolder();
         }
@@ -492,9 +487,9 @@ public class AppInfoFragment extends Fragment implements
                 }
             }
             //check if there is enought free memory
+//            if (mTotalSize + MB_MARGIN > 104857600) {  //todo for test
             if (mTotalSize + MB_MARGIN > mSDFreeMemory) {
-                EnoughtFreeMemoryDialog dialog = new EnoughtFreeMemoryDialog();
-                dialog.show(getFragmentManager(), ENOUGHT_FREE_MEMORY_DIALOG_TAG);
+                mDialogHandler.showEnoughtFreeMemory();
                 return false;
             } else {
                 return true;
@@ -503,6 +498,42 @@ public class AppInfoFragment extends Fragment implements
         throw new CustomException();
     }
 
+    /**
+     * This method is used to notify a dialog resoult from DialogHandler that implement DialogHandlerListener
+     *
+     * @param tag     rappresent the dialog identifier
+     * @param resoult the dialog resoult to cast
+     */
+    @Override
+    public void onDialogResoult(Object resoult, String tag) {
+        switch (tag) {
+            case EXTERNAL_STORAGE_COMPATIBILITY_DIALOG_TAG:
+                boolean res = (boolean) resoult;
+                if (res)
+                    Toast.makeText(this.getContext(), "inviare feedbak", Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(this.getContext(), "non inviare", Toast.LENGTH_SHORT).show();
+                getActivity().finish();
+                break;
+            case PERFORM_COPY_DIALOG_PARAMETER_TAG:
+                PerformCopyDialogFromParameter parameter = (PerformCopyDialogFromParameter) resoult;
+                if (isMainFolderJustPresent(parameter.getFolder()) == false) {
+                    mDialogHandler.dismissPerformCopyDialog();
+
+                    if (isEnoughtFreeMemory(mDirectoryListModels) == true) {
+                        copySelectedFolder();
+                    }
+                } else {
+                    AlertMainFolderDialog dialog = new AlertMainFolderDialog();
+                    dialog.setTargetFragment(AppInfoFragment.this, DIALOG_FRAGMENT);
+                    dialog.show(getFragmentManager(), ALERT_MAIN_FOLDER_DIALOG_TAG);
+                }
+                break;
+            default:
+                LogUtils.LOGD_N(LOG_TAG, "Alert Dialog sconosciuto");
+                break;
+        }
+    }
 }
 
 

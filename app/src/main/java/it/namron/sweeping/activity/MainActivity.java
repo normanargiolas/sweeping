@@ -153,8 +153,8 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
 //        populateNavigationDrawer(navigationView);
 
 
-        //Set singleton resource hash code
-        ResourceHashCode.getInstance(getApplicationContext());
+//        //Set singleton resource hash code
+//        ResourceHashCode.getInstance(getApplicationContext());
         Log.d(LOG_TAG, "onCreate done!");
     }
 
