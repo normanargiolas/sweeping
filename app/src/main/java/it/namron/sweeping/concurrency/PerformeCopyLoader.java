@@ -15,7 +15,6 @@ public class PerformeCopyLoader extends AsyncTaskLoader<Boolean> {
 
     private Context mContext;
     private ArrayList<String> mDirList;
-
     private FolderSizeAsyncTaskListener mCallback;
 
 
