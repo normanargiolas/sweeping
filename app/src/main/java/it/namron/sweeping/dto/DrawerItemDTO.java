@@ -21,6 +21,7 @@ public class DrawerItemDTO implements Parcelable {
     }
 
     protected DrawerItemDTO(Parcel in) {
+        id = in.readInt();
         drawerName = in.readString();
         Bitmap bitmap = (Bitmap) in.readParcelable(getClass().getClassLoader());
         if (bitmap != null) {
@@ -67,6 +68,7 @@ public class DrawerItemDTO implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
         dest.writeString(drawerName);
         if (drawerIcon != null) {
             Bitmap bitmap = (Bitmap) ((BitmapDrawable) drawerIcon).getBitmap();

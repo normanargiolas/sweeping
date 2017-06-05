@@ -1,9 +1,5 @@
 package it.namron.sweeping.dialog.parameter;
 
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -11,28 +7,28 @@ import android.os.Parcelable;
  * Created by norman on 27/05/17.
  */
 
-public class PerformCopyDialogFromParameter implements Parcelable {
+public class PerformCopyFromDialogParameter implements Parcelable {
     private String folder;
     private Boolean original;
 
-    protected PerformCopyDialogFromParameter(Parcel in) {
+    protected PerformCopyFromDialogParameter(Parcel in) {
         folder = in.readString();
         original = in.readByte() != 0;     //original == true if byte != 0
     }
 
-    public static final Creator<PerformCopyDialogFromParameter> CREATOR = new Creator<PerformCopyDialogFromParameter>() {
+    public static final Creator<PerformCopyFromDialogParameter> CREATOR = new Creator<PerformCopyFromDialogParameter>() {
         @Override
-        public PerformCopyDialogFromParameter createFromParcel(Parcel in) {
-            return new PerformCopyDialogFromParameter(in);
+        public PerformCopyFromDialogParameter createFromParcel(Parcel in) {
+            return new PerformCopyFromDialogParameter(in);
         }
 
         @Override
-        public PerformCopyDialogFromParameter[] newArray(int size) {
-            return new PerformCopyDialogFromParameter[size];
+        public PerformCopyFromDialogParameter[] newArray(int size) {
+            return new PerformCopyFromDialogParameter[size];
         }
     };
 
-    public PerformCopyDialogFromParameter() {
+    public PerformCopyFromDialogParameter() {
     }
 
     public Boolean getOriginal() {

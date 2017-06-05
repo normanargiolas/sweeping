@@ -28,12 +28,13 @@ import it.namron.sweeping.sweeping.R;
 import it.namron.sweeping.concurrency.AppEntry;
 import it.namron.sweeping.concurrency.AppListLoader;
 import it.namron.sweeping.utils.AppUtils;
-import it.namron.sweeping.utils.ResourceHashCode;
 
 import static it.namron.sweeping.constant.Constant.APP_SELECTED_BUNDLE;
+import static it.namron.sweeping.constant.Constant.ID_APP_LIST_LOADER;
 
 
-public class MainActivity extends BaseActivity implements AppItemAdapter.AppItemAdapterOnClickListener {
+public class MainActivity extends BaseActivity implements
+        AppItemAdapter.AppItemAdapterOnClickListener {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -53,14 +54,11 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
      */
     private static final int APP_INFO_REQUEST = 1;
 
-    /**
-     * This number will uniquely identify our Loader
-     */
-    private static final int ID_APP_LIST_LOADER = 20;
+
     private LoaderManager mLoaderManager;
 
 
-    private LoaderManager.LoaderCallbacks<List<AppEntry>> mAppListLoaderCallback = new LoaderManager.LoaderCallbacks<List<AppEntry>>() {
+    private LoaderManager.LoaderCallbacks<List<AppEntry>> mAppListLoader = new LoaderManager.LoaderCallbacks<List<AppEntry>>() {
 
         @Override
         public Loader<List<AppEntry>> onCreateLoader(int loaderId, Bundle args) {
@@ -147,7 +145,7 @@ public class MainActivity extends BaseActivity implements AppItemAdapter.AppItem
 
         //Insert same data here into bundle
         Bundle pathBundle = new Bundle();
-        getSupportLoaderManager().initLoader(ID_APP_LIST_LOADER, pathBundle, mAppListLoaderCallback);
+        mLoaderManager.initLoader(ID_APP_LIST_LOADER, pathBundle, mAppListLoader);
 
 
 //        populateNavigationDrawer(navigationView);

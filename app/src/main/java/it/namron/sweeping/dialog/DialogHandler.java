@@ -5,8 +5,9 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
-import it.namron.sweeping.dialog.parameter.PerformCopyDialogFromParameter;
+import it.namron.sweeping.dialog.parameter.PerformCopyFromDialogParameter;
 
+import static it.namron.sweeping.constant.Constant.ALERT_MAIN_FOLDER_DIALOG_TAG;
 import static it.namron.sweeping.constant.Constant.ALERT_SELECTED_FOLDER_DIALOG_TAG;
 import static it.namron.sweeping.constant.Constant.DIALOG_FRAGMENT;
 import static it.namron.sweeping.constant.Constant.ENOUGHT_FREE_MEMORY_DIALOG_TAG;
@@ -19,6 +20,7 @@ import static it.namron.sweeping.constant.Constant.PERFORM_COPY_DIALOG_PARAMETER
 
 public class DialogHandler extends Fragment implements
         PerformCopyDialog.ResoultPerformCopyDialogListener,
+        AlertMainFolderDialog.ResoultAlertMainFolderDialogListener,
         ExternalStorageCompatibilityDialog.ResoultExternalStorageCompatibilityDialogListener {
 
     private static final String LOG_TAG = DialogHandler.class.getSimpleName();
@@ -30,6 +32,7 @@ public class DialogHandler extends Fragment implements
     private ExternalStorageCompatibilityDialog externalStorageCompatibilityDialog = new ExternalStorageCompatibilityDialog();
     private AlertSelectedFolderDialog alertSelectedFolderDialog = new AlertSelectedFolderDialog();
     private PerformCopyDialog performCopyDialog = new PerformCopyDialog();
+    private AlertMainFolderDialog alertMainFolderDialog = new AlertMainFolderDialog();
 
 
     private DialogHandlerListener mListener;
@@ -70,6 +73,11 @@ public class DialogHandler extends Fragment implements
         }
     }
 
+    public void showAlertMainFolder() {
+        alertMainFolderDialog.setTargetFragment(this, DIALOG_FRAGMENT);
+        alertMainFolderDialog.show(mFragmentManager, ALERT_MAIN_FOLDER_DIALOG_TAG);
+    }
+
 
     public void showExternalStorageCompatibility() {
         externalStorageCompatibilityDialog.setTargetFragment(this, DIALOG_FRAGMENT);
@@ -108,7 +116,16 @@ public class DialogHandler extends Fragment implements
      * PerformCopyDialog has clicked.
      */
     @Override
-    public void onResoultPerformCopyDialog(PerformCopyDialogFromParameter resoult) {
+    public void onResoultPerformCopyDialog(PerformCopyFromDialogParameter resoult) {
         mListener.onDialogResoult(resoult, PERFORM_COPY_DIALOG_PARAMETER_TAG);
+    }
+
+    /**
+     * This method is used to notify after a onClick "continue" buttn that implement
+     * ContinueAlertMainFolderDialog has clicked.
+     */
+    @Override
+    public void onContinueAlertMainFolderDialog(boolean resoult) {
+        mListener.onDialogResoult(resoult, ALERT_MAIN_FOLDER_DIALOG_TAG);
     }
 }

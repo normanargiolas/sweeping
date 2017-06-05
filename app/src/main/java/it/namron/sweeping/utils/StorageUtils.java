@@ -1,6 +1,7 @@
 package it.namron.sweeping.utils;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.os.StatFs;
@@ -204,7 +205,9 @@ public class StorageUtils {
             String[] storageDirectories = getStorageDirectories(context);
             String app_root_dir = Environment.getExternalStorageDirectory().getPath();
             for (String dir : storageDirectories) {
-                if (!dir.toLowerCase().equals(app_root_dir.toLowerCase())) {
+                File first = new File(dir);
+                File second = new File(app_root_dir);
+                if (!first.equals(second)){
                     root.add(dir);
                 }
             }

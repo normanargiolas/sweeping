@@ -3,7 +3,7 @@ package it.namron.sweeping.fragment;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -25,16 +25,17 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import it.namron.sweeping.adapter.DirectoryItemAdapter;
+import it.namron.sweeping.concurrency.AppListLoader;
 import it.namron.sweeping.concurrency.FolderSizeAsyncTask;
-import it.namron.sweeping.dialog.AlertMainFolderDialog;
+import it.namron.sweeping.concurrency.PerformeCopyLoader;
 import it.namron.sweeping.dialog.DialogHandler;
-import it.namron.sweeping.dialog.PerformCopyDialog;
-import it.namron.sweeping.dialog.parameter.PerformCopyDialogFromParameter;
 import it.namron.sweeping.dialog.parameter.PerformCopyDialogToParameter;
+import it.namron.sweeping.dialog.parameter.PerformCopyFromDialogParameter;
 import it.namron.sweeping.dto.AppItemDTO;
 import it.namron.sweeping.dto.DirectoryItemDTO;
 import it.namron.sweeping.exception.CustomException;
 import it.namron.sweeping.listener.FolderSizeAsyncTaskListener;
+import it.namron.sweeping.listener.PerformeCopyListener;
 import it.namron.sweeping.sweeping.R;
 import it.namron.sweeping.utils.AppUtils;
 import it.namron.sweeping.utils.LogUtils;
@@ -50,10 +51,14 @@ import static it.namron.sweeping.constant.Constant.APP_TELEGRAM;
 import static it.namron.sweeping.constant.Constant.APP_WHATSAPP;
 import static it.namron.sweeping.constant.Constant.DIALOG_FRAGMENT;
 import static it.namron.sweeping.constant.Constant.EXTERNAL_STORAGE_COMPATIBILITY_DIALOG_TAG;
+import static it.namron.sweeping.constant.Constant.ID_APP_INFO_FOLDER_LOADER;
+import static it.namron.sweeping.constant.Constant.ID_APP_LIST_LOADER;
+import static it.namron.sweeping.constant.Constant.ID_PREPARE_COPY_LOADER;
 import static it.namron.sweeping.constant.Constant.MB_MARGIN;
 import static it.namron.sweeping.constant.Constant.NOT_INITIALIZED_FOLDER_SIZE;
 import static it.namron.sweeping.constant.Constant.PERFORM_COPY_DIALOG_PARAMETER_BUNDLE;
 import static it.namron.sweeping.constant.Constant.PERFORM_COPY_DIALOG_PARAMETER_TAG;
+import static it.namron.sweeping.constant.Constant.PREPARE_COPY_BUNDLE;
 
 /**
  * Created by norman on 09/05/17.
@@ -61,11 +66,9 @@ import static it.namron.sweeping.constant.Constant.PERFORM_COPY_DIALOG_PARAMETER
 
 public class AppInfoFragment extends Fragment implements
         DirectoryItemAdapter.DirectoryAdapterListener,
-//        PerformCopyDialog.ResoultPerformCopyDialogListener,
-        AlertMainFolderDialog.ResoultAlertMainFolderDialogListener,
-//        ExternalStorageCompatibilityDialog.ResoultExternalStorageCompatibilityDialogListener,
         DialogHandler.DialogHandlerListener,
-        FolderSizeAsyncTaskListener {
+        FolderSizeAsyncTaskListener ,
+        PerformeCopyListener {
 
     private static final String LOG_TAG = AppInfoFragment.class.getSimpleName();
 
@@ -83,6 +86,7 @@ public class AppInfoFragment extends Fragment implements
     private long mSDFreeMemory;
     private String mSDPath;
 
+    private PerformCopyFromDialogParameter mPerformCopyParameter;
 
     //References to RecyclerView and Adapter to reset the list to its
     //"pretty" state when the reset menu item is clicked.
@@ -92,13 +96,7 @@ public class AppInfoFragment extends Fragment implements
     private AppItemDTO mAppItem;
 
     private List<DirectoryItemDTO> mDirectoryListModels = new ArrayList<>();
-
-    /*
-     * This number will uniquely identify our Loader
-     */
-    private static final int ID_APP_INFO_FOLDER_LOADER = 20;
-
-    private static final int ID_WHATSAPP_FOLDER_LOADER = 30;
+    private List<DirectoryItemDTO> mSelectedDirectoryList = new ArrayList<>();
 
     private LoaderManager mLoaderManager;
 
@@ -124,7 +122,43 @@ public class AppInfoFragment extends Fragment implements
 
     }
 
-    private LoaderManager.LoaderCallbacks<List<DirectoryItemDTO>> mAppInfoFolderLoaderCallback = new LoaderManager.LoaderCallbacks<List<DirectoryItemDTO>>() {
+    /**
+     * This method is used to notify after a doInBackground that implement
+     * PerformeCopyListener has finished.
+     */
+    @Override
+    public void notifyOnFolderCopied(String folder, int index, String senderCode) {
+
+    }
+
+    private LoaderManager.LoaderCallbacks<Boolean> mPerformeCopyLoader = new LoaderManager.LoaderCallbacks<Boolean>() {
+
+        @Override
+        public Loader<Boolean> onCreateLoader(int loaderId, Bundle args) {
+            switch (loaderId) {
+                case ID_APP_LIST_LOADER:
+                    // This is called when a new Loader needs to be created.  This
+                    // sample only has one Loader with no arguments, so it is simple.
+                    if (args != null && args.getStringArrayList(APP_NAME_BUNDLE) != null)
+                        return new PerformeCopyLoader(getContext(), args.getStringArrayList(APP_NAME_BUNDLE));
+                default:
+                    throw new RuntimeException("Loader Not Implemented: " + loaderId);
+            }
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Boolean> loader, Boolean data) {
+
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Boolean> loader) {
+
+        }
+    };
+
+
+    private LoaderManager.LoaderCallbacks<List<DirectoryItemDTO>> mAppInfoFolderLoader = new LoaderManager.LoaderCallbacks<List<DirectoryItemDTO>>() {
 
         @Override
         public Loader<List<DirectoryItemDTO>> onCreateLoader(int loaderId, Bundle args) {
@@ -242,8 +276,8 @@ public class AppInfoFragment extends Fragment implements
             throw new ClassCastException(context.toString()
                     + " must implement FolderSizeAsyncTaskListener");
         }
+        //todo aggiungere le restanti interfacce
     }
-
 
     private boolean isSelected(List<DirectoryItemDTO> mDirectoryListModels) {
         for (DirectoryItemDTO directory : mDirectoryListModels) {
@@ -281,29 +315,12 @@ public class AppInfoFragment extends Fragment implements
                 public void onClick(View view) {
                     if (mAppItem != null && mDirectoryListModels != null) {
                         if (isSelected(mDirectoryListModels) == true) {
-//                            mPerformeCopyDialog = new PerformCopyDialog();
-//                            mPerformeCopyDialog.setTargetFragment(AppInfoFragment.this, DIALOG_FRAGMENT);
-
                             Bundle bundleForDialog = createPerformCopyBundle();
-//                            mPerformeCopyDialog.setArguments(bundleForDialog);
-                            // Show Alert DialogFragment
-//                            mPerformeCopyDialog.show(fm, PERFORM_COPY_DIALOG_PARAMETER_TAG);
-
                             mDialogHandler.showPerformCopyDialog(bundleForDialog);
                         } else {
                             mDialogHandler.showAlertSelectedFolderDialog();
                         }
-
-
-                        //Mostrare un menu dialog di conferma
-                        //Recuperare i dati
-                        //Avviare la procedura di copia
-                        //Eventualmente cancellare gli originali
-
-
                     }
-
-
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
                 }
@@ -335,26 +352,20 @@ public class AppInfoFragment extends Fragment implements
                 getActivity().setTitle(mAppItem.getAppName());
 
                 if (mAppItem != null) {
-                /*
-                * Initialize the loader
-                */
+                    /**
+                     * Initialize the loader
+                     **/
                     mLoaderManager = getLoaderManager();
                     Bundle appInfoBundle = new Bundle();
                     appInfoBundle.putString(APP_NAME_BUNDLE, mAppItem.getAppName());
 
-                    getLoaderManager().initLoader(ID_APP_INFO_FOLDER_LOADER, appInfoBundle, mAppInfoFolderLoaderCallback);
+                    getLoaderManager().initLoader(ID_APP_INFO_FOLDER_LOADER, appInfoBundle, mAppInfoFolderLoader);
                 }
             }
-
             return rootView;
         } else {
             LogUtils.LOGD_N(LOG_TAG, "Device non compatibile!");
-//            ExternalStorageCompatibilityDialog dialog = new ExternalStorageCompatibilityDialog();
-//            dialog.setTargetFragment(AppInfoFragment.this, DIALOG_FRAGMENT);
-//            dialog.show(getFragmentManager(), EXTERNAL_STORAGE_COMPATIBILITY_DIALOG_TAG);
-
             mDialogHandler.showExternalStorageCompatibility();
-
             return null;
         }
     }
@@ -370,7 +381,6 @@ public class AppInfoFragment extends Fragment implements
         mDirectoryListModels.set(position, directoryItem);
         mDirectoryAdapter.notifyDataSetChanged();
 
-
 //        if (mToast != null) {
 //            mToast.cancel();
 //        }
@@ -379,37 +389,6 @@ public class AppInfoFragment extends Fragment implements
 //
 //        mToast.show();
     }
-
-//    /**
-//     * This method is used to notify after a onClick positive buttn that implement
-//     * PerformCopyDialog has clicked.
-//     */
-//    @Override
-//    public void onResoultPerformCopyDialog(@NonNull PerformCopyDialogFromParameter parameter) {
-//
-////        if (mToast != null) {
-////            mToast.cancel();
-////        }
-////        String toastMessage = "Folder:" + parameter.getFolder() + " Mantieni originali: " + parameter.getOriginal().toString();
-////        mToast = Toast.makeText(this.getContext(), toastMessage, Toast.LENGTH_LONG);
-////        mToast.show();
-//
-//
-//        if (isMainFolderJustPresent(parameter.getFolder()) == false) {
-//            mDialogHandler.dismissPerformCopyDialog();
-//
-//            if (isEnoughtFreeMemory(mDirectoryListModels) == true) {
-//                copySelectedFolder();
-//            }
-//
-//
-////            Toast.makeText(this.getContext(), "Crea cartella ed inizia la procedura di copia", Toast.LENGTH_LONG).show();
-//        } else {
-//            AlertMainFolderDialog dialog = new AlertMainFolderDialog();
-//            dialog.setTargetFragment(AppInfoFragment.this, DIALOG_FRAGMENT);
-//            dialog.show(getFragmentManager(), ALERT_MAIN_FOLDER_DIALOG_TAG);
-//        }
-//    }
 
     private boolean isMainFolderJustPresent(String folder) {
 
@@ -423,12 +402,8 @@ public class AppInfoFragment extends Fragment implements
             return false;
         }
 
-
 //            String[] storageDirectories = StorageUtils.getStorageDirectories(getContext());
-//
-//
 //            String app_root_dir = Environment.getExternalStorageDirectory().getPath();
-//
 //
 //            File[] externalFilesDirs = ContextCompat.getExternalFilesDirs(getActivity(), null);
 //            File[] externalCacheDirs = ContextCompat.getExternalCacheDirs(getActivity());
@@ -436,6 +411,9 @@ public class AppInfoFragment extends Fragment implements
 
     private String getPathOfRemovibleSDWithMoreFreeMemory(String folder) {
         String[] removibleSDPath = StorageUtils.getRemovibleSDStorageDirectory(getContext());
+
+        removibleSDPath = new String[1];
+        removibleSDPath[0] = Environment.getExternalStorageDirectory().getPath(); //todo only for test on nexus
 
         if (removibleSDPath != null && removibleSDPath.length > 0) {
             String rootSD = removibleSDPath[0];
@@ -457,32 +435,16 @@ public class AppInfoFragment extends Fragment implements
         throw new CustomException("Errore inaspettato");
     }
 
+    private boolean isEnoughtFreeMemory(List<DirectoryItemDTO> directoryListModels) {
+        //  directoryListModels = mDirectoryListModels
+        // contiene tutte le informazioni riguardo le directory da copiare
 
-    /**
-     * This method is used to notify after a onClick "continue" buttn that implement
-     * ContinueAlertMainFolderDialog has clicked.
-     */
-    @Override
-    public void onContinueAlertMainFolderDialog(boolean resoult) {
-        mDialogHandler.dismissPerformCopyDialog();
-
-        if (isEnoughtFreeMemory(mDirectoryListModels) == true) {
-            copySelectedFolder();
-        }
-    }
-
-    private void copySelectedFolder() {
-        Toast.makeText(this.getContext(), "Inizia la procedura di copia", Toast.LENGTH_LONG).show();
-
-    }
-
-    private boolean isEnoughtFreeMemory(List<DirectoryItemDTO> mDirectoryListModels) {
-//        mDirectoryListModels contiene tutte le informazioni
-
-        if (mDirectoryListModels != null) {
+        if (directoryListModels != null) {
+            mSelectedDirectoryList.clear();
             mTotalSize = 0;
-            for (DirectoryItemDTO directory : mDirectoryListModels) {
+            for (DirectoryItemDTO directory : directoryListModels) {
                 if (directory.isSelected()) {
+                    mSelectedDirectoryList.add(directory);
                     mTotalSize += directory.getSizeByte();
                 }
             }
@@ -516,24 +478,74 @@ public class AppInfoFragment extends Fragment implements
                 getActivity().finish();
                 break;
             case PERFORM_COPY_DIALOG_PARAMETER_TAG:
-                PerformCopyDialogFromParameter parameter = (PerformCopyDialogFromParameter) resoult;
-                if (isMainFolderJustPresent(parameter.getFolder()) == false) {
-                    mDialogHandler.dismissPerformCopyDialog();
+                mPerformCopyParameter = (PerformCopyFromDialogParameter) resoult;
 
-                    if (isEnoughtFreeMemory(mDirectoryListModels) == true) {
-                        copySelectedFolder();
-                    }
-                } else {
-                    AlertMainFolderDialog dialog = new AlertMainFolderDialog();
-                    dialog.setTargetFragment(AppInfoFragment.this, DIALOG_FRAGMENT);
-                    dialog.show(getFragmentManager(), ALERT_MAIN_FOLDER_DIALOG_TAG);
-                }
+                if (isMainFolderJustPresent(mPerformCopyParameter.getFolder()) == true)
+                    mDialogHandler.showAlertMainFolder();
+                else
+                    prepareTheCopy();
+                break;
+            case ALERT_MAIN_FOLDER_DIALOG_TAG:
+                /**
+                 * "continue" buttn that implement ContinueAlertMainFolderDialog has clicked
+                 **/
+                prepareTheCopy();
                 break;
             default:
                 LogUtils.LOGD_N(LOG_TAG, "Alert Dialog sconosciuto");
                 break;
         }
     }
+
+    /**
+     * If we haven't enought free memory, we waiting in AppInfoFragment directory list
+     * At this point we have:
+     * mTotalSize = total size of file to copy in byte
+     * mSDPath = path of SD card
+     * mSDFreeMemory = free memory of mSDPath
+     * mDirectoryListModels = contains all directory nformation
+     * mSelectedDirectoryList = contains all directory selected information, not be null at this point
+     * mPerformCopyParameter = contains name of folder where to put the files and if delete files after the copy
+     * mLoaderManager = deve essere diverso da null
+     **/
+    private void prepareTheCopy() {
+        //todo lanciare un asynck task all'interno di un loader
+        mDialogHandler.dismissPerformCopyDialog();
+        if (isEnoughtFreeMemory(mDirectoryListModels) == true) {
+
+            final ArrayList<String> dir = new ArrayList<>();
+            for (DirectoryItemDTO s : mSelectedDirectoryList) {
+                dir.add(s.getPath());
+            }
+
+            Bundle directoryBundle = new Bundle();
+            directoryBundle.putStringArrayList(PREPARE_COPY_BUNDLE, dir);
+
+            Loader<Boolean> performeCopyLoader = mLoaderManager.getLoader(ID_PREPARE_COPY_LOADER);
+            if (performeCopyLoader == null) {
+                mLoaderManager.initLoader(ID_PREPARE_COPY_LOADER, directoryBundle, mPerformeCopyLoader);
+            } else {
+                mLoaderManager.restartLoader(ID_PREPARE_COPY_LOADER, directoryBundle, mPerformeCopyLoader);
+            }
+
+
+//            for (DirectoryItemDTO directory : mSelectedDirectoryList) {
+//                File sourceLocation = new File(directory.getPath());
+//                File targetLocation = new File(mSDPath, mPerformCopyParameter.getFolder());
+//                copySelectedFolder(sourceLocation, targetLocation);
+//            }
+
+        }
+    }
+
+
+    private void copySelectedFolder(File sourceLocation, File targetLocation) {
+
+
+        Toast.makeText(this.getContext(), "Inizia la procedura di copia", Toast.LENGTH_LONG).show();
+
+    }
+
 }
 
 

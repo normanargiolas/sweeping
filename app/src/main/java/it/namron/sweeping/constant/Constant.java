@@ -30,6 +30,14 @@ public class Constant {
 
 
     /**
+     * This number will uniquely identify our Loader
+     */
+    public static final int ID_APP_LIST_LOADER = 20;
+    public static final int ID_PREPARE_COPY_LOADER = 21;
+    public static final int ID_APP_INFO_FOLDER_LOADER = 22;
+
+
+    /**
      * Valori per gestire size_byte della classe DirectoryItemDTO
      *
      * */
@@ -49,6 +57,8 @@ public class Constant {
      */
     public static final String APP_SELECTED_BUNDLE = "APP_SELECTED_BUNDLE";
     public static final String APP_NAME_BUNDLE = "APP_NAME_BUNDLE";
+    public static final String PREPARE_COPY_BUNDLE = "PREPARE_COPY_BUNDLE";
+
 
     public static enum target {
         WHATSAPP("whatsapp"),

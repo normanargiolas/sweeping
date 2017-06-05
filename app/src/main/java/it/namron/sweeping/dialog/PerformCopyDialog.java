@@ -24,7 +24,7 @@ import android.widget.TextView;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import it.namron.sweeping.dialog.parameter.PerformCopyDialogFromParameter;
+import it.namron.sweeping.dialog.parameter.PerformCopyFromDialogParameter;
 import it.namron.sweeping.dialog.parameter.PerformCopyDialogToParameter;
 import it.namron.sweeping.sweeping.R;
 
@@ -39,10 +39,10 @@ public class PerformCopyDialog extends DialogFragment{
     RadioButton mPerformeRdBtnTieni;
 
     EditText mPerformeEditText;
-    PerformCopyDialogFromParameter mParameterFromObj;
+    PerformCopyFromDialogParameter mParameterFromObj;
 
     public interface ResoultPerformCopyDialogListener {
-        void onResoultPerformCopyDialog(PerformCopyDialogFromParameter parameter);
+        void onResoultPerformCopyDialog(PerformCopyFromDialogParameter parameter);
     }
 
     public PerformCopyDialog() {
@@ -106,7 +106,7 @@ public class PerformCopyDialog extends DialogFragment{
 
 
                         if (validFormatFolder(mPerformeEditText.getText().toString())) {
-                            mParameterFromObj = new PerformCopyDialogFromParameter();
+                            mParameterFromObj = new PerformCopyFromDialogParameter();
                             mParameterFromObj.setFolder(mPerformeEditText.getText().toString());
                             mParameterFromObj.setOriginal(mPerformeRdBtnTieni.isChecked());
 
