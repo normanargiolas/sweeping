@@ -18,6 +18,7 @@ import static it.namron.sweeping.constant.Constant.ILLEGAL_ARGUMENT_FOLDER_SIZE;
 /**
  * Created by norman on 31/05/17.
  */
+
 //AsyncTask<Params, Progress, Result>
 public class FolderSizeAsyncTask extends AsyncTask<Uri, Integer, Long> {
     private final String CLASS_NAME_HASH_CODE = getClass().getSimpleName() + super.hashCode();
