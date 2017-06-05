@@ -3,6 +3,8 @@ package it.namron.sweeping.concurrency;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
 
 import java.io.File;
 
@@ -47,12 +49,13 @@ public class AppEntry {
         } else {
             return mIcon;
         }
-//todo rimuovere deprecato
-        return mLoader.getContext().getResources().getDrawable(
-                android.R.drawable.sym_def_app_icon);
+        return ContextCompat.getDrawable(mLoader.getContext(), android.R.drawable.sym_def_app_icon);
+//        return ResourcesCompat.getDrawable(mLoader.getContext().getResources(), android.R.drawable.sym_def_app_icon, null);
+//        return mLoader.getContext().getResources().getDrawable(android.R.drawable.sym_def_app_icon);
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return mLabel;
     }
 
