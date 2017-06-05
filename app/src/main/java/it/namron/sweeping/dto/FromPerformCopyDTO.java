@@ -1,4 +1,4 @@
-package it.namron.sweeping.dialog.parameter;
+package it.namron.sweeping.dto;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -7,28 +7,28 @@ import android.os.Parcelable;
  * Created by norman on 27/05/17.
  */
 
-public class PerformCopyFromDialogParameter implements Parcelable {
+public class FromPerformCopyDTO implements Parcelable {
     private String folder;
     private Boolean original;
 
-    protected PerformCopyFromDialogParameter(Parcel in) {
+    protected FromPerformCopyDTO(Parcel in) {
         folder = in.readString();
         original = in.readByte() != 0;     //original == true if byte != 0
     }
 
-    public static final Creator<PerformCopyFromDialogParameter> CREATOR = new Creator<PerformCopyFromDialogParameter>() {
+    public static final Creator<FromPerformCopyDTO> CREATOR = new Creator<FromPerformCopyDTO>() {
         @Override
-        public PerformCopyFromDialogParameter createFromParcel(Parcel in) {
-            return new PerformCopyFromDialogParameter(in);
+        public FromPerformCopyDTO createFromParcel(Parcel in) {
+            return new FromPerformCopyDTO(in);
         }
 
         @Override
-        public PerformCopyFromDialogParameter[] newArray(int size) {
-            return new PerformCopyFromDialogParameter[size];
+        public FromPerformCopyDTO[] newArray(int size) {
+            return new FromPerformCopyDTO[size];
         }
     };
 
-    public PerformCopyFromDialogParameter() {
+    public FromPerformCopyDTO() {
     }
 
     public Boolean getOriginal() {

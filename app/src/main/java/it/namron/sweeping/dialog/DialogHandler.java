@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
-import it.namron.sweeping.dialog.parameter.PerformCopyFromDialogParameter;
+import it.namron.sweeping.dto.FromPerformCopyDTO;
 
 import static it.namron.sweeping.constant.Constant.ALERT_MAIN_FOLDER_DIALOG_TAG;
 import static it.namron.sweeping.constant.Constant.ALERT_SELECTED_FOLDER_DIALOG_TAG;
@@ -116,7 +116,7 @@ public class DialogHandler extends Fragment implements
      * PerformCopyDialog has clicked.
      */
     @Override
-    public void onResoultPerformCopyDialog(PerformCopyFromDialogParameter resoult) {
+    public void onResoultPerformCopyDialog(FromPerformCopyDTO resoult) {
         mListener.onDialogResoult(resoult, PERFORM_COPY_DIALOG_PARAMETER_TAG);
     }
 

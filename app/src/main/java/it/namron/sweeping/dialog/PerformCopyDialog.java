@@ -24,8 +24,8 @@ import android.widget.TextView;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import it.namron.sweeping.dialog.parameter.PerformCopyFromDialogParameter;
-import it.namron.sweeping.dialog.parameter.PerformCopyDialogToParameter;
+import it.namron.sweeping.dto.FromPerformCopyDTO;
+import it.namron.sweeping.dto.ToPerformCopyDTO;
 import it.namron.sweeping.sweeping.R;
 
 import static it.namron.sweeping.constant.Constant.ALERT_FOLDER_DIALOG_TAG;
@@ -39,10 +39,10 @@ public class PerformCopyDialog extends DialogFragment{
     RadioButton mPerformeRdBtnTieni;
 
     EditText mPerformeEditText;
-    PerformCopyFromDialogParameter mParameterFromObj;
+    FromPerformCopyDTO mParameterFromObj;
 
     public interface ResoultPerformCopyDialogListener {
-        void onResoultPerformCopyDialog(PerformCopyFromDialogParameter parameter);
+        void onResoultPerformCopyDialog(FromPerformCopyDTO parameter);
     }
 
     public PerformCopyDialog() {
@@ -53,7 +53,7 @@ public class PerformCopyDialog extends DialogFragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Bundle mArgs = getArguments();
         if (mArgs != null) {
-            PerformCopyDialogToParameter parameterObj = mArgs.getParcelable(PERFORM_COPY_DIALOG_PARAMETER_BUNDLE);
+            ToPerformCopyDTO parameterObj = mArgs.getParcelable(PERFORM_COPY_DIALOG_PARAMETER_BUNDLE);
             if (parameterObj != null) {
                 String title = parameterObj.getTitle();
                 String folder = parameterObj.getFolder();
@@ -106,7 +106,7 @@ public class PerformCopyDialog extends DialogFragment{
 
 
                         if (validFormatFolder(mPerformeEditText.getText().toString())) {
-                            mParameterFromObj = new PerformCopyFromDialogParameter();
+                            mParameterFromObj = new FromPerformCopyDTO();
                             mParameterFromObj.setFolder(mPerformeEditText.getText().toString());
                             mParameterFromObj.setOriginal(mPerformeRdBtnTieni.isChecked());
 

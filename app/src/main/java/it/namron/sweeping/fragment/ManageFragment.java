@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import it.namron.sweeping.sweeping.R;
+import it.namron.sweeping.utils.LogUtils;
 
 /**
  * Created by norman on 09/05/17.
@@ -185,7 +186,7 @@ public class ManageFragment extends Fragment {
 
                 @Override
                 public Boolean loadInBackground() {
-                    Log.d(LOG_TAG, "loadInBackground");
+                    LogUtils.LOGD_N(LOG_TAG, "loadInBackground");
 
                     String sourcePath = args.getString(SOURCE_PATH_URI_EXTRA);
                     Uri sourceUri = Uri.parse(sourcePath);

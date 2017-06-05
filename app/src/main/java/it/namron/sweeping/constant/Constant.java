@@ -57,7 +57,10 @@ public class Constant {
      */
     public static final String APP_SELECTED_BUNDLE = "APP_SELECTED_BUNDLE";
     public static final String APP_NAME_BUNDLE = "APP_NAME_BUNDLE";
-    public static final String PREPARE_COPY_BUNDLE = "PREPARE_COPY_BUNDLE";
+    public static final String DIR_PREPARE_COPY_BUNDLE = "DIR_PREPARE_COPY_BUNDLE";
+    public static final String SD_PREPARE_COPY_BUNDLE = "SD_PREPARE_COPY_BUNDLE";
+    public static final String DTO_PREPARE_COPY_BUNDLE = "DTO_PREPARE_COPY_BUNDLE";
+
 
 
     public static enum target {

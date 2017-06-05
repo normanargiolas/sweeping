@@ -1,29 +1,22 @@
-package it.namron.sweeping.dialog.parameter;
+package it.namron.sweeping.dto;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.v4.app.DialogFragment;
-
-import it.namron.sweeping.sweeping.R;
 
 /**
  * Created by norman on 27/05/17.
  */
 
-public class PerformCopyDialogToParameter implements Parcelable {
+public class ToPerformCopyDTO implements Parcelable {
     private String title;
     private String folder;
     private Drawable icon;
 
-    protected PerformCopyDialogToParameter(Parcel in) {
+    protected ToPerformCopyDTO(Parcel in) {
         title = in.readString();
         folder = in.readString();
 
@@ -35,19 +28,19 @@ public class PerformCopyDialogToParameter implements Parcelable {
         }
     }
 
-    public static final Creator<PerformCopyDialogToParameter> CREATOR = new Creator<PerformCopyDialogToParameter>() {
+    public static final Creator<ToPerformCopyDTO> CREATOR = new Creator<ToPerformCopyDTO>() {
         @Override
-        public PerformCopyDialogToParameter createFromParcel(Parcel in) {
-            return new PerformCopyDialogToParameter(in);
+        public ToPerformCopyDTO createFromParcel(Parcel in) {
+            return new ToPerformCopyDTO(in);
         }
 
         @Override
-        public PerformCopyDialogToParameter[] newArray(int size) {
-            return new PerformCopyDialogToParameter[size];
+        public ToPerformCopyDTO[] newArray(int size) {
+            return new ToPerformCopyDTO[size];
         }
     };
 
-    public PerformCopyDialogToParameter() {
+    public ToPerformCopyDTO() {
     }
 
     public String getTitle() {

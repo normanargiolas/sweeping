@@ -1,41 +1,89 @@
 package it.namron.sweeping.concurrency;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.v4.content.AsyncTaskLoader;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
+import it.namron.sweeping.dto.FromPerformCopyDTO;
 import it.namron.sweeping.listener.FolderSizeAsyncTaskListener;
+import it.namron.sweeping.utils.LogUtils;
 
 /**
  * Created by norman on 05/06/17.
  */
 
 public class PerformeCopyLoader extends AsyncTaskLoader<Boolean> {
+    public static final String LOG_TAG = PerformeCopyLoader.class.getSimpleName();
+
 
     private Context mContext;
-    private ArrayList<String> mDirList;
+    private ArrayList<String> mSources;
+    private String mDestination;
     private FolderSizeAsyncTaskListener mCallback;
+    FromPerformCopyDTO mInfo;
 
+    private Boolean mResponce;
 
-
-    public PerformeCopyLoader(Context context, ArrayList<String> directories) {
+    public PerformeCopyLoader(Context context, ArrayList<String> sources, String destination, FromPerformCopyDTO info) {
         super(context);
         mContext = context;
-        mDirList = directories;
+        mSources = sources;
+        mDestination = destination;
+        mInfo = info;
     }
+
 
     /**
      * Handles a request to start the Loader.
      */
     @Override
     protected void onStartLoading() {
-
+        Boolean responce;
+        if (mSources == null) {
+            return;
+        }
+        /**
+         * If we already have cached results, just deliver them now. If we don't have any
+         * cached results, force a load.
+         **/
+        if (mResponce != null) {
+            deliverResult(mResponce);
+        } else {
+            forceLoad();
+        }
     }
 
     @Override
     public Boolean loadInBackground() {
-        return null;
+        LogUtils.LOGD_N(LOG_TAG, "loadInBackground");
+        try {
+            for (String source : mSources) {
+
+                File sourceLocation = new File(source);
+                if (sourceLocation.isDirectory()) {
+                    Uri uri = Uri.parse(source);
+                    String token = uri.getLastPathSegment();
+                    File destination = new File(mDestination, mInfo.getFolder());
+                    if (!destination.exists()) {
+                        //pensare se si vuole avvisare della directory già presente
+                        destination.mkdir();
+                    }
+                    File destinationLocation = new File(mDestination, combine(mInfo.getFolder(), token));
+                    copySelectedFolder(sourceLocation, destinationLocation);
+                }
+            }
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     /**
@@ -45,7 +93,8 @@ public class PerformeCopyLoader extends AsyncTaskLoader<Boolean> {
      */
     @Override
     public void deliverResult(Boolean res) {
-
+        mResponce = res;
+        super.deliverResult(res);
     }
 
     /**
@@ -55,5 +104,66 @@ public class PerformeCopyLoader extends AsyncTaskLoader<Boolean> {
     protected void onStopLoading() {
         // Attempt to cancel the current load task if possible.
         cancelLoad();
+    }
+
+    /**
+     * Handles a request to completely reset the Loader.
+     */
+    @Override
+    protected void onReset() {
+        super.onReset();
+        // Ensure the loader is stopped
+        onStopLoading();
+        // At this point we can release the resources associated with 'apps'
+        // if needed.
+        if (mResponce != null) {
+            onReleaseResources(mResponce);
+            mResponce = null;
+        }
+    }
+
+    private String combine(String path1, String path2) {
+        File file1 = new File(path1);
+        File file2 = new File(file1, path2);
+        return file2.getPath();
+    }
+
+    private void copySelectedFolder(File source, File destination) throws IOException {
+        LogUtils.LOGD_N(LOG_TAG, "Inizia la procedura di copia per: ", source);
+        if (source.isDirectory()) {
+            if (!destination.exists()) {
+                //pensare se si vuole avvisare della directory già presente
+                destination.mkdir();
+            }
+
+            String[] children = source.list();
+            for (int i = 0; i < source.listFiles().length; i++) {
+
+                copySelectedFolder(new File(source, children[i]),
+                        new File(destination, children[i]));
+            }
+        } else {
+            if (!destination.exists()) {
+                //pensare se si vuole avvisare del file già presente
+            }
+
+            FileInputStream inStream = new FileInputStream(source);
+            FileOutputStream outStream = new FileOutputStream(destination);
+            FileChannel inChannel = inStream.getChannel();
+            FileChannel outChannel = outStream.getChannel();
+            inChannel.transferTo(0, inChannel.size(), outChannel);
+            inStream.close();
+            outStream.close();
+
+        }
+    }
+
+    /**
+     * Helper function to take care of releasing resources associated
+     * with an actively loaded data set.
+     */
+    protected void onReleaseResources(Boolean res) {
+        // For a simple List<> there is nothing to do.  For something
+        // like a Cursor, we would close it here.
     }
 }
