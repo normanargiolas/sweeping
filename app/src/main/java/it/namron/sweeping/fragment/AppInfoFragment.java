@@ -74,6 +74,7 @@ public class AppInfoFragment extends Fragment implements
 
     private DialogHandler mDialogHandler;
 
+    private PerformeCopyListener performeCopyListener;
     private FolderSizeAsyncTaskListener mAppInfofragmentListener;
     FolderSizeAsyncTask mFolderSizeAsyncTask;
     ExecutorService threadPoolExecutor = Executors.newFixedThreadPool(2);
@@ -142,12 +143,15 @@ public class AppInfoFragment extends Fragment implements
                     if (args != null &&
                             args.getStringArrayList(DIR_PREPARE_COPY_BUNDLE) != null &&
                             args.getString(SD_PREPARE_COPY_BUNDLE) != null &&
-                            args.getParcelable(DTO_PREPARE_COPY_BUNDLE) != null)
+                            args.getParcelable(DTO_PREPARE_COPY_BUNDLE) != null) {
 
-                        return new PerformeCopyLoader(getContext(),
-                                args.getStringArrayList(DIR_PREPARE_COPY_BUNDLE),
-                                args.getString(SD_PREPARE_COPY_BUNDLE),
-                                args.getParcelable(DTO_PREPARE_COPY_BUNDLE));
+                        ArrayList<String> dirs = args.getStringArrayList(DIR_PREPARE_COPY_BUNDLE);
+                        String sd = args.getString(SD_PREPARE_COPY_BUNDLE);
+                        FromPerformCopyDTO dto = args.getParcelable(DTO_PREPARE_COPY_BUNDLE);
+
+                        return new PerformeCopyLoader(getContext(), dirs, sd, dto, performeCopyListener);
+                    }
+
                 default:
                     throw new RuntimeException("Loader Not Implemented: " + loaderId);
             }

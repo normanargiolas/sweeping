@@ -12,7 +12,7 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
 import it.namron.sweeping.dto.FromPerformCopyDTO;
-import it.namron.sweeping.listener.FolderSizeAsyncTaskListener;
+import it.namron.sweeping.listener.PerformeCopyListener;
 import it.namron.sweeping.utils.LogUtils;
 
 /**
@@ -26,17 +26,18 @@ public class PerformeCopyLoader extends AsyncTaskLoader<Boolean> {
     private Context mContext;
     private ArrayList<String> mSources;
     private String mDestination;
-    private FolderSizeAsyncTaskListener mCallback;
+    private PerformeCopyListener mCallback;
     FromPerformCopyDTO mInfo;
 
     private Boolean mResponce;
 
-    public PerformeCopyLoader(Context context, ArrayList<String> sources, String destination, FromPerformCopyDTO info) {
+    public PerformeCopyLoader(Context context, ArrayList<String> sources, String destination, FromPerformCopyDTO info, PerformeCopyListener callback) {
         super(context);
         mContext = context;
         mSources = sources;
         mDestination = destination;
         mInfo = info;
+        mCallback = callback;
     }
 
 
