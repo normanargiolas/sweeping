@@ -270,7 +270,7 @@ public class AppInfoFragment extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        if (isCompatible) {  
+        if (isCompatible) {
             View rootView = inflater.inflate(R.layout.fragment_app_info, container, false);
 
             FragmentManager fm = getFragmentManager();
