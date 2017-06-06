@@ -129,7 +129,16 @@ public class AppInfoFragment extends Fragment implements
      */
     @Override
     public void notifyOnFolderCopied(String folder, int index, String senderCode) {
+        Toast.makeText(getActivity(), "copia di " + folder, Toast.LENGTH_SHORT).show();
+    }
 
+    /**
+     * This method is used to notify an error during the copy of files in the object that implement
+     * PerformeCopyListener has finished.
+     */
+    @Override
+    public void notifyOnErrorOccurred(String folder, int index, String senderCode) {
+        Toast.makeText(getActivity(), "errore nella copia di " + folder, Toast.LENGTH_SHORT).show();
     }
 
     private LoaderManager.LoaderCallbacks<Boolean> mPerformeCopyLoader = new LoaderManager.LoaderCallbacks<Boolean>() {

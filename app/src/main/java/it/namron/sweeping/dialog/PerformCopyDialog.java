@@ -108,7 +108,7 @@ public class PerformCopyDialog extends DialogFragment{
                         if (validFormatFolder(mPerformeEditText.getText().toString())) {
                             mParameterFromObj = new FromPerformCopyDTO();
                             mParameterFromObj.setFolder(mPerformeEditText.getText().toString());
-                            mParameterFromObj.setOriginal(mPerformeRdBtnTieni.isChecked());
+                            mParameterFromObj.setDelete(mPerformeRdBtnTieni.isChecked());
 
                             mListener.onResoultPerformCopyDialog(mParameterFromObj);
                         } else {

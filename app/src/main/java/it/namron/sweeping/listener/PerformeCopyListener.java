@@ -7,5 +7,6 @@ package it.namron.sweeping.listener;
 public interface PerformeCopyListener {
 
     void notifyOnFolderCopied(String folder, int index, String senderCode);
+    void notifyOnErrorOccurred(String folder, int index, String senderCode);
 
 }

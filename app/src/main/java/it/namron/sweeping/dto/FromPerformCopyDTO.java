@@ -9,11 +9,11 @@ import android.os.Parcelable;
 
 public class FromPerformCopyDTO implements Parcelable {
     private String folder;
-    private Boolean original;
+    private Boolean delete;
 
     protected FromPerformCopyDTO(Parcel in) {
         folder = in.readString();
-        original = in.readByte() != 0;     //original == true if byte != 0
+        delete = in.readByte() != 0;     //delete == true if byte != 0
     }
 
     public static final Creator<FromPerformCopyDTO> CREATOR = new Creator<FromPerformCopyDTO>() {
@@ -31,12 +31,12 @@ public class FromPerformCopyDTO implements Parcelable {
     public FromPerformCopyDTO() {
     }
 
-    public Boolean getOriginal() {
-        return original;
+    public Boolean isDelete() {
+        return delete;
     }
 
-    public void setOriginal(Boolean original) {
-        this.original = original;
+    public void setDelete(Boolean isDelete) {
+        this.delete = isDelete;
     }
 
     public String getFolder() {
@@ -55,8 +55,8 @@ public class FromPerformCopyDTO implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeByte((byte) (original ? 1 : 0));     //if original == true, byte == 1
-//        dest.writeBooleanArray(new boolean[] {original});
+        dest.writeByte((byte) (delete ? 1 : 0));     //if delete == true, byte == 1
+//        dest.writeBooleanArray(new boolean[] {delete});
         dest.writeString(folder);
 
     }
