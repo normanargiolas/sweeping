@@ -2,7 +2,6 @@ package it.namron.sweeping.activity;
 
 import android.app.Application;
 
-import it.namron.sweeping.exception.UncaughtHandler;
 import it.namron.sweeping.utils.ResourceHashCode;
 
 /**
@@ -17,10 +16,10 @@ public class MainApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        //todo decommentare in futuro per la gestione delle eccezioni e relativo invio feedback
+        //new UncaughtHandler(this);
 
         //Set singleton resource hash code
         ResourceHashCode.getInstance(getApplicationContext());
-        //decommentare in futuro
-        //new UncaughtHandler(this);
     }
 }

@@ -174,7 +174,6 @@ public class PerformeCopyLoader extends AsyncTaskLoader<Boolean> {
                 //errore nella copia del file
                 mCallback.notifyOnErrorOccurred(source.toString(), 0, "copySelectedFolder");
             }
-
         }
     }
 

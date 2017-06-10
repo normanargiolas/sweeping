@@ -21,12 +21,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.namron.sweeping.adapter.AppItemAdapter;
-import it.namron.sweeping.fragment.ManageFragment;
-import it.namron.sweeping.dto.AppItemDTO;
-import it.namron.sweeping.dto.DrawerItemDTO;
-import it.namron.sweeping.sweeping.R;
 import it.namron.sweeping.concurrency.AppEntry;
 import it.namron.sweeping.concurrency.AppListLoader;
+import it.namron.sweeping.data.DatabaseManager;
+import it.namron.sweeping.data.DbHelper;
+import it.namron.sweeping.data.dao.ErrorLogDAO;
+import it.namron.sweeping.data.entity.ErrorLog;
+import it.namron.sweeping.dto.AppItemDTO;
+import it.namron.sweeping.dto.DrawerItemDTO;
+import it.namron.sweeping.fragment.ManageFragment;
+import it.namron.sweeping.sweeping.R;
 import it.namron.sweeping.utils.AppUtils;
 
 import static it.namron.sweeping.constant.Constant.APP_SELECTED_BUNDLE;
@@ -112,10 +116,33 @@ public class MainActivity extends BaseActivity implements
     };
 
 
+    private static DbHelper dbHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Create a DB helper (this will create the DB if run for the first time)
+        dbHelper = new DbHelper(getApplicationContext());
+        DatabaseManager.initializeInstance(dbHelper);
+
+        ErrorLogDAO errorLogDAO = new ErrorLogDAO();
+        //Insert Sample data
+        ErrorLog errorLog = new ErrorLog();
+        errorLog.setFile("nome del file");
+        errorLog.setMethod("descrizione metodo");
+        errorLog.setLine("numero linea");
+        errorLog.setMsg("messaggio");
+        errorLog.setLog("log");
+        errorLog.setStackTrace("stacktrace");
+        errorLogDAO.insert(errorLog);
+
+
+        // Keep a reference to the mDb until paused or killed. Get a writable database
+        // because you will be adding restaurant customers
+//        ResourceHashCode.setWritableDatabase(dbHelper.getWritableDatabase());
+
 
 //        setLayout(R.layout.activity_main);
         setDrawer(getApplicationContext());
