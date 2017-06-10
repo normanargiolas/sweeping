@@ -53,7 +53,7 @@ public class ErrorLogDAO {
         SQLiteDatabase db = DatabaseManager.getInstance().openDatabase();
         ContentValues values = new ContentValues();
 
-        values.put(COLUMN_ID, errorLog.getId());
+//        values.put(COLUMN_ID, errorLog.getId());
         values.put(COLUMN_FILE, errorLog.getFile());
         values.put(COLUMN_METHOD, errorLog.getMethod());
         values.put(COLUMN_LINE, errorLog.getLine());

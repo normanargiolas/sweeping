@@ -2,6 +2,8 @@ package it.namron.sweeping.activity;
 
 import android.app.Application;
 
+import it.namron.sweeping.data.DatabaseManager;
+import it.namron.sweeping.data.DbHelper;
 import it.namron.sweeping.utils.ResourceHashCode;
 
 /**
@@ -13,6 +15,9 @@ import it.namron.sweeping.utils.ResourceHashCode;
  * or do other staff
  */
 public class MainApplication extends Application {
+
+    private static DbHelper dbHelper;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -21,5 +26,8 @@ public class MainApplication extends Application {
 
         //Set singleton resource hash code
         ResourceHashCode.getInstance(getApplicationContext());
+        // Create a DB helper (this will create the DB if run for the first time)
+        dbHelper = new DbHelper(getApplicationContext());
+        DatabaseManager.initializeInstance(dbHelper);
     }
 }

@@ -115,17 +115,10 @@ public class MainActivity extends BaseActivity implements
         }
     };
 
-
-    private static DbHelper dbHelper;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        // Create a DB helper (this will create the DB if run for the first time)
-        dbHelper = new DbHelper(getApplicationContext());
-        DatabaseManager.initializeInstance(dbHelper);
 
         ErrorLogDAO errorLogDAO = new ErrorLogDAO();
         //Insert Sample data
@@ -136,6 +129,9 @@ public class MainActivity extends BaseActivity implements
         errorLog.setMsg("messaggio");
         errorLog.setLog("log");
         errorLog.setStackTrace("stacktrace");
+        errorLogDAO.insert(errorLog);
+
+        errorLogDAO.insert(errorLog);
         errorLogDAO.insert(errorLog);
 
 
