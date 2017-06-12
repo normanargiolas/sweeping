@@ -120,19 +120,19 @@ public class MainActivity extends BaseActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ErrorLogDAO errorLogDAO = new ErrorLogDAO();
-        //Insert Sample data
-        ErrorLog errorLog = new ErrorLog();
-        errorLog.setFile("nome del file");
-        errorLog.setMethod("descrizione metodo");
-        errorLog.setLine("numero linea");
-        errorLog.setMsg("messaggio");
-        errorLog.setLog("log");
-        errorLog.setStackTrace("stacktrace");
-        errorLogDAO.insert(errorLog);
-
-        errorLogDAO.insert(errorLog);
-        errorLogDAO.insert(errorLog);
+//        ErrorLogDAO errorLogDAO = new ErrorLogDAO();
+//        //Insert Sample data
+//        ErrorLog errorLog = new ErrorLog();
+//        errorLog.setFile("nome del file");
+//        errorLog.setMethod("descrizione metodo");
+//        errorLog.setLine("numero linea");
+//        errorLog.setMsg("messaggio");
+//        errorLog.setLog("log");
+//        errorLog.setStackTrace("stacktrace");
+//        errorLogDAO.insert(errorLog);
+//
+//        errorLogDAO.insert(errorLog);
+//        errorLogDAO.insert(errorLog);
 
 
         // Keep a reference to the mDb until paused or killed. Get a writable database

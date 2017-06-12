@@ -1,9 +1,15 @@
 package it.namron.sweeping.concurrency;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
+import android.content.res.XmlResourceParser;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.content.AsyncTaskLoader;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 
 import org.apache.commons.io.FileUtils;
@@ -19,8 +25,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import it.namron.sweeping.activity.AppInfoActivity;
 import it.namron.sweeping.dto.FromPerformCopyDTO;
 import it.namron.sweeping.listener.PerformeCopyListener;
+import it.namron.sweeping.sweeping.R;
 import it.namron.sweeping.utils.LogUtils;
 
 /**
@@ -28,6 +36,8 @@ import it.namron.sweeping.utils.LogUtils;
  */
 
 public class PerformeCopyLoader extends AsyncTaskLoader<Boolean> {
+    private final String CLASS_NAME_HASH_CODE = getClass().getSimpleName() + super.hashCode();
+
     public static final String LOG_TAG = PerformeCopyLoader.class.getSimpleName();
 
 
@@ -35,10 +45,9 @@ public class PerformeCopyLoader extends AsyncTaskLoader<Boolean> {
     private ArrayList<String> mSources;
     private String mDestination;
     private PerformeCopyListener mCallback;
-    FromPerformCopyDTO mInfo;
+    private FromPerformCopyDTO mInfo;
 
     private Boolean mResponce;
-    private String currentTime;
 
     public PerformeCopyLoader(Context context, ArrayList<String> sources, String destination, FromPerformCopyDTO info, PerformeCopyListener callback) {
         super(context);
@@ -72,7 +81,34 @@ public class PerformeCopyLoader extends AsyncTaskLoader<Boolean> {
 
     @Override
     public Boolean loadInBackground() {
-        LogUtils.LOGD_N(LOG_TAG, "loadInBackground");
+        onPreBackground();
+
+//        boolean res = inBackground();
+
+        try {
+            Thread.sleep(4000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        onPostBackground();
+
+        return true;
+    }
+
+    private void onPostBackground() {
+        mCallback.notifyOnPostBackground(CLASS_NAME_HASH_CODE);
+    }
+
+    private void onPreBackground() {
+        mCallback.notifyOnPreBackground(CLASS_NAME_HASH_CODE);
+    }
+
+
+
+
+    private boolean inBackground() {
+        LogUtils.LOGD_N(LOG_TAG, "inBackground");
         try {
             for (String source : mSources) {
 
@@ -172,7 +208,7 @@ public class PerformeCopyLoader extends AsyncTaskLoader<Boolean> {
                 }
             } else {
                 //errore nella copia del file
-                mCallback.notifyOnErrorOccurred(source.toString(), 0, "copySelectedFolder");
+                mCallback.notifyOnErrorOccurred(source.toString(), 0, CLASS_NAME_HASH_CODE);
             }
         }
     }

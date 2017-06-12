@@ -4,6 +4,8 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -16,9 +18,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -54,6 +58,8 @@ import static it.namron.sweeping.constant.Constant.EXTERNAL_STORAGE_COMPATIBILIT
 import static it.namron.sweeping.constant.Constant.ID_APP_INFO_FOLDER_LOADER;
 import static it.namron.sweeping.constant.Constant.ID_PREPARE_COPY_LOADER;
 import static it.namron.sweeping.constant.Constant.MB_MARGIN;
+import static it.namron.sweeping.constant.Constant.MSG_PERFORME_COPY_POST_BACKGROUND;
+import static it.namron.sweeping.constant.Constant.MSG_PERFORME_COPY_PRE_BACKGROUND;
 import static it.namron.sweeping.constant.Constant.NOT_INITIALIZED_FOLDER_SIZE;
 import static it.namron.sweeping.constant.Constant.PERFORM_COPY_DIALOG_PARAMETER_BUNDLE;
 import static it.namron.sweeping.constant.Constant.PERFORM_COPY_DIALOG_PARAMETER_TAG;
@@ -87,6 +93,8 @@ public class AppInfoFragment extends Fragment implements
     private long mSDFreeMemory;
     private String mSDPath;
 
+    private ProgressBar mProgressBar;
+
     private FromPerformCopyDTO mPerformCopyDTO;
 
     //References to RecyclerView and Adapter to reset the list to its
@@ -102,7 +110,36 @@ public class AppInfoFragment extends Fragment implements
     private LoaderManager mLoaderManager;
 
     private Toast mToast;
-//    PerformCopyDialog mPerformeCopyDialog;
+
+
+    static class UIHandler extends Handler {
+        WeakReference<AppInfoFragment> mParent;
+
+        public UIHandler(WeakReference<AppInfoFragment> parent) {
+            mParent = parent;
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            AppInfoFragment parent = mParent.get();
+            if (null != parent) {
+                switch (msg.what) {
+                    case MSG_PERFORME_COPY_PRE_BACKGROUND: {
+                        parent.mProgressBar.setVisibility(View.VISIBLE);
+                        parent.mProgressBar.bringToFront();
+                        break;
+                    }
+                    case MSG_PERFORME_COPY_POST_BACKGROUND: {
+                        parent.mProgressBar.setVisibility(View.GONE);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    Handler handler;
+
 
     public AppInfoFragment() {
 
@@ -139,6 +176,30 @@ public class AppInfoFragment extends Fragment implements
     @Override
     public void notifyOnErrorOccurred(String folder, int index, String senderCode) {
         Toast.makeText(getActivity(), "errore nella copia di " + folder, Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * This method is used to notify OnPostBackground during the copy of files in the object that implement
+     * PerformeCopyListener has finished.
+     */
+    @Override
+    public void notifyOnPostBackground(String senderCode) {
+        if (handler != null) {
+            Message msg = handler.obtainMessage(MSG_PERFORME_COPY_POST_BACKGROUND);
+            handler.sendMessage(msg);
+        }
+    }
+
+    /**
+     * This method is used to notify OnPreBackground during the copy of files in the object that implement
+     * PerformeCopyListener has finished.
+     */
+    @Override
+    public void notifyOnPreBackground(String senderCode) {
+        if (handler != null) {
+            Message msg = handler.obtainMessage(MSG_PERFORME_COPY_PRE_BACKGROUND);
+            handler.sendMessage(msg);
+        }
     }
 
     private LoaderManager.LoaderCallbacks<Boolean> mPerformeCopyLoader = new LoaderManager.LoaderCallbacks<Boolean>() {
@@ -307,11 +368,20 @@ public class AppInfoFragment extends Fragment implements
     public void onAttach(Context context) {
         super.onAttach(context);
         Log.d(LOG_TAG, "onAttach");
+
+        handler = new UIHandler(new WeakReference<AppInfoFragment>(this));
+
         try {
             mAppInfofragmentListener = (FolderSizeAsyncTaskListener) this;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                     + " must implement FolderSizeAsyncTaskListener");
+        }
+        try {
+            performeCopyListener = (PerformeCopyListener) this;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement PerformeCopyListener");
         }
         //todo aggiungere le restanti interfacce
     }
@@ -345,6 +415,9 @@ public class AppInfoFragment extends Fragment implements
             View rootView = inflater.inflate(R.layout.fragment_app_info, container, false);
 
             FragmentManager fm = getFragmentManager();
+
+            mProgressBar = (ProgressBar) rootView.findViewById(R.id.progress_bar);
+            mProgressBar.setVisibility(View.GONE);
 
             FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
             fab.setOnClickListener(new View.OnClickListener() {

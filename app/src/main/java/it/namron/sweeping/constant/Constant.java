@@ -57,6 +57,12 @@ public class Constant {
     public static final String SD_PREPARE_COPY_BUNDLE = "SD_PREPARE_COPY_BUNDLE";
     public static final String DTO_PREPARE_COPY_BUNDLE = "DTO_PREPARE_COPY_BUNDLE";
 
+    /**
+     * This string will uniquely identify our handler messages
+     */
+    public final static int MSG_PERFORME_COPY_PRE_BACKGROUND = 1;
+    public final static int MSG_PERFORME_COPY_POST_BACKGROUND = 2;
+
 
 
     public static enum target {
