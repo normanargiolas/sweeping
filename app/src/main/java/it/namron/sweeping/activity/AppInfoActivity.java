@@ -16,6 +16,7 @@ import it.namron.sweeping.fragment.ManageFragment;
 import it.namron.sweeping.sweeping.R;
 
 import static it.namron.sweeping.constant.Constant.APP_SELECTED_BUNDLE;
+import static it.namron.sweeping.constant.Constant.TAG_APP_INFO_FRAGMENT;
 
 /**
  * Created by norman on 19/05/17.
@@ -27,7 +28,10 @@ public class AppInfoActivity extends BaseActivity {
 
 //    private RecyclerView mRecyclerView;
 
-    AppItemDTO mAppItem;
+    private AppItemDTO mAppItem;
+
+    private FragmentManager mFragmentManager;
+    private Fragment mAppInfoFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,18 +40,21 @@ public class AppInfoActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_app_info);
 
+        //Set initial fragment
+        mFragmentManager = getSupportFragmentManager();
+
         if (savedInstanceState != null) {
             // The activity is being re-created. Use the
             // savedInstanceState bundle for initializations either
             // during onCreate or onRestoreInstanceState().
-            Log.d(LOG_TAG,
-                    "onCreate(): activity re-created from savedInstanceState");
-
+            Log.d(LOG_TAG, "onCreate(): activity re-created from savedInstanceState");
+            restoreState(savedInstanceState);
         } else {
             // Activity is being created anew.  No prior saved
             // instance state information available in Bundle object.
-            Log.d(LOG_TAG,
-                    "onCreate(): activity created");
+            Log.d(LOG_TAG, "onCreate(): activity created");
+
+            setupFragments();
         }
 
 //        if (savedInstanceState == null) {
@@ -60,21 +67,35 @@ public class AppInfoActivity extends BaseActivity {
         setDrawer(getApplicationContext());
         addDrawerItemFromAppList(null);
 
-        //Set initial fragment
-        Fragment fragment = new AppInfoFragment();
-        FragmentManager fragmentManager = getSupportFragmentManager();
+    }
+
+    private void restoreState(Bundle savedInstanceState) {
+        //Fragments tags were saved in onSavedInstanceState
+        mAppInfoFragment = (AppInfoFragment) mFragmentManager.findFragmentByTag(savedInstanceState.getString(TAG_APP_INFO_FRAGMENT));
+    }
+
+    private void setupFragments() {
+        mAppInfoFragment = new AppInfoFragment();
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             mAppItem = (AppItemDTO) bundle.getParcelable(APP_SELECTED_BUNDLE);
             Log.d(LOG_TAG, "Start new Fragment-->" + mAppItem.getAppName());
-            fragment.setArguments(bundle);
+            mAppInfoFragment.setArguments(bundle);
         }
-        fragmentManager.beginTransaction().replace(R.id.content_frame_app_info, fragment).commit();
-
-
+        mFragmentManager.beginTransaction().replace(R.id.content_frame_app_info, mAppInfoFragment).commit();
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle savedInstanceState) {
+        Log.d(LOG_TAG, "onSaveInstanceState");
+
+        if(null != mAppInfoFragment) {
+            savedInstanceState.putString(TAG_APP_INFO_FRAGMENT, mAppInfoFragment.getTag());
+        }
+
+        super.onSaveInstanceState(savedInstanceState);
+    }
 
     /**
      * Start new Fragment
