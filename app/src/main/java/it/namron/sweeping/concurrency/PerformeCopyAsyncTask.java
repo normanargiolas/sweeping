@@ -67,5 +67,6 @@ public class PerformeCopyAsyncTask extends AsyncTask<ArrayList<String>, Integer,
     @Override
     protected void onPostExecute(Boolean result) {
         mCallback.notifyOnPerformeCopyResoult(result, ResourceHashCode.getPerformeCopyAsyncTaskCode());
+        ResourceHashCode.removePerformeCopyTask(this);
     }
 }

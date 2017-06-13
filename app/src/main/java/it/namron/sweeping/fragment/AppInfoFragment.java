@@ -2,6 +2,7 @@ package it.namron.sweeping.fragment;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -54,6 +55,7 @@ import it.namron.sweeping.listener.PerformeCopyAsyncTaskListener;
 import it.namron.sweeping.sweeping.R;
 import it.namron.sweeping.utils.AppUtils;
 import it.namron.sweeping.utils.LogUtils;
+import it.namron.sweeping.utils.ResourceHashCode;
 import it.namron.sweeping.utils.StorageUtils;
 import it.namron.sweeping.wrapper.WrappedDirectorySize;
 
@@ -104,7 +106,7 @@ public class AppInfoFragment extends Fragment implements
     private PerformeCopyAsyncTask mPerformeCopyAsyncTask;
     private PerformeCopyAsyncTaskListener mPerformeCopyAsyncTaskListener;
 
-    private ExecutorService threadPoolExecutor = Executors.newFixedThreadPool(2);
+    private ExecutorService mThreadPoolExecutor = Executors.newFixedThreadPool(2);
     private int mCurrFolderSizeWorking = -1;
     private int mCurrPerformeCopyWorking = -1;
 
@@ -136,7 +138,7 @@ public class AppInfoFragment extends Fragment implements
     private Toast mToast;
 
     static class UIHandler extends Handler {
-        WeakReference<AppInfoFragment> mParent;
+        private WeakReference<AppInfoFragment> mParent;
 
         public UIHandler(WeakReference<AppInfoFragment> parent) {
             mParent = parent;
@@ -205,7 +207,7 @@ public class AppInfoFragment extends Fragment implements
      */
     @Override
     public void notifyOnPerformeCopyPreExecute(String senderCode) {
-        LogUtils.LOGD_N(LOG_TAG, "notifyOnPerformeCopyResoult");
+        LogUtils.LOGD_N(LOG_TAG, "notifyOnPerformeCopyPreExecute");
         if (!isPause) {
             if (handler != null) {
                 Message msg = handler.obtainMessage(MSG_PERFORME_COPY_PRE_EXECUTE);
@@ -222,11 +224,11 @@ public class AppInfoFragment extends Fragment implements
     public void notifyOnPerformeCopyResoult(Boolean resoult, String senderCode) {
         LogUtils.LOGD_N(LOG_TAG, "notifyOnPerformeCopyResoult");
         mCurrPerformeCopyWorking = -1;
-        if (!isPause) {
-            //alternativa perchè nel UI thread
-            //mProgressBar.setVisibility(View.GONE);
-            //mFab.setVisibility(View.VISIBLE);
 
+        //alternativa perchè nel UI thread
+        //mProgressBar.setVisibility(View.GONE);
+        //mFab.setVisibility(View.VISIBLE);
+        if (!isPause) {
             if (handler != null) {
                 Message msg = handler.obtainMessage(MSG_PERFORME_COPY_RESOULT);
                 handler.sendMessage(msg);
@@ -292,7 +294,7 @@ public class AppInfoFragment extends Fragment implements
                                 mCurrPerformeCopyWorking = 1;
                                 mPerformeCopyAsyncTask = new PerformeCopyAsyncTask(getActivity(),
                                         mPerformeCopyAsyncTaskListener, sd, dto);
-                                mPerformeCopyAsyncTask.executeOnExecutor(threadPoolExecutor, dirs);
+                                mPerformeCopyAsyncTask.executeOnExecutor(mThreadPoolExecutor, dirs);
 
 //                                boolean res = inBackground();
                                 //todo remove this only for test
@@ -576,7 +578,7 @@ public class AppInfoFragment extends Fragment implements
                                     mFolderSizeAsyncTask = new FolderSizeAsyncTask(getActivity(),
                                             mFolderSizeAsyncTaskListener,
                                             mCurrFolderSizeWorking);
-                                    mFolderSizeAsyncTask.executeOnExecutor(threadPoolExecutor, dirUri);
+                                    mFolderSizeAsyncTask.executeOnExecutor(mThreadPoolExecutor, dirUri);
                                 }
                             }
 
@@ -650,7 +652,6 @@ public class AppInfoFragment extends Fragment implements
 //            restoreValue(savedInstanceState);
 //        }
 
-        isPause = false;
 
         if (!AppUtils.isExternalStorageCompatible())
             isCompatible = false;
@@ -683,7 +684,7 @@ public class AppInfoFragment extends Fragment implements
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
+        isPause = false;
         if (isCompatible) {
             mDialogHandler = new DialogHandler();
             mDialogHandler.setTargetFragment(AppInfoFragment.this, DIALOG_FRAGMENT);
@@ -701,12 +702,19 @@ public class AppInfoFragment extends Fragment implements
                 @Override
                 public void onClick(View view) {
                     if (mAppItem != null && mDirectoryListModels != null) {
-                        if (isSelected(mDirectoryListModels) == true) {
-                            Bundle bundleForDialog = createPerformCopyBundle();
-                            mDialogHandler.showPerformCopyDialog(bundleForDialog);
+                        PerformeCopyAsyncTask task = ResourceHashCode.getPerformeCopyTask(mAppItem.getAppName());
+                        if (task == null || task.getStatus() != AsyncTask.Status.RUNNING) {
+                            if (isSelected(mDirectoryListModels) == true) {
+                                Bundle bundleForDialog = createPerformCopyBundle();
+                                mDialogHandler.showPerformCopyDialog(bundleForDialog);
+                            } else {
+                                mDialogHandler.showAlertSelectedFolderDialog();
+                            }
                         } else {
-                            mDialogHandler.showAlertSelectedFolderDialog();
+                            Toast.makeText(getActivity(), "Copia ancora in esecuzione!", Toast.LENGTH_SHORT).show();
                         }
+
+
                     }
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
@@ -759,7 +767,7 @@ public class AppInfoFragment extends Fragment implements
                 }
             }
 
-            restoreState();
+            restoreState(savedInstanceState);
 
             return rootView;
         } else {
@@ -769,7 +777,11 @@ public class AppInfoFragment extends Fragment implements
         }
     }
 
-    private void restoreState() {
+    private void restoreState(Bundle savedInstanceState) {
+//        if (null != savedInstanceState) {
+//            mDirectoryAdapter.populateDirectoryItem(mDirectoryListModels);
+//        }
+
         if (mCurrPerformeCopyWorking == 1) {
             mProgressBar.setVisibility(View.VISIBLE);
             mProgressBar.bringToFront();
@@ -779,6 +791,8 @@ public class AppInfoFragment extends Fragment implements
             mProgressBar.bringToFront();
             mFab.setVisibility(View.VISIBLE);
         }
+
+
     }
 
 
@@ -974,8 +988,8 @@ public class AppInfoFragment extends Fragment implements
             mCurrPerformeCopyWorking = 1;
             mPerformeCopyAsyncTask = new PerformeCopyAsyncTask(getActivity(),
                     mPerformeCopyAsyncTaskListener, mSDPath, mPerformCopyDTO);
-            mPerformeCopyAsyncTask.executeOnExecutor(threadPoolExecutor, dirs);
-
+            ResourceHashCode.addPerformeCopyTask(mAppItem.getAppName(), mPerformeCopyAsyncTask);
+            mPerformeCopyAsyncTask.executeOnExecutor(mThreadPoolExecutor, dirs);
         }
     }
 

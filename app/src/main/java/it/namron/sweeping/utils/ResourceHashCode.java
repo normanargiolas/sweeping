@@ -4,6 +4,12 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import it.namron.sweeping.concurrency.PerformeCopyAsyncTask;
+
 /**
  * Created by norman on 01/06/17.
  */
@@ -16,6 +22,31 @@ public class ResourceHashCode {
     private static String mPerformeCopyAsyncTaskCode;
     private static SQLiteDatabase mDb;
     private static Context mContext;
+
+    //    private static ArrayList<PerformeCopyAsyncTask> mPerformeCopyTasks = new ArrayList<>();
+    private static Map<String, PerformeCopyAsyncTask> mPerformeCopyTasks = new HashMap<>();
+
+    public static void addPerformeCopyTask(@NonNull String app, @NonNull PerformeCopyAsyncTask task) {
+        if (null == ResourceHashCode.mContext) {
+            throw new NullPointerException();
+        }
+        ResourceHashCode.mPerformeCopyTasks.put(app, task);
+    }
+
+    public static PerformeCopyAsyncTask getPerformeCopyTask(@NonNull String key) {
+        if (null == ResourceHashCode.mContext) {
+            throw new NullPointerException();
+        }
+        return ResourceHashCode.mPerformeCopyTasks.get(key);
+    }
+
+    public static void removePerformeCopyTask(@NonNull PerformeCopyAsyncTask task) {
+        if (null == ResourceHashCode.mContext) {
+            throw new NullPointerException();
+        }
+        ResourceHashCode.mPerformeCopyTasks.values().remove(task);
+    }
+
 
     private static class SingletonHelper {
 
@@ -57,19 +88,19 @@ public class ResourceHashCode {
         ResourceHashCode.mFolderSizeAsyncTaskCode = folderSizeAsyncTaskCode;
     }
 
-    /**
-     * Keep a reference to the mDb until paused or killed. Get a writable database
-     * because you will be adding restaurant customers
-     **/
-    public static void setWritableDatabase(@NonNull SQLiteDatabase database) {
-        if (null == ResourceHashCode.mContext) {
-            throw new NullPointerException();
-        }
-        ResourceHashCode.mDb = database;
-    }
-
-    public static SQLiteDatabase getWritableDatabase() {
-        return mDb;
-    }
+//    /**
+//     * Keep a reference to the mDb until paused or killed. Get a writable database
+//     * because you will be adding restaurant customers
+//     **/
+//    public static void setWritableDatabase(@NonNull SQLiteDatabase database) {
+//        if (null == ResourceHashCode.mContext) {
+//            throw new NullPointerException();
+//        }
+//        ResourceHashCode.mDb = database;
+//    }
+//
+//    public static SQLiteDatabase getWritableDatabase() {
+//        return mDb;
+//    }
 
 }
