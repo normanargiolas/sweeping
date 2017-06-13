@@ -44,11 +44,14 @@ public class FolderSizeAsyncTask extends AsyncTask<Uri, Integer, Long> {
 
     @Override
     protected Long doInBackground(@NonNull Uri... params) {
+
+        //todo remove this - only for test
 //        try {
-//            Thread.sleep(4000);
+//            Thread.sleep(10000);
 //        } catch (InterruptedException e) {
 //            e.printStackTrace();
 //        }
+//        return Long.valueOf(10);
 
 
         return getFolderSize(params[0]);

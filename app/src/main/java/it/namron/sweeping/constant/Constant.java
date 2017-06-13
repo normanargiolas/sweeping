@@ -63,6 +63,17 @@ public class Constant {
     public final static int MSG_PERFORME_COPY_PRE_BACKGROUND = 1;
     public final static int MSG_PERFORME_COPY_POST_BACKGROUND = 2;
 
+    /**
+     * This string will uniquely identify our bundle in onSaveInstanceState
+     */
+    public static final String DIRECTORY_LIST_MODELS_STATE = "DIRECTORY_LIST_MODELS_STATE";
+
+    /**
+     * This string will uniquely identify our AppInfoFragment.getTag()
+     */
+    public static final String TAG_APP_INFO_FRAGMENT = "TAG_APP_INFO_FRAGMENT";
+
+
 
 
     public static enum target {

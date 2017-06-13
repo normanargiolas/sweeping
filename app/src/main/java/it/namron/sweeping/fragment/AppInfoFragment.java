@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.CallSuper;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -53,6 +55,7 @@ import static it.namron.sweeping.constant.Constant.APP_SELECTED_BUNDLE;
 import static it.namron.sweeping.constant.Constant.APP_TELEGRAM;
 import static it.namron.sweeping.constant.Constant.APP_WHATSAPP;
 import static it.namron.sweeping.constant.Constant.DIALOG_FRAGMENT;
+import static it.namron.sweeping.constant.Constant.DIRECTORY_LIST_MODELS_STATE;
 import static it.namron.sweeping.constant.Constant.DTO_PREPARE_COPY_BUNDLE;
 import static it.namron.sweeping.constant.Constant.EXTERNAL_STORAGE_COMPATIBILITY_DIALOG_TAG;
 import static it.namron.sweeping.constant.Constant.ID_APP_INFO_FOLDER_LOADER;
@@ -77,6 +80,8 @@ public class AppInfoFragment extends Fragment implements
         PerformeCopyListener {
 
     private static final String LOG_TAG = AppInfoFragment.class.getSimpleName();
+
+    boolean isPause;
 
     private DialogHandler mDialogHandler;
 
@@ -104,8 +109,8 @@ public class AppInfoFragment extends Fragment implements
 
     private AppItemDTO mAppItem;
 
-    private List<DirectoryItemDTO> mDirectoryListModels = new ArrayList<>();
-    private List<DirectoryItemDTO> mSelectedDirectoryList = new ArrayList<>();
+    private ArrayList<DirectoryItemDTO> mDirectoryListModels = new ArrayList<DirectoryItemDTO>();
+    private ArrayList<DirectoryItemDTO> mSelectedDirectoryList = new ArrayList<DirectoryItemDTO>();
 
     private LoaderManager mLoaderManager;
 
@@ -152,7 +157,9 @@ public class AppInfoFragment extends Fragment implements
     @Override
     public void notifyOnFolderSizeResoult(Long result, int index, String senderCode) {
         Log.d(LOG_TAG, "notifyOnFolderSizeResoult: " + result);
-        mDirectoryAdapter.updateSize(result, index);
+        if (!isPause) {
+            mDirectoryAdapter.updateSize(result, index);
+        }
     }
 
     @Override
@@ -317,6 +324,7 @@ public class AppInfoFragment extends Fragment implements
                                     Uri dirUri = Uri.parse(dir);
                                     String folder = dirUri.getLastPathSegment();
                                     dirItem = new DirectoryItemDTO();
+
                                     dirItem.setPath(dir);
                                     dirItem.setName(folder);
                                     dirItem.setSelected(true);
@@ -398,6 +406,13 @@ public class AppInfoFragment extends Fragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Reset instance state on reconfiguration
+        if (null != savedInstanceState) {
+            restoreState(savedInstanceState);
+        }
+
+        isPause = false;
+
         mDialogHandler = new DialogHandler();
         mDialogHandler.setTargetFragment(AppInfoFragment.this, DIALOG_FRAGMENT);
         mDialogHandler.initialize(getContext(), getFragmentManager());
@@ -406,6 +421,21 @@ public class AppInfoFragment extends Fragment implements
             isCompatible = false;
         else
             isCompatible = true;
+    }
+
+    private void restoreState(Bundle savedInstanceState) {
+        mDirectoryListModels = savedInstanceState.getParcelableArrayList(DIRECTORY_LIST_MODELS_STATE);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        LogUtils.LOGD_N(LOG_TAG, "onSaveInstanceState");
+
+        if (null != mDirectoryListModels) {
+            savedInstanceState.putParcelableArrayList(DIRECTORY_LIST_MODELS_STATE, mDirectoryListModels);
+        }
+
+        super.onSaveInstanceState(savedInstanceState);
     }
 
     @Override
@@ -462,14 +492,18 @@ public class AppInfoFragment extends Fragment implements
                 getActivity().setTitle(mAppItem.getAppName());
 
                 if (mAppItem != null) {
-                    /**
-                     * Initialize the loader
-                     **/
-                    mLoaderManager = getLoaderManager();
-                    Bundle appInfoBundle = new Bundle();
-                    appInfoBundle.putString(APP_NAME_BUNDLE, mAppItem.getAppName());
 
-                    getLoaderManager().initLoader(ID_APP_INFO_FOLDER_LOADER, appInfoBundle, mAppInfoFolderLoader);
+                    if (null == savedInstanceState) {
+                        /**
+                         * Initialize the loader
+                         **/
+                        mLoaderManager = getLoaderManager();
+                        Bundle appInfoBundle = new Bundle();
+                        appInfoBundle.putString(APP_NAME_BUNDLE, mAppItem.getAppName());
+                        getLoaderManager().initLoader(ID_APP_INFO_FOLDER_LOADER, appInfoBundle, mAppInfoFolderLoader);
+                    }
+
+
                 }
             }
             return rootView;
@@ -478,6 +512,47 @@ public class AppInfoFragment extends Fragment implements
             mDialogHandler.showExternalStorageCompatibility();
             return null;
         }
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        isPause = true;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
     }
 
     /**
@@ -633,6 +708,7 @@ public class AppInfoFragment extends Fragment implements
             directoryBundle.putString(SD_PREPARE_COPY_BUNDLE, mSDPath);
             directoryBundle.putParcelable(DTO_PREPARE_COPY_BUNDLE, mPerformCopyDTO);
 
+            //todo verificare meglio mLoaderManager con onSaveInstanceState
             Loader<Boolean> performeCopyLoader = mLoaderManager.getLoader(ID_PREPARE_COPY_LOADER);
             if (performeCopyLoader == null) {
                 mLoaderManager.initLoader(ID_PREPARE_COPY_LOADER, directoryBundle, mPerformeCopyLoader);

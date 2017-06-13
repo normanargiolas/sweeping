@@ -84,7 +84,7 @@ public class PerformeCopyLoader extends AsyncTaskLoader<Boolean> {
         onPreBackground();
 
 //        boolean res = inBackground();
-
+        //todo remove this only for test
         try {
             Thread.sleep(4000);
         } catch (InterruptedException e) {
