@@ -60,13 +60,14 @@ public class Constant {
     /**
      * This string will uniquely identify our handler messages
      */
-    public final static int MSG_PERFORME_COPY_PRE_BACKGROUND = 1;
-    public final static int MSG_PERFORME_COPY_POST_BACKGROUND = 2;
+    public final static int MSG_PERFORME_COPY_PRE_EXECUTE = 1;
+    public final static int MSG_PERFORME_COPY_RESOULT = 2;
 
     /**
      * This string will uniquely identify our bundle in onSaveInstanceState
      */
     public static final String DIRECTORY_LIST_MODELS_STATE = "DIRECTORY_LIST_MODELS_STATE";
+    public static final String CURR_PERFORME_COPY_WORKING_STATE = "CURR_PERFORME_COPY_WORKING_STATE";
 
     /**
      * This string will uniquely identify our AppInfoFragment.getTag()

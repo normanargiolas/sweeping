@@ -13,6 +13,7 @@ public class ResourceHashCode {
     //add here our classes instances
     //--------------------
     private static String mFolderSizeAsyncTaskCode;
+    private static String mPerformeCopyAsyncTaskCode;
     private static SQLiteDatabase mDb;
     private static Context mContext;
 
@@ -32,6 +33,17 @@ public class ResourceHashCode {
         }
 
         return mContext;
+    }
+
+    public static String getPerformeCopyAsyncTaskCode() {
+        return mPerformeCopyAsyncTaskCode;
+    }
+
+    public static void setPerformeCopyAsyncTaskCode(@NonNull String performeCopyAsyncTaskCode) {
+        if (null == ResourceHashCode.mContext) {
+            throw new NullPointerException();
+        }
+        ResourceHashCode.mPerformeCopyAsyncTaskCode = performeCopyAsyncTaskCode;
     }
 
     public static String getFolderSizeAsyncTaskCode() {

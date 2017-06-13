@@ -1,16 +1,9 @@
 package it.namron.sweeping.concurrency;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.res.Resources;
-import android.content.res.XmlResourceParser;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.content.AsyncTaskLoader;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.webkit.MimeTypeMap;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -25,10 +18,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import it.namron.sweeping.activity.AppInfoActivity;
 import it.namron.sweeping.dto.FromPerformCopyDTO;
-import it.namron.sweeping.listener.PerformeCopyListener;
-import it.namron.sweeping.sweeping.R;
+import it.namron.sweeping.listener.PerformeCopyLoaderListener;
 import it.namron.sweeping.utils.LogUtils;
 
 /**
@@ -44,12 +35,12 @@ public class PerformeCopyLoader extends AsyncTaskLoader<Boolean> {
     private Context mContext;
     private ArrayList<String> mSources;
     private String mDestination;
-    private PerformeCopyListener mCallback;
+    private PerformeCopyLoaderListener mCallback;
     private FromPerformCopyDTO mInfo;
 
     private Boolean mResponce;
 
-    public PerformeCopyLoader(Context context, ArrayList<String> sources, String destination, FromPerformCopyDTO info, PerformeCopyListener callback) {
+    public PerformeCopyLoader(Context context, ArrayList<String> sources, String destination, FromPerformCopyDTO info, PerformeCopyLoaderListener callback) {
         super(context);
         mContext = context;
         mSources = sources;
@@ -86,7 +77,7 @@ public class PerformeCopyLoader extends AsyncTaskLoader<Boolean> {
 //        boolean res = inBackground();
         //todo remove this only for test
         try {
-            Thread.sleep(4000);
+            Thread.sleep(6000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -148,6 +139,8 @@ public class PerformeCopyLoader extends AsyncTaskLoader<Boolean> {
      */
     @Override
     protected void onStopLoading() {
+        LogUtils.LOGD_N(LOG_TAG, "onStopLoading");
+
         // Attempt to cancel the current load task if possible.
         cancelLoad();
     }
