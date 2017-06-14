@@ -20,7 +20,7 @@ public class PerformeCopyAsyncTask extends AsyncTask<ArrayList<String>, Integer,
 
     private final String LOG_TAG = getClass().getSimpleName();
 
-    private Context mActivity;
+    private Activity mActivity;
     private String mDestination;
     private FromPerformCopyDTO mInfo;
 
@@ -66,7 +66,7 @@ public class PerformeCopyAsyncTask extends AsyncTask<ArrayList<String>, Integer,
 
     @Override
     protected void onPostExecute(Boolean result) {
-        mCallback.notifyOnPerformeCopyResoult(result, ResourceHashCode.getPerformeCopyAsyncTaskCode());
+        mCallback.notifyOnPerformeCopyResoult(mActivity, result, ResourceHashCode.getPerformeCopyAsyncTaskCode());
         ResourceHashCode.removePerformeCopyTask(this);
     }
 }

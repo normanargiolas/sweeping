@@ -1,6 +1,13 @@
 package it.namron.sweeping.fragment;
 
+import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -13,6 +20,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,6 +29,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -41,6 +50,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import it.namron.sweeping.activity.MainActivity;
 import it.namron.sweeping.adapter.DirectoryItemAdapter;
 import it.namron.sweeping.concurrency.FolderSizeAsyncTask;
 import it.namron.sweeping.concurrency.PerformeCopyAsyncTask;
@@ -122,6 +132,18 @@ public class AppInfoFragment extends Fragment implements
     private FloatingActionButton mFab;
 
     private FromPerformCopyDTO mPerformCopyDTO;
+
+    /**
+     * Notification parameters
+     * **/
+    private NotificationCompat.Builder mNotificationBuilder;
+    private NotificationManager mNotificationManager;
+    private Bitmap mIcon;
+    private String notificationTitle;
+    private String notificationText;
+    private int currentNotificationID = 0;
+
+
 
     //References to RecyclerView and Adapter to reset the list to its
     //"pretty" state when the reset menu item is clicked.
@@ -219,9 +241,9 @@ public class AppInfoFragment extends Fragment implements
     /**
      * This method is used to notify RESOULT during the copy of files in the object that implement
      * PerformeCopyAsyncTaskListener has finished.
-     */
+     **/
     @Override
-    public void notifyOnPerformeCopyResoult(Boolean resoult, String senderCode) {
+    public void notifyOnPerformeCopyResoult(Activity activity , Boolean resoult, String senderCode) {
         LogUtils.LOGD_N(LOG_TAG, "notifyOnPerformeCopyResoult");
         mCurrPerformeCopyWorking = -1;
 
@@ -235,7 +257,37 @@ public class AppInfoFragment extends Fragment implements
             }
 
             Toast.makeText(getActivity(), "Copia termitata", Toast.LENGTH_SHORT).show();
+        } else {
+            sendNotification(activity);
         }
+    }
+
+    private void sendNotification(Activity activity) {
+        notificationTitle = activity.getApplicationContext().getString(R.string.app_name);
+        notificationText = "Hello..This is a Notification Test";
+        mNotificationBuilder = new NotificationCompat.Builder(activity.getApplicationContext())
+                .setSmallIcon(R.drawable.app_icon)
+                .setLargeIcon(mIcon)
+                .setContentTitle(notificationTitle)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(notificationText))
+                .setPriority(Notification.PRIORITY_MAX)
+                .setContentText(notificationText);
+
+        Intent notificationIntent = new Intent(activity, MainActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(activity, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        mNotificationBuilder.setContentIntent(contentIntent);
+        Notification notification = mNotificationBuilder.build();
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
+        notification.defaults |= Notification.DEFAULT_SOUND;
+
+        currentNotificationID++;
+        int notificationId = currentNotificationID;
+        if (notificationId == Integer.MAX_VALUE - 1)
+            notificationId = 0;
+
+        mNotificationManager.notify(notificationId, notification);
+
     }
 
     private LoaderManager.LoaderCallbacks<Boolean> mPerformeCopyLoader = new LoaderManager.LoaderCallbacks<Boolean>() {
@@ -689,6 +741,11 @@ public class AppInfoFragment extends Fragment implements
             mDialogHandler = new DialogHandler();
             mDialogHandler.setTargetFragment(AppInfoFragment.this, DIALOG_FRAGMENT);
             mDialogHandler.initialize(getContext(), getFragmentManager());
+
+            mNotificationManager = (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+
+            mIcon = BitmapFactory.decodeResource(this.getResources(),
+                    R.drawable.app_icon);
 
 
             View rootView = inflater.inflate(R.layout.fragment_app_info, container, false);
