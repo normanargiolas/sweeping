@@ -241,7 +241,6 @@ public class AppInfoFragment extends Fragment implements
                 Message msg = handler.obtainMessage(MSG_PERFORME_COPY_RESOULT);
                 handler.sendMessage(msg);
             }
-
             Toast.makeText(getActivity(), "Copia cartella " + folder + " terminata!", Toast.LENGTH_SHORT).show();
         } else {
             if (isForegroundRunning(activity)) {
@@ -271,8 +270,6 @@ public class AppInfoFragment extends Fragment implements
     }
 
     private void sendNotification(Activity activity, String folder) {
-
-
         mNotificationManager = (NotificationManager) activity.getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
         mIcon = BitmapFactory.decodeResource(activity.getResources(),
                 R.drawable.app_icon);
@@ -280,7 +277,7 @@ public class AppInfoFragment extends Fragment implements
         notificationTitle = activity.getApplicationContext().getString(R.string.app_name);
         notificationText = "...copia cartella " + folder + " terminata!";
         mNotificationBuilder = new NotificationCompat.Builder(activity.getApplicationContext())
-                .setSmallIcon(R.drawable.app_icon)
+                .setSmallIcon(R.drawable.folder_selected)
                 .setLargeIcon(mIcon)
                 .setContentTitle(notificationTitle)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(notificationText))
@@ -601,6 +598,13 @@ public class AppInfoFragment extends Fragment implements
 
     }
 
+    //todo da sistemare per non aprire due istanze dell'app con la notifica
+    private void clearAllNotifications() {
+        if (mNotificationManager != null) {
+            mCurrentNotificationID = 0;
+            mNotificationManager.cancelAll();
+        }
+    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
