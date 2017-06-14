@@ -58,6 +58,5 @@ public class FromPerformCopyDTO implements Parcelable {
         dest.writeByte((byte) (delete ? 1 : 0));     //if delete == true, byte == 1
 //        dest.writeBooleanArray(new boolean[] {delete});
         dest.writeString(folder);
-
     }
 }

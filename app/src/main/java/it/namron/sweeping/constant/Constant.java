@@ -68,6 +68,7 @@ public class Constant {
      */
     public static final String DIRECTORY_LIST_MODELS_STATE = "DIRECTORY_LIST_MODELS_STATE";
     public static final String CURR_PERFORME_COPY_WORKING_STATE = "CURR_PERFORME_COPY_WORKING_STATE";
+    public static final String CURRENT_NOTIFICATION_ID_STATE = "CURRENT_NOTIFICATION_ID_STATE";
 
     /**
      * This string will uniquely identify our AppInfoFragment.getTag()
@@ -77,21 +78,21 @@ public class Constant {
 
 
 
-    public static enum target {
-        WHATSAPP("whatsapp"),
-        TELEGRAM("telegram"),
-        FACEBOOK("facebook");
-
-        private final String text;
-
-        private target(String text) {
-            this.text = text;
-        }
-
-        public String getName() {
-            return text;
-        }
-    }
+//    public static enum target {
+//        WHATSAPP("whatsapp"),
+//        TELEGRAM("telegram"),
+//        FACEBOOK("facebook");
+//
+//        private final String text;
+//
+//        private target(String text) {
+//            this.text = text;
+//        }
+//
+//        public String getName() {
+//            return text;
+//        }
+//    }
 
     public static final List<String> APP_TARGET_LIST = Collections.unmodifiableList(
             new ArrayList<String>() {{

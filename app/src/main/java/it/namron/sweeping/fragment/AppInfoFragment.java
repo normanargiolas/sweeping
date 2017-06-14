@@ -1,9 +1,11 @@
 package it.namron.sweeping.fragment;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -14,7 +16,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -29,23 +30,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.nio.channels.FileChannel;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -55,10 +45,10 @@ import it.namron.sweeping.adapter.DirectoryItemAdapter;
 import it.namron.sweeping.concurrency.FolderSizeAsyncTask;
 import it.namron.sweeping.concurrency.PerformeCopyAsyncTask;
 import it.namron.sweeping.dialog.DialogHandler;
-import it.namron.sweeping.dto.ToPerformCopyDTO;
-import it.namron.sweeping.dto.FromPerformCopyDTO;
 import it.namron.sweeping.dto.AppItemDTO;
 import it.namron.sweeping.dto.DirectoryItemDTO;
+import it.namron.sweeping.dto.FromPerformCopyDTO;
+import it.namron.sweeping.dto.ToPerformCopyDTO;
 import it.namron.sweeping.exception.CustomException;
 import it.namron.sweeping.listener.FolderSizeAsyncTaskListener;
 import it.namron.sweeping.listener.PerformeCopyAsyncTaskListener;
@@ -76,21 +66,18 @@ import static it.namron.sweeping.constant.Constant.APP_NAME_BUNDLE;
 import static it.namron.sweeping.constant.Constant.APP_SELECTED_BUNDLE;
 import static it.namron.sweeping.constant.Constant.APP_TELEGRAM;
 import static it.namron.sweeping.constant.Constant.APP_WHATSAPP;
+import static it.namron.sweeping.constant.Constant.CURRENT_NOTIFICATION_ID_STATE;
 import static it.namron.sweeping.constant.Constant.CURR_PERFORME_COPY_WORKING_STATE;
 import static it.namron.sweeping.constant.Constant.DIALOG_FRAGMENT;
 import static it.namron.sweeping.constant.Constant.DIRECTORY_LIST_MODELS_STATE;
-import static it.namron.sweeping.constant.Constant.DTO_PREPARE_COPY_BUNDLE;
 import static it.namron.sweeping.constant.Constant.EXTERNAL_STORAGE_COMPATIBILITY_DIALOG_TAG;
 import static it.namron.sweeping.constant.Constant.ID_APP_INFO_FOLDER_LOADER;
-import static it.namron.sweeping.constant.Constant.ID_PREPARE_COPY_LOADER;
 import static it.namron.sweeping.constant.Constant.MB_MARGIN;
-import static it.namron.sweeping.constant.Constant.MSG_PERFORME_COPY_RESOULT;
 import static it.namron.sweeping.constant.Constant.MSG_PERFORME_COPY_PRE_EXECUTE;
+import static it.namron.sweeping.constant.Constant.MSG_PERFORME_COPY_RESOULT;
 import static it.namron.sweeping.constant.Constant.NOT_INITIALIZED_FOLDER_SIZE;
 import static it.namron.sweeping.constant.Constant.PERFORM_COPY_DIALOG_PARAMETER_BUNDLE;
 import static it.namron.sweeping.constant.Constant.PERFORM_COPY_DIALOG_PARAMETER_TAG;
-import static it.namron.sweeping.constant.Constant.DIR_PREPARE_COPY_BUNDLE;
-import static it.namron.sweeping.constant.Constant.SD_PREPARE_COPY_BUNDLE;
 
 /**
  * Created by norman on 09/05/17.
@@ -135,14 +122,13 @@ public class AppInfoFragment extends Fragment implements
 
     /**
      * Notification parameters
-     * **/
+     **/
     private NotificationCompat.Builder mNotificationBuilder;
     private NotificationManager mNotificationManager;
     private Bitmap mIcon;
     private String notificationTitle;
     private String notificationText;
-    private int currentNotificationID = 0;
-
+    private int mCurrentNotificationID = 0;
 
 
     //References to RecyclerView and Adapter to reset the list to its
@@ -243,7 +229,7 @@ public class AppInfoFragment extends Fragment implements
      * PerformeCopyAsyncTaskListener has finished.
      **/
     @Override
-    public void notifyOnPerformeCopyResoult(Activity activity , Boolean resoult, String senderCode) {
+    public void notifyOnPerformeCopyResoult(Activity activity, String folder, String senderCode) {
         LogUtils.LOGD_N(LOG_TAG, "notifyOnPerformeCopyResoult");
         mCurrPerformeCopyWorking = -1;
 
@@ -256,15 +242,43 @@ public class AppInfoFragment extends Fragment implements
                 handler.sendMessage(msg);
             }
 
-            Toast.makeText(getActivity(), "Copia termitata", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Copia cartella " + folder + " terminata!", Toast.LENGTH_SHORT).show();
         } else {
-            sendNotification(activity);
+            if (isForegroundRunning(activity)) {
+                LogUtils.LOGD_N(LOG_TAG, "foreground");
+                Toast.makeText(activity, "Copia cartella " + folder + " terminata!", Toast.LENGTH_SHORT).show();
+            } else {
+                LogUtils.LOGD_N(LOG_TAG, "background");
+                sendNotification(activity, folder);
+            }
         }
     }
 
-    private void sendNotification(Activity activity) {
+    public boolean isForegroundRunning(Context context) {
+        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningAppProcessInfo> runningProcesses = am.getRunningAppProcesses();
+        for (ActivityManager.RunningAppProcessInfo processInfo : runningProcesses) {
+            if (processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+                for (String activeProcess : processInfo.pkgList) {
+                    if (activeProcess.equals(context.getPackageName())) {
+                        //If your app is the process in foreground, then it's not in running in background
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private void sendNotification(Activity activity, String folder) {
+
+
+        mNotificationManager = (NotificationManager) activity.getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        mIcon = BitmapFactory.decodeResource(activity.getResources(),
+                R.drawable.app_icon);
+
         notificationTitle = activity.getApplicationContext().getString(R.string.app_name);
-        notificationText = "Hello..This is a Notification Test";
+        notificationText = "...copia cartella " + folder + " terminata!";
         mNotificationBuilder = new NotificationCompat.Builder(activity.getApplicationContext())
                 .setSmallIcon(R.drawable.app_icon)
                 .setLargeIcon(mIcon)
@@ -281,280 +295,14 @@ public class AppInfoFragment extends Fragment implements
         notification.flags |= Notification.FLAG_AUTO_CANCEL;
         notification.defaults |= Notification.DEFAULT_SOUND;
 
-        currentNotificationID++;
-        int notificationId = currentNotificationID;
+        mCurrentNotificationID++;
+        int notificationId = mCurrentNotificationID;
         if (notificationId == Integer.MAX_VALUE - 1)
             notificationId = 0;
 
         mNotificationManager.notify(notificationId, notification);
 
     }
-
-    private LoaderManager.LoaderCallbacks<Boolean> mPerformeCopyLoader = new LoaderManager.LoaderCallbacks<Boolean>() {
-
-        @Override
-        public Loader<Boolean> onCreateLoader(int loaderId, Bundle args) {
-            switch (loaderId) {
-                case ID_PREPARE_COPY_LOADER:
-                    // This is called when a new Loader needs to be created.  This
-                    // sample only has one Loader with no arguments, so it is simple.
-                    if (args != null &&
-                            args.getStringArrayList(DIR_PREPARE_COPY_BUNDLE) != null &&
-                            args.getString(SD_PREPARE_COPY_BUNDLE) != null &&
-                            args.getParcelable(DTO_PREPARE_COPY_BUNDLE) != null) {
-
-                        ArrayList<String> dirs = args.getStringArrayList(DIR_PREPARE_COPY_BUNDLE);
-                        String sd = args.getString(SD_PREPARE_COPY_BUNDLE);
-                        FromPerformCopyDTO dto = args.getParcelable(DTO_PREPARE_COPY_BUNDLE);
-
-//                        return new PerformeCopyLoader(getContext(), dirs, sd, dto, performeCopyListener);
-                        return new AsyncTaskLoader<Boolean>(getContext()) {
-                            private final String CLASS_NAME_HASH_CODE = getClass().getSimpleName() + super.hashCode();
-
-
-                            private ArrayList<String> mSources = dirs;
-                            private String mDestination = sd;
-                            private FromPerformCopyDTO mInfo = dto;
-
-
-                            private Boolean mResponce;
-
-                            /**
-                             * Handles a request to start the Loader.
-                             */
-                            @Override
-                            protected void onStartLoading() {
-                                Boolean responce;
-                                if (mSources == null) {
-                                    return;
-                                }
-                                /**
-                                 * If we already have cached results, just deliver them now. If we don't have any
-                                 * cached results, force a load.
-                                 **/
-                                if (mResponce != null) {
-                                    deliverResult(mResponce);
-                                } else {
-                                    forceLoad();
-                                }
-                            }
-
-                            @Override
-                            public Boolean loadInBackground() {
-//                                onPreBackground();
-
-                                mCurrPerformeCopyWorking = 1;
-                                mPerformeCopyAsyncTask = new PerformeCopyAsyncTask(getActivity(),
-                                        mPerformeCopyAsyncTaskListener, sd, dto);
-                                mPerformeCopyAsyncTask.executeOnExecutor(mThreadPoolExecutor, dirs);
-
-//                                boolean res = inBackground();
-                                //todo remove this only for test
-                                try {
-                                    Thread.sleep(5000);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-
-//                                onPostBackground();
-
-                                return true;
-                            }
-
-                            /**
-                             * Called when there is new data to deliver to the client.  The
-                             * super class will take care of delivering it; the implementation
-                             * here just adds a little more logic.
-                             */
-                            @Override
-                            public void deliverResult(Boolean res) {
-                                mResponce = res;
-                                super.deliverResult(res);
-                            }
-
-                            /**
-                             * Handles a request to stop the Loader.
-                             */
-                            @Override
-                            protected void onStopLoading() {
-                                LogUtils.LOGD_N(LOG_TAG, "onStopLoading");
-
-                                // Attempt to cancel the current load task if possible.
-                                cancelLoad();
-                            }
-
-                            /**
-                             * Handles a request to completely reset the Loader.
-                             */
-                            @Override
-                            protected void onReset() {
-                                super.onReset();
-                                // Ensure the loader is stopped
-                                onStopLoading();
-                                // At this point we can release the resources associated with 'apps'
-                                // if needed.
-                                if (mResponce != null) {
-                                    onReleaseResources(mResponce);
-                                    mResponce = null;
-                                }
-                            }
-
-                            /**
-                             * Helper function to take care of releasing resources associated
-                             * with an actively loaded data set.
-                             */
-                            protected void onReleaseResources(Boolean res) {
-                                // For a simple List<> there is nothing to do.  For something
-                                // like a Cursor, we would close it here.
-                            }
-
-                            private boolean inBackground() {
-                                LogUtils.LOGD_N(LOG_TAG, "inBackground");
-                                try {
-                                    for (String source : mSources) {
-
-                                        File sourceLocation = new File(source);
-                                        if (sourceLocation.isDirectory()) {
-                                            Uri uri = Uri.parse(source);
-                                            String token = uri.getLastPathSegment();
-                                            File destination = new File(mDestination, mInfo.getFolder());
-                                            if (!destination.exists()) {
-                                                //pensare se si vuole avvisare della directory già presente
-                                                destination.mkdir();
-                                            }
-                                            File destinationLocation = new File(mDestination, combine(mInfo.getFolder(), token));
-                                            copySelectedFolder(sourceLocation, destinationLocation);
-                                        }
-                                    }
-                                    return true;
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                    return false;
-                                }
-                            }
-
-                            private String combine(String path1, String path2) {
-                                File file1 = new File(path1);
-                                File file2 = new File(file1, path2);
-                                return file2.getPath();
-                            }
-
-                            private void copySelectedFolder(@NonNull File source, @NonNull File destination) throws IOException {
-                                LogUtils.LOGD_N(LOG_TAG, "Inizia la procedura di copia per: ", source);
-                                if (source.isDirectory()) {
-                                    if (!destination.exists()) {
-                                        //pensare se si vuole avvisare della directory già presente
-                                        destination.mkdir();
-                                    }
-
-                                    String[] children = source.list();
-                                    for (int i = 0; i < source.listFiles().length; i++) {
-
-                                        copySelectedFolder(new File(source, children[i]),
-                                                new File(destination, children[i]));
-                                    }
-                                } else { //todo vedere come si comporta con i collegamenti
-                                    if (destination.exists()) {
-                                        if (!contentEquals(source, destination)) {
-                                            //file è con lo stesso nome ma diverso: rinominare
-                                            destination = getNewDestination(destination);
-                                            copy(source, destination);
-                                        }
-
-                                    } else {
-                                        copy(source, destination);
-                                    }
-
-                                    //verifica integrità
-                                    if (contentEquals(source, destination)) {
-                                        //controlla se devo eliminare l'originale
-                                        if (mInfo.isDelete()) {
-                                            FileUtils.forceDelete(source);
-                                        }
-                                    } else {
-                                        //errore nella copia del file
-//                                        mCallback.notifyOnErrorOccurred(source.toString(), 0, CLASS_NAME_HASH_CODE);
-                                    }
-                                }
-                            }
-
-                            private File getNewDestination(File file) {
-                                /**
-                                 Whereas you can have DateFormat patterns such as:
-                                 "yyyy.MM.dd G 'at' HH:mm:ss z" ---- 2001.07.04 AD at 12:08:56 PDT
-                                 "hh 'o''clock' a, zzzz" ----------- 12 o'clock PM, Pacific Daylight Time
-                                 "EEE, d MMM yyyy HH:mm:ss Z"------- Wed, 4 Jul 2001 12:08:56 -0700
-                                 "yyyy-MM-dd'T'HH:mm:ss.SSSZ"------- 2001-07-04T12:08:56.235-0700
-                                 "yyMMddHHmmssZ"-------------------- 010704120856-0700
-                                 "K:mm a, z" ----------------------- 0:08 PM, PDT
-                                 "h:mm a" -------------------------- 12:08 PM
-                                 "EEE, MMM d, ''yy" ---------------- Wed, Jul 4, '01
-                                 **/
-                                DateFormat df = new SimpleDateFormat("_yyyy_MM_dd_sss");
-                                String time = df.format(Calendar.getInstance().getTime());
-
-                                String str = file.toString();
-                                String basename = FilenameUtils.getBaseName(str);
-                                String extension = FilenameUtils.getExtension(str);
-
-                                String newName = basename.concat(time).concat(extension);
-                                String parent = file.getParent();
-
-                                return new File(parent, newName);
-                            }
-
-                            private boolean contentEquals(File source, File destination) throws IOException {
-                                boolean isTwoEqual = FileUtils.contentEquals(source, destination);
-                                //todo verificare ulteriormente con md5 ???
-                                return isTwoEqual;
-                            }
-
-                            private void copy(File source, File destination) throws IOException {
-                                /**You can't use FileChannel if your file is bigger than 2GB though.**/
-                                FileInputStream inStream = new FileInputStream(source);
-                                FileOutputStream outStream = new FileOutputStream(destination);
-                                FileChannel inChannel = inStream.getChannel();
-                                FileChannel outChannel = outStream.getChannel();
-                                inChannel.transferTo(0, inChannel.size(), outChannel);
-                                inStream.close();
-                                outStream.close();
-                            }
-                        };
-                    }
-
-                default:
-                    throw new RuntimeException("Loader Not Implemented: " + loaderId);
-            }
-        }
-
-        @Override
-        public void onLoadFinished(Loader<Boolean> loader, Boolean data) {
-            switch (loader.getId()) {
-                case ID_PREPARE_COPY_LOADER:
-                    LogUtils.LOGD_N(LOG_TAG, "onLoadFinished");
-                    if (null == data) {
-                        LogUtils.LOGD_N(LOG_TAG, "data non deve essere nullo null");
-                        //todo gestire il caso
-//                Toast.makeText(getActivity(), log, Toast.LENGTH_SHORT).show();
-                    } else {
-                        if (data)
-                            Toast.makeText(getActivity(), "Loader terminato con successo", Toast.LENGTH_SHORT).show();
-                        else
-                            Toast.makeText(getActivity(), "Loader terminato con errori", Toast.LENGTH_SHORT).show();
-                        //todo inviare il feedback errorlog
-                    }
-            }
-
-        }
-
-        @Override
-        public void onLoaderReset(Loader<Boolean> loader) {
-            LogUtils.LOGD_N(LOG_TAG, "onLoaderReset");
-            //todo gestire il caso
-
-        }
-    };
-
 
     private LoaderManager.LoaderCallbacks<List<DirectoryItemDTO>> mAppInfoFolderLoader = new LoaderManager.LoaderCallbacks<List<DirectoryItemDTO>>() {
 
@@ -731,6 +479,10 @@ public class AppInfoFragment extends Fragment implements
             savedInstanceState.putParcelableArrayList(DIRECTORY_LIST_MODELS_STATE, mDirectoryListModels);
         }
 
+        if (0 != mCurrentNotificationID) {
+            savedInstanceState.putInt(CURRENT_NOTIFICATION_ID_STATE, mCurrentNotificationID);
+        }
+
         super.onSaveInstanceState(savedInstanceState);
     }
 
@@ -741,12 +493,6 @@ public class AppInfoFragment extends Fragment implements
             mDialogHandler = new DialogHandler();
             mDialogHandler.setTargetFragment(AppInfoFragment.this, DIALOG_FRAGMENT);
             mDialogHandler.initialize(getContext(), getFragmentManager());
-
-            mNotificationManager = (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
-
-            mIcon = BitmapFactory.decodeResource(this.getResources(),
-                    R.drawable.app_icon);
-
 
             View rootView = inflater.inflate(R.layout.fragment_app_info, container, false);
 
@@ -838,6 +584,9 @@ public class AppInfoFragment extends Fragment implements
 //        if (null != savedInstanceState) {
 //            mDirectoryAdapter.populateDirectoryItem(mDirectoryListModels);
 //        }
+        if (null != savedInstanceState) {
+            mCurrentNotificationID = savedInstanceState.getInt(CURRENT_NOTIFICATION_ID_STATE);
+        }
 
         if (mCurrPerformeCopyWorking == 1) {
             mProgressBar.setVisibility(View.VISIBLE);

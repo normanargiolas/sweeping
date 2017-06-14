@@ -7,7 +7,7 @@ import android.app.Activity;
  */
 
 public interface PerformeCopyAsyncTaskListener {
-    void notifyOnPerformeCopyResoult(Activity activity, Boolean resoult, String senderCode);
+    void notifyOnPerformeCopyResoult(Activity activity,  String folder, String senderCode);
 
     void notifyOnPerformeCopyProgress(Integer progress, String senderCode);
 
