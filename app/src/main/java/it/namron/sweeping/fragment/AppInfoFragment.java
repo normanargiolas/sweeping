@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import it.namron.sweeping.activity.AppInfoActivity;
 import it.namron.sweeping.activity.MainActivity;
 import it.namron.sweeping.adapter.DirectoryItemAdapter;
 import it.namron.sweeping.concurrency.FolderSizeAsyncTask;
@@ -124,7 +125,7 @@ public class AppInfoFragment extends Fragment implements
      * Notification parameters
      **/
     private NotificationCompat.Builder mNotificationBuilder;
-    private NotificationManager mNotificationManager;
+    private static NotificationManager mNotificationManager;
     private Bitmap mIcon;
     private String notificationTitle;
     private String notificationText;
@@ -269,6 +270,15 @@ public class AppInfoFragment extends Fragment implements
         return false;
     }
 
+
+    //todo da sistemare per non aprire due istanze dell'app con la notifica
+    private void clearAllNotifications() {
+        if (mNotificationManager != null) {
+            mCurrentNotificationID = 0;
+            mNotificationManager.cancelAll();
+        }
+    }
+
     private void sendNotification(Activity activity, String folder) {
         mNotificationManager = (NotificationManager) activity.getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
         mIcon = BitmapFactory.decodeResource(activity.getResources(),
@@ -284,7 +294,12 @@ public class AppInfoFragment extends Fragment implements
                 .setPriority(Notification.PRIORITY_MAX)
                 .setContentText(notificationText);
 
-        Intent notificationIntent = new Intent(activity, MainActivity.class);
+        Intent notificationIntent = new Intent(activity, AppInfoActivity.class);
+
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(APP_SELECTED_BUNDLE, mAppItem);
+        notificationIntent.putExtras(bundle);
+
         PendingIntent contentIntent = PendingIntent.getActivity(activity, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         mNotificationBuilder.setContentIntent(contentIntent);
@@ -298,7 +313,6 @@ public class AppInfoFragment extends Fragment implements
             notificationId = 0;
 
         mNotificationManager.notify(notificationId, notification);
-
     }
 
     private LoaderManager.LoaderCallbacks<List<DirectoryItemDTO>> mAppInfoFolderLoader = new LoaderManager.LoaderCallbacks<List<DirectoryItemDTO>>() {
@@ -485,6 +499,7 @@ public class AppInfoFragment extends Fragment implements
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        clearAllNotifications();
         isPause = false;
         if (isCompatible) {
             mDialogHandler = new DialogHandler();
@@ -596,14 +611,6 @@ public class AppInfoFragment extends Fragment implements
         }
 
 
-    }
-
-    //todo da sistemare per non aprire due istanze dell'app con la notifica
-    private void clearAllNotifications() {
-        if (mNotificationManager != null) {
-            mCurrentNotificationID = 0;
-            mNotificationManager.cancelAll();
-        }
     }
 
     @Override
