@@ -71,7 +71,10 @@ public class AppInfoActivity extends BaseActivity {
 
     private void restoreState(Bundle savedInstanceState) {
         //Fragments tags were saved in onSavedInstanceState
-        mAppInfoFragment = (AppInfoFragment) mFragmentManager.findFragmentByTag(savedInstanceState.getString(TAG_APP_INFO_FRAGMENT));
+        String tag = savedInstanceState.getString(TAG_APP_INFO_FRAGMENT);
+        if(tag != null)        {
+            mAppInfoFragment = (AppInfoFragment) mFragmentManager.findFragmentByTag(tag);
+        }
     }
 
     private void setupFragments() {

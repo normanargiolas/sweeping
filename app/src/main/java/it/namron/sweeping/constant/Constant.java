@@ -24,7 +24,6 @@ public class Constant {
     public static final String EXTERNAL_STORAGE_COMPATIBILITY_DIALOG_TAG = "ExternalStorageCompatibilityDialog_TAG";
     public static final String ENOUGHT_FREE_MEMORY_DIALOG_TAG = "EnoughtFreeMemoryDialog_TAG";
 
-
     /**
      * This number will uniquely identify our Loader
      */
@@ -75,24 +74,7 @@ public class Constant {
      */
     public static final String TAG_APP_INFO_FRAGMENT = "TAG_APP_INFO_FRAGMENT";
 
-
-
-
-//    public static enum target {
-//        WHATSAPP("whatsapp"),
-//        TELEGRAM("telegram"),
-//        FACEBOOK("facebook");
-//
-//        private final String text;
-//
-//        private target(String text) {
-//            this.text = text;
-//        }
-//
-//        public String getName() {
-//            return text;
-//        }
-//    }
+    public static final String ON_HISTORY_PARAM = "TAG_HISTORY_FRAGMENT";
 
     public static final List<String> APP_TARGET_LIST = Collections.unmodifiableList(
             new ArrayList<String>() {{

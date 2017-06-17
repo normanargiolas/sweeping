@@ -177,11 +177,6 @@ public abstract class BaseActivity extends AppCompatActivity implements DrawerIt
         LOGD(TAG, "onDestroy");
     }
 
-//    @Override
-//    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-//        LOGD(TAG, "onNavigationItemSelected");
-//        return false;
-//    }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {

@@ -508,7 +508,7 @@ public class AppInfoFragment extends Fragment implements
 
             View rootView = inflater.inflate(R.layout.fragment_app_info, container, false);
 
-            FragmentManager fm = getFragmentManager();
+//            FragmentManager fm = getFragmentManager();
 
             mProgressBar = (ProgressBar) rootView.findViewById(R.id.progress_bar);
 

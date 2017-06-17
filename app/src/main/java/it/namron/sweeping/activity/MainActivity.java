@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.view.GravityCompat;
@@ -15,6 +16,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -23,18 +25,19 @@ import java.util.List;
 import it.namron.sweeping.adapter.AppItemAdapter;
 import it.namron.sweeping.concurrency.AppEntry;
 import it.namron.sweeping.concurrency.AppListLoader;
-import it.namron.sweeping.data.DatabaseManager;
-import it.namron.sweeping.data.DbHelper;
-import it.namron.sweeping.data.dao.ErrorLogDAO;
-import it.namron.sweeping.data.entity.ErrorLog;
 import it.namron.sweeping.dto.AppItemDTO;
 import it.namron.sweeping.dto.DrawerItemDTO;
+import it.namron.sweeping.fragment.AppInfoFragment;
+import it.namron.sweeping.fragment.HistoryFragment;
 import it.namron.sweeping.fragment.ManageFragment;
 import it.namron.sweeping.sweeping.R;
 import it.namron.sweeping.utils.AppUtils;
 
 import static it.namron.sweeping.constant.Constant.APP_SELECTED_BUNDLE;
 import static it.namron.sweeping.constant.Constant.ID_APP_LIST_LOADER;
+import static it.namron.sweeping.constant.Constant.ON_HISTORY_PARAM;
+import static it.namron.sweeping.constant.Constant.TAG_APP_INFO_FRAGMENT;
+import static it.namron.sweeping.utils.LogUtils.LOGD;
 
 
 public class MainActivity extends BaseActivity implements
@@ -47,10 +50,14 @@ public class MainActivity extends BaseActivity implements
 
     private RecyclerView mRecyclerView;
     private AppItemAdapter mAppEntryAdapter;
+
+    private LinearLayout mContentLayout;
+
 //    private SwipeRefreshLayout swipeRefreshLayout;
 
     private Toast mToast;
 
+    private boolean onHistory = false;
 
     /**
      * A value that uniquely identifies the request to download an
@@ -116,6 +123,12 @@ public class MainActivity extends BaseActivity implements
     };
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        LOGD(LOG_TAG, "onResume");
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -146,6 +159,8 @@ public class MainActivity extends BaseActivity implements
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
 
+        mContentLayout = (LinearLayout) findViewById(R.id.content_frame);
+
         mRecyclerView = (RecyclerView) findViewById(R.id.app_list_recycler);
 //        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
 //        swipeRefreshLayout.setOnRefreshListener(this);
@@ -171,12 +186,36 @@ public class MainActivity extends BaseActivity implements
         mLoaderManager.initLoader(ID_APP_LIST_LOADER, pathBundle, mAppListLoader);
 
 
+        if (savedInstanceState != null) {
+            Log.d(LOG_TAG, "onCreate(): activity re-created from savedInstanceState");
+            restoreState(savedInstanceState);
+        }
+
 //        populateNavigationDrawer(navigationView);
 
 
 //        //Set singleton resource hash code
 //        ResourceHashCode.getInstance(getApplicationContext());
         Log.d(LOG_TAG, "onCreate done!");
+    }
+
+    private void restoreState(Bundle savedInstanceState) {
+        onHistory = savedInstanceState.getBoolean(ON_HISTORY_PARAM);
+        if (onHistory) {
+            if (getSupportFragmentManager().getBackStackEntryCount() > 0){
+                getSupportFragmentManager().popBackStack();
+            }
+            setOnHistoryFragment();
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle savedInstanceState) {
+        Log.d(LOG_TAG, "onSaveInstanceState");
+        if (onHistory) {
+            savedInstanceState.putBoolean(ON_HISTORY_PARAM, onHistory);
+        }
+        super.onSaveInstanceState(savedInstanceState);
     }
 
 
@@ -243,22 +282,10 @@ public class MainActivity extends BaseActivity implements
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-
+    /**
+     * This method is used to notify that a list item has clicked in the object that implement
+     * AppItemAdapterOnClickListener in AppItemAdapter.
+     */
     @Override
     public void onListItemClick(AppItemDTO clickedItem) {
 
@@ -333,6 +360,55 @@ public class MainActivity extends BaseActivity implements
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (getFragmentManager().getBackStackEntryCount() == 0) {
+            if (mRecyclerView.getParent() == null) {
+
+                mContentLayout.addView(mRecyclerView);
+            }
+
+            super.onBackPressed();
+        } else {
+            getFragmentManager().popBackStack();
+        }
+    }
+
+    /**
+     * Start new Fragment with a list of log selected
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        switch (id) {
+            case R.id.action_settings:
+                return true;
+            case R.id.action_history:
+                setOnHistoryFragment();
+                return true;
+            case R.id.action_error:
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void setOnHistoryFragment() {
+        Fragment fragment = null;
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragment = new HistoryFragment();
+        if (mRecyclerView.getParent() != null) {
+            ((LinearLayout) mRecyclerView.getParent()).removeView(mRecyclerView);
+        }
+        onHistory = true;
+        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack(null).commit();
     }
 }
 

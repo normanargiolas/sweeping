@@ -45,7 +45,6 @@ public class AppEntry {
         } else {
             return mIcon;
         }
-//todo rimuovere deprecato
         return mLoader.getContext().getResources().getDrawable(
                 android.R.drawable.sym_def_app_icon);
     }

@@ -7,6 +7,9 @@
     <string name="menu">Hello menu!</string>
 
     <string name="action_settings">Settings</string>
+    <string name="action_history">Cronologia</string>
+    <string name="action_error">Errori</string>
+
     <!--voci alert dialog-->
     <string name="ok">Ok</string>
     <string name="annulla">Annulla</string>
