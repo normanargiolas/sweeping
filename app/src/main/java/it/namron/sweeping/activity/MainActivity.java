@@ -27,7 +27,6 @@ import it.namron.sweeping.concurrency.AppEntry;
 import it.namron.sweeping.concurrency.AppListLoader;
 import it.namron.sweeping.dto.AppItemDTO;
 import it.namron.sweeping.dto.DrawerItemDTO;
-import it.namron.sweeping.fragment.AppInfoFragment;
 import it.namron.sweeping.fragment.HistoryFragment;
 import it.namron.sweeping.fragment.ManageFragment;
 import it.namron.sweeping.sweeping.R;
@@ -36,7 +35,6 @@ import it.namron.sweeping.utils.AppUtils;
 import static it.namron.sweeping.constant.Constant.APP_SELECTED_BUNDLE;
 import static it.namron.sweeping.constant.Constant.ID_APP_LIST_LOADER;
 import static it.namron.sweeping.constant.Constant.ON_HISTORY_PARAM;
-import static it.namron.sweeping.constant.Constant.TAG_APP_INFO_FRAGMENT;
 import static it.namron.sweeping.utils.LogUtils.LOGD;
 
 
@@ -45,8 +43,8 @@ public class MainActivity extends BaseActivity implements
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
-    private List<AppItemDTO> mAppListModel = new ArrayList<>();
-    private List<DrawerItemDTO> mDrawerListModel = new ArrayList<>();
+    private List<AppItemDTO> mAppListDTO = new ArrayList<>();
+//    private List<DrawerItemDTO> mDrawerListModel = new ArrayList<>();
 
     private RecyclerView mRecyclerView;
     private AppItemAdapter mAppEntryAdapter;
@@ -102,9 +100,9 @@ public class MainActivity extends BaseActivity implements
                 }
 
                 if (appItemModelList != null) {
-                    mAppListModel = appItemModelList;
-                    addDrawerItemFromAppList(mAppListModel);
-                    mAppEntryAdapter.swapFolder(mAppListModel);
+                    mAppListDTO = appItemModelList;
+                    addDrawerItemFromAppList(mAppListDTO);
+                    mAppEntryAdapter.swapFolder(mAppListDTO);
                 } else {
                     //todo vedere meglio se appItemModelList==null
                     //nessuna applicazione supportata
@@ -173,7 +171,7 @@ public class MainActivity extends BaseActivity implements
 
 
         //The AppItemAdapter is responsible for displaying each item in the list.
-        mAppEntryAdapter = new AppItemAdapter(this, mAppListModel, this);
+        mAppEntryAdapter = new AppItemAdapter(this, mAppListDTO, this);
         mRecyclerView.setAdapter(mAppEntryAdapter);
 
         /*
@@ -348,8 +346,8 @@ public class MainActivity extends BaseActivity implements
                 fragment = new ManageFragment();
                 break;
             default:
-                if (mAppListModel != null) {
-                    AppItemDTO appItemModel = mAppListModel.get(id);
+                if (mAppListDTO != null) {
+                    AppItemDTO appItemModel = mAppListDTO.get(id);
                     Log.d(LOG_TAG, "Start new Activity-->" + appItemModel.getAppName());
 
                     startAppInfoActivity(appItemModel);

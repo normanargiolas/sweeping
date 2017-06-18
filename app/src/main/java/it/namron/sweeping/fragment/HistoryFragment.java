@@ -1,14 +1,23 @@
 package it.namron.sweeping.fragment;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+
+import it.namron.sweeping.adapter.DirectoryItemAdapter;
+import it.namron.sweeping.adapter.HistoryItemAdapter;
+import it.namron.sweeping.dto.HistoryListDTO;
 import it.namron.sweeping.sweeping.R;
 import it.namron.sweeping.utils.LogUtils;
 
@@ -16,8 +25,22 @@ import it.namron.sweeping.utils.LogUtils;
  * Created by norman on 17/06/17.
  */
 
-public class HistoryFragment extends Fragment {
+public class HistoryFragment extends Fragment implements
+        HistoryItemAdapter.HistoryAdapterListener {
     private static final String LOG_TAG = HistoryFragment.class.getSimpleName();
+
+    private RecyclerView mRecyclerView;
+    private HistoryItemAdapter mHistoryAdapter;
+    private ArrayList<HistoryListDTO> mHistoryListDTO = new ArrayList<>();
+
+    /**
+     * This method is used to notify from HistoryItemAdapterViewHolder that implement
+     * HistoryAdapterListener has clicked.
+     */
+    @Override
+    public void onHistoryClicked(int position) {
+
+    }
 
     public HistoryFragment() {
 
@@ -40,6 +63,20 @@ public class HistoryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_history, container, false);
+
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.app_list_recycler);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
+        mRecyclerView.setHasFixedSize(true);
+
+        // Get all history info from the database and save in a cursor
+        Cursor cursor = getAllHistory();
+        //The DirectoryItemAdapter is responsible for displaying each item in the list.
+        mHistoryAdapter = new HistoryItemAdapter(getContext(), this, cursor);
+        mRecyclerView.setAdapter(mHistoryAdapter);
+
 
         return rootView;
     }
@@ -69,4 +106,12 @@ public class HistoryFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
     }
 
+    /**
+     * Query the mDb and get all history logs from the history table
+     *
+     * @return Cursor containing the list of logs
+     */
+    public Cursor getAllHistory() {
+        return allHistory;
+    }
 }

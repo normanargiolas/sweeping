@@ -26,16 +26,16 @@ public class DirectoryItemAdapter extends RecyclerView.Adapter<DirectoryItemAdap
 
     private final Context mContext;
 
-    private List<DirectoryItemDTO> mDirectoryItemList;
+    private List<DirectoryItemDTO> mDirectoryDTO;
     private DirectoryAdapterListener listener;
 
     public interface DirectoryAdapterListener {
         void onIconDirectoryClicked(int position);
     }
 
-    public DirectoryItemAdapter(@NonNull Context context, DirectoryAdapterListener listener, List<DirectoryItemDTO> directoryItemList) {
+    public DirectoryItemAdapter(@NonNull Context context, @NonNull DirectoryAdapterListener listener, List<DirectoryItemDTO> directoryDTO) {
         this.listener = listener;
-        mDirectoryItemList = directoryItemList;
+        mDirectoryDTO = directoryDTO;
         mContext = context;
     }
 
@@ -53,7 +53,7 @@ public class DirectoryItemAdapter extends RecyclerView.Adapter<DirectoryItemAdap
     @Override
     public void onBindViewHolder(DirectoryItemAdapterViewHolder directoryItemAdapterViewHolder, int position) {
 //        Log.d(TAG, "#" + position);
-        DirectoryItemDTO directoryItem = mDirectoryItemList.get(position);
+        DirectoryItemDTO directoryItem = mDirectoryDTO.get(position);
 
         directoryItemAdapterViewHolder.listItemDirectoryView.setText(directoryItem.getName());
 
@@ -84,25 +84,25 @@ public class DirectoryItemAdapter extends RecyclerView.Adapter<DirectoryItemAdap
     }
 
     public void updateSize(long size, int position) {
-        mDirectoryItemList.get(position).setSizeByte(size);
-        mDirectoryItemList.get(position).setSizeString(WrappedDirectorySize.size(size));
+        mDirectoryDTO.get(position).setSizeByte(size);
+        mDirectoryDTO.get(position).setSizeString(WrappedDirectorySize.size(size));
         notifyDataSetChanged();
     }
 
     public void populateDirectoryItem(List<DirectoryItemDTO> directoryItemList) {
-        mDirectoryItemList = directoryItemList;
+        mDirectoryDTO = directoryItemList;
         notifyDataSetChanged();
     }
 
     @Override
     public long getItemId(int position) {
-        return mDirectoryItemList.get(position).getId();
+        return mDirectoryDTO.get(position).getId();
     }
 
     @Override
     public int getItemCount() {
-        if (null == mDirectoryItemList) return 0;
-        return mDirectoryItemList.size();
+        if (null == mDirectoryDTO) return 0;
+        return mDirectoryDTO.size();
     }
 
     public class DirectoryItemAdapterViewHolder extends RecyclerView.ViewHolder {

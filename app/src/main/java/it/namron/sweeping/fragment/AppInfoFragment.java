@@ -5,7 +5,6 @@ import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -19,7 +18,6 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.AsyncTaskLoader;
@@ -41,7 +39,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import it.namron.sweeping.activity.AppInfoActivity;
-import it.namron.sweeping.activity.MainActivity;
 import it.namron.sweeping.adapter.DirectoryItemAdapter;
 import it.namron.sweeping.concurrency.FolderSizeAsyncTask;
 import it.namron.sweeping.concurrency.PerformeCopyAsyncTask;
@@ -88,7 +85,6 @@ public class AppInfoFragment extends Fragment implements
         DirectoryItemAdapter.DirectoryAdapterListener,
         DialogHandler.DialogHandlerListener,
         FolderSizeAsyncTaskListener,
-//        PerformeCopyLoaderListener,
         PerformeCopyAsyncTaskListener {
 
     private static final String LOG_TAG = AppInfoFragment.class.getSimpleName();
@@ -139,8 +135,8 @@ public class AppInfoFragment extends Fragment implements
 
     private AppItemDTO mAppItem;
 
-    private ArrayList<DirectoryItemDTO> mDirectoryListModels = new ArrayList<DirectoryItemDTO>();
-    private ArrayList<DirectoryItemDTO> mSelectedDirectoryList = new ArrayList<DirectoryItemDTO>();
+    private ArrayList<DirectoryItemDTO> mDirectoryListDTO = new ArrayList<DirectoryItemDTO>();
+    private ArrayList<DirectoryItemDTO> mSelectedDirectoryListDTO = new ArrayList<DirectoryItemDTO>();
 
     private LoaderManager mLoaderManager;
 
@@ -351,7 +347,7 @@ public class AppInfoFragment extends Fragment implements
                         @Override
                         public List<DirectoryItemDTO> loadInBackground() {
 
-                            mDirectoryListModels.clear();
+                            mDirectoryListDTO.clear();
                             DirectoryItemDTO dirItem;
                             List<String> appDirList = null;
 
@@ -383,7 +379,7 @@ public class AppInfoFragment extends Fragment implements
                                     dirItem.setSizeByte(NOT_INITIALIZED_FOLDER_SIZE);
                                     dirItem.setSizeString(WrappedDirectorySize.size(dirItem.getSizeByte()));
 
-                                    mDirectoryListModels.add(dirItem);
+                                    mDirectoryListDTO.add(dirItem);
 
                                     mCurrFolderSizeWorking++;
                                     mFolderSizeAsyncTask = new FolderSizeAsyncTask(getActivity(),
@@ -393,7 +389,7 @@ public class AppInfoFragment extends Fragment implements
                                 }
                             }
 
-                            return mDirectoryListModels;
+                            return mDirectoryListDTO;
                         }
                     };
                 default:
@@ -475,7 +471,7 @@ public class AppInfoFragment extends Fragment implements
 
 //    private void restoreValue(Bundle savedInstanceState) {
 //
-//        mDirectoryListModels = savedInstanceState.getParcelableArrayList(DIRECTORY_LIST_MODELS_STATE);
+//        mDirectoryListDTO = savedInstanceState.getParcelableArrayList(DIRECTORY_LIST_MODELS_STATE);
 //
 //        mCurrPerformeCopyWorking = savedInstanceState.getInt(CURR_PERFORME_COPY_WORKING_STATE);
 //    }
@@ -486,8 +482,8 @@ public class AppInfoFragment extends Fragment implements
 
         savedInstanceState.putInt(CURR_PERFORME_COPY_WORKING_STATE, mCurrPerformeCopyWorking);
 
-        if (null != mDirectoryListModels) {
-            savedInstanceState.putParcelableArrayList(DIRECTORY_LIST_MODELS_STATE, mDirectoryListModels);
+        if (null != mDirectoryListDTO) {
+            savedInstanceState.putParcelableArrayList(DIRECTORY_LIST_MODELS_STATE, mDirectoryListDTO);
         }
 
         if (0 != mCurrentNotificationID) {
@@ -516,10 +512,10 @@ public class AppInfoFragment extends Fragment implements
             mFab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (mAppItem != null && mDirectoryListModels != null) {
+                    if (mAppItem != null && mDirectoryListDTO != null) {
                         PerformeCopyAsyncTask task = ResourceHashCode.getPerformeCopyTask(mAppItem.getAppName());
                         if (task == null || task.getStatus() != AsyncTask.Status.RUNNING) {
-                            if (isSelected(mDirectoryListModels) == true) {
+                            if (isSelected(mDirectoryListDTO) == true) {
                                 Bundle bundleForDialog = createPerformCopyBundle();
                                 mDialogHandler.showPerformCopyDialog(bundleForDialog);
                             } else {
@@ -553,7 +549,7 @@ public class AppInfoFragment extends Fragment implements
             mRecyclerView.setHasFixedSize(true);
 
             //The DirectoryItemAdapter is responsible for displaying each item in the list.
-            mDirectoryAdapter = new DirectoryItemAdapter(getContext(), this, mDirectoryListModels);
+            mDirectoryAdapter = new DirectoryItemAdapter(getContext(), this, mDirectoryListDTO);
             mRecyclerView.setAdapter(mDirectoryAdapter);
 
             Bundle bundle = getArguments();
@@ -594,7 +590,7 @@ public class AppInfoFragment extends Fragment implements
 
     private void restoreState(Bundle savedInstanceState) {
 //        if (null != savedInstanceState) {
-//            mDirectoryAdapter.populateDirectoryItem(mDirectoryListModels);
+//            mDirectoryAdapter.populateDirectoryItem(mDirectoryListDTO);
 //        }
         if (null != savedInstanceState) {
             mCurrentNotificationID = savedInstanceState.getInt(CURRENT_NOTIFICATION_ID_STATE);
@@ -660,9 +656,9 @@ public class AppInfoFragment extends Fragment implements
      */
     @Override
     public void onIconDirectoryClicked(int position) {
-        DirectoryItemDTO directoryItem = mDirectoryListModels.get(position);
+        DirectoryItemDTO directoryItem = mDirectoryListDTO.get(position);
         directoryItem.setSelected(!directoryItem.isSelected());
-        mDirectoryListModels.set(position, directoryItem);
+        mDirectoryListDTO.set(position, directoryItem);
         mDirectoryAdapter.notifyDataSetChanged();
 
 //        if (mToast != null) {
@@ -720,15 +716,15 @@ public class AppInfoFragment extends Fragment implements
     }
 
     private boolean isEnoughtFreeMemory(List<DirectoryItemDTO> directoryListModels) {
-        //  directoryListModels = mDirectoryListModels
+        //  directoryListModels = mDirectoryListDTO
         // contiene tutte le informazioni riguardo le directory da copiare
 
         if (directoryListModels != null) {
-            mSelectedDirectoryList.clear();
+            mSelectedDirectoryListDTO.clear();
             mTotalSize = 0;
             for (DirectoryItemDTO directory : directoryListModels) {
                 if (directory.isSelected()) {
-                    mSelectedDirectoryList.add(directory);
+                    mSelectedDirectoryListDTO.add(directory);
                     mTotalSize += directory.getSizeByte();
                 }
             }
@@ -787,18 +783,18 @@ public class AppInfoFragment extends Fragment implements
      * mTotalSize = total size of file to copy in byte
      * mSDPath = path of SD card
      * mSDFreeMemory = free memory of mSDPath
-     * mDirectoryListModels = contains all directory nformation
-     * mSelectedDirectoryList = contains all directory selected information, not be null at this point
+     * mDirectoryListDTO = contains all directory nformation
+     * mSelectedDirectoryListDTO = contains all directory selected information, not be null at this point
      * mPerformCopyDTO = contains name of folder where to put the files and if delete files after the copy
      * mLoaderManager = deve essere diverso da null
      **/
     private void prepareTheCopy() {
         //todo lanciare un asynck task all'interno di un loader
         mDialogHandler.dismissPerformCopyDialog();
-        if (isEnoughtFreeMemory(mDirectoryListModels) == true) {
+        if (isEnoughtFreeMemory(mDirectoryListDTO) == true) {
 
             final ArrayList<String> dirs = new ArrayList<>();
-            for (DirectoryItemDTO s : mSelectedDirectoryList) {
+            for (DirectoryItemDTO s : mSelectedDirectoryListDTO) {
                 dirs.add(s.getPath());
             }
 
