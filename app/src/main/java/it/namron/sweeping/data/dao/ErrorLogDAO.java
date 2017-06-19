@@ -54,11 +54,18 @@ public class ErrorLogDAO {
                     COLUMN_MSG + " TEXT NOT NULL, " +
                     COLUMN_LOG + " TEXT NOT NULL, " +
                     COLUMN_STACK_TRACE + " TEXT NOT NULL, " +
-                    COLUMN_TIMESTAMP + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
+                    COLUMN_TIMESTAMP + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
                     COLUMN_ERROR_LOG_HISTORY_ID + " INT, " +
                     "FOREIGN KEY(" + COLUMN_ERROR_LOG_HISTORY_ID + ") REFERENCES " +
                     HistoryDAO.TABLE_NAME + "(id)" +
                     "); ";
+
+    /**
+     * RETURN ALL ERROR_LOG TABLE ELEMENT SQL
+     * This String will contain a simple SQL statement that will return all error_log table element
+     **/
+    private static final String SQL_GET_ALL_ERROR_LOG_ELEMENTS =
+            "SELECT * FROM " + TABLE_NAME + "; ";
 
     public static String createTableSQL() {
         return SQL_CREATE_ERROR_LOG_TABLE;
@@ -111,15 +118,17 @@ public class ErrorLogDAO {
     }
 
     /**
-     * get all ErrorLog elements
+     * Get all ErrorLog elements
+     *
+     * @return List<ErrorLog> containing the list of ErrorLog
      **/
     public List<ErrorLog> getAllErrorLog() {
+        LogUtils.LOGD_N(LOG_TAG, SQL_GET_ALL_ERROR_LOG_ELEMENTS);
+
         List<ErrorLog> errors = new ArrayList<ErrorLog>();
         SQLiteDatabase db = DatabaseManager.getInstance().openDatabase();
 
-        String selectQuery = " ";//todo set right query
-        LogUtils.LOGD_N(LOG_TAG, selectQuery);
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        Cursor cursor = db.rawQuery(SQL_GET_ALL_ERROR_LOG_ELEMENTS, null);
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
             do {
@@ -148,6 +157,23 @@ public class ErrorLogDAO {
         DatabaseManager.getInstance().closeDatabase();
 
         return errors;
+    }
+
+    /**
+     * Get all ErrorLog elements
+     *
+     * @return Cursor containing the list of History
+     **/
+    public Cursor getAllErrorLogCursor() {
+        LogUtils.LOGD_N(LOG_TAG, SQL_GET_ALL_ERROR_LOG_ELEMENTS);
+
+        List<ErrorLog> errors = new ArrayList<ErrorLog>();
+        SQLiteDatabase db = DatabaseManager.getInstance().openDatabase();
+
+        Cursor cursor = db.rawQuery(SQL_GET_ALL_ERROR_LOG_ELEMENTS, null);
+//        cursor.close();
+        DatabaseManager.getInstance().closeDatabase();
+        return cursor;
     }
 
 }

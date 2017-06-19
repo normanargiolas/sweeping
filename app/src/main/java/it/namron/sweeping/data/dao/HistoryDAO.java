@@ -23,7 +23,7 @@ public class HistoryDAO {
     public static final String COLUMN_ID = "id";
     public static final String COLUMN_FOLDER = "folder";
     public static final String COLUMN_FILE_NUMBER = "file_number";
-    public static final String COLUMN_SIZE = "size";
+    public static final String COLUMN_SIZE = "byteSize";
     public static final String COLUMN_TIMESTAMP = "timestamp";
 
     private History history;
@@ -43,21 +43,16 @@ public class HistoryDAO {
                     COLUMN_FOLDER + " TEXT NOT NULL, " +
                     COLUMN_FILE_NUMBER + " INTEGER NOT NULL, " +
                     COLUMN_SIZE + " BIGINT NOT NULL, " +
-                    COLUMN_TIMESTAMP + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
+                    COLUMN_TIMESTAMP + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP " +
                     "); ";
 
     /**
      * RETURN ALL HISTORY TABLE ELEMENT SQL
      * This String will contain a simple SQL statement that will return all history table element
      **/
-    private static final String SQL_GET_ALL_HISTORY_ELEMENTS = //todo da implementare
-            "CREATE TABLE " + TABLE_NAME + " (" +
-                    COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    COLUMN_FOLDER + " TEXT NOT NULL, " +
-                    COLUMN_FILE_NUMBER + " INTEGER NOT NULL, " +
-                    COLUMN_SIZE + " BIGINT NOT NULL, " +
-                    COLUMN_TIMESTAMP + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
-                    "); ";
+    private static final String SQL_GET_ALL_HISTORY_ELEMENTS =
+            "SELECT * FROM " + TABLE_NAME + "; ";
+
 
     public static String createTableSQL() {
         return SQL_CREATE_HISTORY_TABLE;
@@ -151,6 +146,8 @@ public class HistoryDAO {
         SQLiteDatabase db = DatabaseManager.getInstance().openDatabase();
 
         Cursor cursor = db.rawQuery(SQL_GET_ALL_HISTORY_ELEMENTS, null);
+//        cursor.close();
+//        DatabaseManager.getInstance().closeDatabase();
         return cursor;
     }
 }

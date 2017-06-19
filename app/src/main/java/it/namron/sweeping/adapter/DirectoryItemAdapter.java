@@ -14,7 +14,7 @@ import java.util.List;
 
 import it.namron.sweeping.dto.DirectoryItemDTO;
 import it.namron.sweeping.sweeping.R;
-import it.namron.sweeping.wrapper.WrappedDirectorySize;
+import it.namron.sweeping.wrapper.WrappedFormatter;
 
 /**
  * Created by norman on 11/05/17.
@@ -57,7 +57,7 @@ public class DirectoryItemAdapter extends RecyclerView.Adapter<DirectoryItemAdap
 
         directoryItemAdapterViewHolder.listItemDirectoryView.setText(directoryItem.getName());
 
-        directoryItemAdapterViewHolder.directorySize.setText(WrappedDirectorySize.size(directoryItem.getSizeByte()));
+        directoryItemAdapterViewHolder.directorySize.setText(WrappedFormatter.byteSize(directoryItem.getSizeByte()));
 
         applyDirectory(directoryItemAdapterViewHolder, directoryItem);
 
@@ -85,7 +85,7 @@ public class DirectoryItemAdapter extends RecyclerView.Adapter<DirectoryItemAdap
 
     public void updateSize(long size, int position) {
         mDirectoryDTO.get(position).setSizeByte(size);
-        mDirectoryDTO.get(position).setSizeString(WrappedDirectorySize.size(size));
+        mDirectoryDTO.get(position).setSizeString(WrappedFormatter.byteSize(size));
         notifyDataSetChanged();
     }
 

@@ -55,7 +55,7 @@ import it.namron.sweeping.utils.AppUtils;
 import it.namron.sweeping.utils.LogUtils;
 import it.namron.sweeping.utils.ResourceHashCode;
 import it.namron.sweeping.utils.StorageUtils;
-import it.namron.sweeping.wrapper.WrappedDirectorySize;
+import it.namron.sweeping.wrapper.WrappedFormatter;
 
 import static it.namron.sweeping.constant.Constant.ALERT_MAIN_FOLDER_DIALOG_TAG;
 import static it.namron.sweeping.constant.Constant.APP_FACEBOOK;
@@ -377,7 +377,7 @@ public class AppInfoFragment extends Fragment implements
                                     dirItem.setName(folder);
                                     dirItem.setSelected(true);
                                     dirItem.setSizeByte(NOT_INITIALIZED_FOLDER_SIZE);
-                                    dirItem.setSizeString(WrappedDirectorySize.size(dirItem.getSizeByte()));
+                                    dirItem.setSizeString(WrappedFormatter.byteSize(dirItem.getSizeByte()));
 
                                     mDirectoryListDTO.add(dirItem);
 
@@ -782,7 +782,7 @@ public class AppInfoFragment extends Fragment implements
     /**
      * If we haven't enought free memory, we waiting in AppInfoFragment directory list
      * At this point we have:
-     * mTotalSize = total size of file to copy in byte
+     * mTotalSize = total byteSize of file to copy in byte
      * mSDPath = path of SD card
      * mSDFreeMemory = free memory of mSDPath
      * mDirectoryListDTO = contains all directory nformation

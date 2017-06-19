@@ -58,7 +58,7 @@ public class FolderSizeAsyncTask extends AsyncTask<Uri, Integer, Long> {
     }
 
     /**
-     * size of directory in bytes,
+     * byteSize of directory in bytes,
      * 0 if directory is security restricted,
      * a negative number when the real total is greater than Long.MAX_VALUE.
      **/

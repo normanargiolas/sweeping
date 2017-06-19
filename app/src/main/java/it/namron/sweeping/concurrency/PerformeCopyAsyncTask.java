@@ -71,17 +71,17 @@ public class PerformeCopyAsyncTask extends AsyncTask<ArrayList<String>, Integer,
     protected Boolean doInBackground(@NonNull ArrayList<String>... sources) {
 
         //todo remove this only for test
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return null;
+//        try {
+//            Thread.sleep(5000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//        return null;
 
-//
-//        mSources = sources[0];
-//        boolean res = inBackground();
-//        return res;
+
+        mSources = sources[0];
+        boolean res = inBackground();
+        return res;
     }
 
     private boolean inBackground() {

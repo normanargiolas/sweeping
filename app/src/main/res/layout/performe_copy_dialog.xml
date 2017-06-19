@@ -79,33 +79,41 @@
             android:textSize="@dimen/msg_text_view" />
 
 
-        <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/performe_radio_group"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp">
+        <!--<RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"-->
+        <!--android:id="@+id/performe_radio_group"-->
+        <!--android:layout_width="fill_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:paddingLeft="10dp"-->
+        <!--android:paddingRight="10dp">-->
 
-            <!--<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="match_parent">-->
-                <RadioButton
-                    android:id="@+id/performe_rdBtn_sposta"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:text="@string/performe_copy_dialog_sposta" />
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <!--<RadioButton-->
+            <!--android:id="@+id/performe_rdBtn_sposta"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignParentTop="true"-->
+            <!--android:text="@string/performe_copy_dialog_sposta" />-->
+            <CheckBox
+                android:id="@+id/performe_checkBox_tieni"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/performe_copy_dialog_tieni_originali"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="2dp" />
 
-                <RadioButton
-                    android:id="@+id/performe_rdBtn_tieni"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentTop="true"
-                    android:text="@string/performe_copy_dialog_tieni_originali" />
-            <!--</RelativeLayout>-->
+            <!--<RadioButton-->
+            <!--android:id="@+id/performe_rdBtn_tieni"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignParentEnd="true"-->
+            <!--android:layout_alignParentTop="true"-->
+            <!--android:text="@string/performe_copy_dialog_tieni_originali" />-->
+        </RelativeLayout>
 
-        </RadioGroup>
+        <!--</RadioGroup>-->
 
 
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -138,6 +146,5 @@
 
 
     </LinearLayout>
-
 
 </RelativeLayout>

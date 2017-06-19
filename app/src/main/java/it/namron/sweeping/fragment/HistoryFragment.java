@@ -67,7 +67,7 @@ public class HistoryFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_history, container, false);
 
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.app_list_recycler);
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.list_recycler);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());

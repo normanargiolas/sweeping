@@ -35,9 +35,9 @@
 
 
     <string name="performe_copy_dialog_title">Titolo Applicazione</string>
-    <string name="performe_copy_dialog_message_1">Copiare le cartelle selezionate all\'interno della cartella</string>
-    <string name="performe_copy_dialog_message_2">della memoria esterna?</string>
-    <string name="performe_copy_dialog_sposta">sposta</string>
+    <string name="performe_copy_dialog_message_1">Spostare le cartelle selezionate all\'interno ella cartella</string>
+    <string name="performe_copy_dialog_message_2">nella memoria esterna?</string>
+    <!--<string name="performe_copy_dialog_sposta">sposta</string>-->
     <string name="performe_copy_dialog_tieni_originali">tieni originali</string>
 
 </resources>

@@ -1,5 +1,6 @@
 package it.namron.sweeping.wrapper;
 
+import android.support.annotation.NonNull;
 import android.text.format.Formatter;
 
 import it.namron.sweeping.sweeping.R;
@@ -12,9 +13,9 @@ import static it.namron.sweeping.constant.Constant.NOT_INITIALIZED_FOLDER_SIZE;
  * Created by norman on 29/05/17.
  */
 
-public class WrappedDirectorySize {
+public class WrappedFormatter {
 
-    public static String size(long bytes) {
+    public static String byteSize(long bytes) {
         String unita;
 
         if (bytes == NOT_INITIALIZED_FOLDER_SIZE) {
@@ -31,5 +32,11 @@ public class WrappedDirectorySize {
 //        long availableBlocks = stat.getAvailableBlocksLong();
         String s = Formatter.formatFileSize(ResourceHashCode.getContext(), bytes);
         return s;
+    }
+
+    public static String filesNumber(@NonNull int numberOfFiles) {
+        String res = String.valueOf(numberOfFiles);
+
+        return res + " files.";
     }
 }

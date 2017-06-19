@@ -15,6 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
@@ -31,15 +33,14 @@ import it.namron.sweeping.sweeping.R;
 import static it.namron.sweeping.constant.Constant.ALERT_FOLDER_DIALOG_TAG;
 import static it.namron.sweeping.constant.Constant.PERFORM_COPY_DIALOG_PARAMETER_BUNDLE;
 
-public class PerformCopyDialog extends DialogFragment{
+public class PerformCopyDialog extends DialogFragment {
 
     private ResoultPerformCopyDialogListener mListener;
 
-    RadioButton mPerformeRdBtnSposta;
-    RadioButton mPerformeRdBtnTieni;
+    private CheckBox mPerformeCheckBoxTieni;
 
-    EditText mPerformeEditText;
-    FromPerformCopyDTO mParameterFromObj;
+    private EditText mPerformeEditText;
+    private FromPerformCopyDTO mParameterFromObj;
 
     public interface ResoultPerformCopyDialogListener {
         void onResoultPerformCopyDialog(FromPerformCopyDTO parameter);
@@ -72,31 +73,42 @@ public class PerformCopyDialog extends DialogFragment{
                 ImageView dialogIcon = (ImageView) rootView.findViewById(R.id.dialog_icon);
                 dialogIcon.setImageDrawable(iconDrawable);
 
-                RadioGroup performeRadioGroup = (RadioGroup) rootView.findViewById(R.id.performe_radio_group);
-                mPerformeRdBtnSposta = (RadioButton) rootView.findViewById(R.id.performe_rdBtn_sposta);
-                mPerformeRdBtnTieni = (RadioButton) rootView.findViewById(R.id.performe_rdBtn_tieni);
-                mPerformeRdBtnSposta.setChecked(true);
+//                RadioGroup performeRadioGroup = (RadioGroup) rootView.findViewById(R.id.performe_radio_group);
+//                mPerformeRdBtnSposta = (RadioButton) rootView.findViewById(R.id.performe_rdBtn_sposta);
+//                mPerformeRdBtnTieni = (RadioButton) rootView.findViewById(R.id.performe_rdBtn_tieni);
+//                mPerformeRdBtnSposta.setChecked(true);
 
-                performeRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(RadioGroup performeRadioGroup, int checkedId) {
-                        switch (checkedId) {
-                            case R.id.performe_rdBtn_sposta:
-                                // 'Incident' checked
-//                    fall.setVisibility(View.GONE);
-//                    trip.setVisibility(View.GONE);
-//                    illness.setVisibility(View.GONE);
-//                                mListener.onResoultPerformCopyDialog("sposta");
 
-                                break;
-                            case R.id.performe_rdBtn_tieni:
-//                                mListener.onResoultPerformCopyDialog("tieni");
+                mPerformeCheckBoxTieni = (CheckBox) rootView.findViewById(R.id.performe_checkBox_tieni);
+                mPerformeCheckBoxTieni.setChecked(true);
 
-                                // 'Accident' checked
-                                break;
-                        }
-                    }
-                });
+//                mPerformeCheckBoxTieni.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//                    @Override
+//                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//
+//                    }
+//                });
+
+//                performeRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+//                    @Override
+//                    public void onCheckedChanged(RadioGroup performeRadioGroup, int checkedId) {
+//                        switch (checkedId) {
+//                            case R.id.performe_rdBtn_sposta:
+//                                // 'Incident' checked
+////                    fall.setVisibility(View.GONE);
+////                    trip.setVisibility(View.GONE);
+////                    illness.setVisibility(View.GONE);
+////                                mListener.onResoultPerformCopyDialog("sposta");
+//
+//                                break;
+//                            case R.id.performe_rdBtn_tieni:
+////                                mListener.onResoultPerformCopyDialog("tieni");
+//
+//                                // 'Accident' checked
+//                                break;
+//                        }
+//                    }
+//                });
 
                 Button performeBtnOkay = (Button) rootView.findViewById(R.id.performe_btn_okay);
                 performeBtnOkay.setOnClickListener(new View.OnClickListener() {
@@ -108,7 +120,7 @@ public class PerformCopyDialog extends DialogFragment{
                         if (validFormatFolder(mPerformeEditText.getText().toString())) {
                             mParameterFromObj = new FromPerformCopyDTO();
                             mParameterFromObj.setFolder(mPerformeEditText.getText().toString());
-                            mParameterFromObj.setDelete(mPerformeRdBtnTieni.isChecked());
+                            mParameterFromObj.setDelete(!mPerformeCheckBoxTieni.isChecked());
 
                             mListener.onResoultPerformCopyDialog(mParameterFromObj);
                         } else {

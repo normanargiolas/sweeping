@@ -25,6 +25,8 @@ import java.util.List;
 import it.namron.sweeping.adapter.AppItemAdapter;
 import it.namron.sweeping.concurrency.AppEntry;
 import it.namron.sweeping.concurrency.AppListLoader;
+import it.namron.sweeping.data.entity.ErrorLog;
+import it.namron.sweeping.data.service.HistoryService;
 import it.namron.sweeping.dto.AppItemDTO;
 import it.namron.sweeping.dto.DrawerItemDTO;
 import it.namron.sweeping.fragment.HistoryFragment;
@@ -131,6 +133,11 @@ public class MainActivity extends BaseActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+//        HistoryService historyService = new HistoryService();
+//        historyService.setHistory("folder", 15, 1024);
+//
+
 
 //        ErrorLogDAO errorLogDAO = new ErrorLogDAO();
 //        //Insert Sample data

@@ -7,8 +7,17 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import java.sql.Timestamp;
 
 import it.namron.sweeping.sweeping.R;
+import it.namron.sweeping.wrapper.WrappedFormatter;
+
+import static it.namron.sweeping.data.dao.HistoryDAO.COLUMN_FILE_NUMBER;
+import static it.namron.sweeping.data.dao.HistoryDAO.COLUMN_FOLDER;
+import static it.namron.sweeping.data.dao.HistoryDAO.COLUMN_SIZE;
+import static it.namron.sweeping.data.dao.HistoryDAO.COLUMN_TIMESTAMP;
 
 /**
  * Created by norman on 19/06/17.
@@ -17,7 +26,7 @@ import it.namron.sweeping.sweeping.R;
 public class HistoryItemAdapter extends RecyclerView.Adapter<HistoryItemAdapter.HistoryItemAdapterViewHolder> {
 
     private final Context mContext;
-    private Cursor mHistoryCursor;
+    private Cursor mCursor;
     private HistoryAdapterListener listener;
 
     public interface HistoryAdapterListener {
@@ -30,7 +39,7 @@ public class HistoryItemAdapter extends RecyclerView.Adapter<HistoryItemAdapter.
                               Cursor cursor) {
 
         this.mContext = context;
-        this.mHistoryCursor = cursor;
+        this.mCursor = cursor;
         this.listener = listener;
     }
 
@@ -47,17 +56,36 @@ public class HistoryItemAdapter extends RecyclerView.Adapter<HistoryItemAdapter.
 
     @Override
     public void onBindViewHolder(HistoryItemAdapterViewHolder holder, int position) {
+        if (!mCursor.moveToPosition(position))
+            return; // bail if returned null
+        String folder = mCursor.getString(mCursor.getColumnIndex(COLUMN_FOLDER));
+        int numberOfFiles = mCursor.getInt(mCursor.getColumnIndex(COLUMN_FILE_NUMBER));
+        long size = mCursor.getLong(mCursor.getColumnIndex(COLUMN_SIZE));
+        String timestamp = mCursor.getString(mCursor.getColumnIndex(COLUMN_TIMESTAMP));
 
+        holder.folder.setText(folder);
+        holder.numberOfFiles.setText(WrappedFormatter.filesNumber(numberOfFiles));
+        holder.sizeOfFiles.setText(WrappedFormatter.byteSize(size));
+        holder.timestamp.setText(timestamp);
     }
 
     @Override
     public int getItemCount() {
-        return mHistoryCursor.getCount();
+        return mCursor.getCount();
     }
 
     public class HistoryItemAdapterViewHolder extends RecyclerView.ViewHolder {
+        public TextView folder;
+        public TextView numberOfFiles;
+        public TextView sizeOfFiles;
+        public TextView timestamp;
+
         public HistoryItemAdapterViewHolder(View itemView) {
             super(itemView);
+            folder = (TextView) itemView.findViewById(R.id.folder);
+            numberOfFiles = (TextView) itemView.findViewById(R.id.txt_primary);
+            sizeOfFiles = (TextView) itemView.findViewById(R.id.txt_secondary);
+            timestamp = (TextView) itemView.findViewById(R.id.timestamp);
         }
 
     }
