@@ -27,6 +27,8 @@ public class ErrorLog implements Parcelable {
 
     private Timestamp timestamp;
 
+    private History history;
+
     public int getId() {
         return id;
     }
@@ -95,7 +97,7 @@ public class ErrorLog implements Parcelable {
         super();
     }
 
-    public ErrorLog(int id, String file, String method, String line, String msg, String log, String stackTrace, Timestamp timestamp) {
+    public ErrorLog(int id, String file, String method, String line, String msg, String log, String stackTrace, Timestamp timestamp, History history) {
         super();
         this.id = id;
         this.file = file;
@@ -105,6 +107,7 @@ public class ErrorLog implements Parcelable {
         this.log = log;
         this.stackTrace = stackTrace;
         this.timestamp = timestamp;
+        this.history = history;
     }
 
     protected ErrorLog(Parcel in) {
@@ -117,6 +120,7 @@ public class ErrorLog implements Parcelable {
         log = in.readString();
         stackTrace = in.readString();
         timestamp = (Timestamp) in.readSerializable();
+        history = in.readParcelable(History.class.getClassLoader());
     }
 
     public static final Creator<ErrorLog> CREATOR = new Creator<ErrorLog>() {
@@ -146,6 +150,7 @@ public class ErrorLog implements Parcelable {
         dest.writeString(log);
         dest.writeString(stackTrace);
         dest.writeSerializable(timestamp);
+        dest.writeParcelable(history, flags);
     }
 
     @Override
@@ -168,5 +173,13 @@ public class ErrorLog implements Parcelable {
         if (id != other.id)
             return false;
         return true;
+    }
+
+    public History getHistory() {
+        return history;
+    }
+
+    public void setHistory(History history) {
+        this.history = history;
     }
 }

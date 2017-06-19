@@ -15,8 +15,8 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
-import it.namron.sweeping.adapter.DirectoryItemAdapter;
 import it.namron.sweeping.adapter.HistoryItemAdapter;
+import it.namron.sweeping.data.service.HistoryService;
 import it.namron.sweeping.dto.HistoryListDTO;
 import it.namron.sweeping.sweeping.R;
 import it.namron.sweeping.utils.LogUtils;
@@ -32,6 +32,9 @@ public class HistoryFragment extends Fragment implements
     private RecyclerView mRecyclerView;
     private HistoryItemAdapter mHistoryAdapter;
     private ArrayList<HistoryListDTO> mHistoryListDTO = new ArrayList<>();
+
+    private HistoryService historyService = new HistoryService();
+
 
     /**
      * This method is used to notify from HistoryItemAdapterViewHolder that implement
@@ -72,7 +75,7 @@ public class HistoryFragment extends Fragment implements
         mRecyclerView.setHasFixedSize(true);
 
         // Get all history info from the database and save in a cursor
-        Cursor cursor = getAllHistory();
+        Cursor cursor = historyService.getAllHistoryCursor();
         //The DirectoryItemAdapter is responsible for displaying each item in the list.
         mHistoryAdapter = new HistoryItemAdapter(getContext(), this, cursor);
         mRecyclerView.setAdapter(mHistoryAdapter);
@@ -104,14 +107,5 @@ public class HistoryFragment extends Fragment implements
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-    }
-
-    /**
-     * Query the mDb and get all history logs from the history table
-     *
-     * @return Cursor containing the list of logs
-     */
-    public Cursor getAllHistory() {
-        return allHistory;
     }
 }

@@ -31,6 +31,7 @@ import it.namron.sweeping.fragment.HistoryFragment;
 import it.namron.sweeping.fragment.ManageFragment;
 import it.namron.sweeping.sweeping.R;
 import it.namron.sweeping.utils.AppUtils;
+import it.namron.sweeping.utils.LogUtils;
 
 import static it.namron.sweeping.constant.Constant.APP_SELECTED_BUNDLE;
 import static it.namron.sweeping.constant.Constant.ID_APP_LIST_LOADER;
@@ -123,7 +124,7 @@ public class MainActivity extends BaseActivity implements
     @Override
     protected void onResume() {
         super.onResume();
-        LOGD(LOG_TAG, "onResume");
+        LogUtils.LOGD_N(LOG_TAG, "onResume");
     }
 
     @Override

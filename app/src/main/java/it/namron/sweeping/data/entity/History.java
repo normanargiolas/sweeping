@@ -19,8 +19,6 @@ public class History implements Parcelable {
 
     private long size;
 
-    public ErrorLog errorlog;
-
     private Timestamp timestamp;
 
     public int getId() {
@@ -55,14 +53,6 @@ public class History implements Parcelable {
         this.size = size;
     }
 
-    public ErrorLog getErrorlog() {
-        return errorlog;
-    }
-
-    public void setErrorlog(ErrorLog errorlog) {
-        this.errorlog = errorlog;
-    }
-
     public Timestamp getTimestamp() {
         return timestamp;
     }
@@ -75,13 +65,12 @@ public class History implements Parcelable {
         super();
     }
 
-    public History(int id, String folder, int file_number, long size, ErrorLog errorLog, Timestamp timestamp) {
+    public History(int id, String folder, int file_number, long size, Timestamp timestamp) {
         super();
         this.id = id;
         this.folder = folder;
         this.file_number = file_number;
         this.size = size;
-        this.errorlog = errorLog;
         this.timestamp = timestamp;
     }
 
@@ -92,9 +81,7 @@ public class History implements Parcelable {
         folder = in.readString();
         file_number = in.readInt();
         size = in.readLong();
-        errorlog = in.readParcelable(ErrorLog.class.getClassLoader());
         timestamp = (Timestamp) in.readSerializable();
-        this.errorlog = in.readParcelable(ErrorLog.class.getClassLoader());
     }
 
     public static final Creator<History> CREATOR = new Creator<History>() {
@@ -120,9 +107,7 @@ public class History implements Parcelable {
         dest.writeString(folder);
         dest.writeInt(file_number);
         dest.writeLong(size);
-        dest.writeParcelable(errorlog, flags);
         dest.writeSerializable(timestamp);
-        dest.writeParcelable(getErrorlog(), flags);
     }
 
     @Override

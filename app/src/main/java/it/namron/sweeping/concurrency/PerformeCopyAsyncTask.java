@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import it.namron.sweeping.data.service.HistoryService;
 import it.namron.sweeping.dto.FromPerformCopyDTO;
 import it.namron.sweeping.listener.PerformeCopyAsyncTaskListener;
 import it.namron.sweeping.utils.LogUtils;
@@ -41,6 +42,11 @@ public class PerformeCopyAsyncTask extends AsyncTask<ArrayList<String>, Integer,
 
     private PerformeCopyAsyncTaskListener mCallback;
 
+    private HistoryService historyService;
+
+    private int numberOfFiles;
+    private long sizeOfFiles;
+
     public PerformeCopyAsyncTask(@NonNull Activity activity,
                                  @NonNull PerformeCopyAsyncTaskListener callback,
                                  @NonNull String destination,
@@ -55,6 +61,10 @@ public class PerformeCopyAsyncTask extends AsyncTask<ArrayList<String>, Integer,
         mDestination = destination;
         mInfo = info;
         mCallback = callback;
+
+        historyService = new HistoryService();
+        numberOfFiles = 0;
+        sizeOfFiles = 0;
     }
 
     @Override
@@ -133,7 +143,7 @@ public class PerformeCopyAsyncTask extends AsyncTask<ArrayList<String>, Integer,
                 }
             } else {
                 //todo errore nella copia del file
-//                                        mCallback.notifyOnErrorOccurred(source.toString(), 0, CLASS_NAME_HASH_CODE);
+                //mCallback.notifyOnErrorOccurred(source.toString(), 0, CLASS_NAME_HASH_CODE);
             }
         }
     }
@@ -178,6 +188,9 @@ public class PerformeCopyAsyncTask extends AsyncTask<ArrayList<String>, Integer,
         inChannel.transferTo(0, inChannel.size(), outChannel);
         inStream.close();
         outStream.close();
+
+        numberOfFiles++;
+        sizeOfFiles = sizeOfFiles + source.length();
     }
 
     private String combine(String path1, String path2) {
@@ -201,6 +214,7 @@ public class PerformeCopyAsyncTask extends AsyncTask<ArrayList<String>, Integer,
 
     @Override
     protected void onPostExecute(Boolean result) {
+        historyService.setHistory(mInfo.getFolder(), numberOfFiles, sizeOfFiles);
         mCallback.notifyOnPerformeCopyResoult(mActivity, mInfo.getFolder(), ResourceHashCode.getPerformeCopyAsyncTaskCode());
         ResourceHashCode.removePerformeCopyTask(this);
     }

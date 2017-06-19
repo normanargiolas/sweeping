@@ -420,6 +420,9 @@ public class AppInfoFragment extends Fragment implements
         }
     };
 
+    /**
+     * Add here all AppInfoFragment interfaces
+     **/
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -439,7 +442,6 @@ public class AppInfoFragment extends Fragment implements
             throw new ClassCastException(context.toString()
                     + " must implement PerformeCopyAsyncTaskListener");
         }
-        //todo aggiungere le restanti interfacce
     }
 
     private boolean isSelected(List<DirectoryItemDTO> mDirectoryListModels) {
@@ -803,6 +805,7 @@ public class AppInfoFragment extends Fragment implements
                     mPerformeCopyAsyncTaskListener, mSDPath, mPerformCopyDTO);
             ResourceHashCode.addPerformeCopyTask(mAppItem.getAppName(), mPerformeCopyAsyncTask);
             mPerformeCopyAsyncTask.executeOnExecutor(mThreadPoolExecutor, dirs);
+            //todo vedere cosa c' in mThreadPoolExecutor
         }
     }
 

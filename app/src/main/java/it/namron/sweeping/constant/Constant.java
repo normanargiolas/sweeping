@@ -83,4 +83,13 @@ public class Constant {
                 add("facebook");
             }});
 
+
+
+    /**
+     * Error constant messages
+     */
+    public static final String EXTERNAL_STORAGE_STATE = "ExternalStorageState";
+
+    public static final int ID_ITEM_NOT_PRESENT = -1;
+
 }

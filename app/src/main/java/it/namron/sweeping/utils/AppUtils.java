@@ -2,7 +2,6 @@ package it.namron.sweeping.utils;
 
 import android.net.Uri;
 import android.os.Environment;
-import android.util.Log;
 
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 
@@ -12,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.namron.sweeping.concurrency.AppEntry;
-import it.namron.sweeping.constant.LogErrorMsg;
+import it.namron.sweeping.constant.Constant;
 import it.namron.sweeping.dto.AppItemDTO;
 
 import static it.namron.sweeping.constant.Constant.APP_TARGET_LIST;
@@ -29,7 +28,7 @@ public class AppUtils {
             LogUtils.LOGD_N(LOG_TAG, Environment.getExternalStorageDirectory().getPath(), true);
             return true;
         }
-        LogUtils.LOGD_N(LOG_TAG, LogErrorMsg.EXTERNAL_STORAGE_STATE, false);
+        LogUtils.LOGD_N(LOG_TAG, Constant.EXTERNAL_STORAGE_STATE, false);
         return false;
     }
 
@@ -75,7 +74,7 @@ public class AppUtils {
         File mediaDirectory;
 
         if (Environment.getExternalStorageState() == null || Environment.isExternalStorageRemovable()) {
-            LogUtils.LOGD_N(LOG_TAG, LogErrorMsg.EXTERNAL_STORAGE_STATE);
+            LogUtils.LOGD_N(LOG_TAG, Constant.EXTERNAL_STORAGE_STATE);
             return null;
         } else if (Environment.getExternalStorageState() != null) {
             // search for directory on SD card
