@@ -3,13 +3,13 @@ package it.namron.sweeping.adapter;
 import android.content.Context;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import java.sql.Timestamp;
 
 import it.namron.sweeping.sweeping.R;
 import it.namron.sweeping.wrapper.WrappedFormatter;
@@ -29,6 +29,7 @@ public class HistoryItemAdapter extends RecyclerView.Adapter<HistoryItemAdapter.
     private Cursor mCursor;
     private HistoryAdapterListener listener;
 
+    //todo da finire in seguito
     public interface HistoryAdapterListener {
         void onHistoryClicked(int position);
     }
@@ -67,6 +68,10 @@ public class HistoryItemAdapter extends RecyclerView.Adapter<HistoryItemAdapter.
         holder.numberOfFiles.setText(WrappedFormatter.filesNumber(numberOfFiles));
         holder.sizeOfFiles.setText(WrappedFormatter.byteSize(size));
         holder.timestamp.setText(timestamp);
+
+        if(position % 2 == 1){
+            holder.descriptionRow.setBackgroundColor(ContextCompat.getColor(mContext, R.color.row_odd));
+        }
     }
 
     @Override
@@ -75,6 +80,7 @@ public class HistoryItemAdapter extends RecyclerView.Adapter<HistoryItemAdapter.
     }
 
     public class HistoryItemAdapterViewHolder extends RecyclerView.ViewHolder {
+        public LinearLayout descriptionRow;
         public TextView folder;
         public TextView numberOfFiles;
         public TextView sizeOfFiles;
@@ -82,10 +88,11 @@ public class HistoryItemAdapter extends RecyclerView.Adapter<HistoryItemAdapter.
 
         public HistoryItemAdapterViewHolder(View itemView) {
             super(itemView);
-            folder = (TextView) itemView.findViewById(R.id.folder);
-            numberOfFiles = (TextView) itemView.findViewById(R.id.txt_primary);
-            sizeOfFiles = (TextView) itemView.findViewById(R.id.txt_secondary);
-            timestamp = (TextView) itemView.findViewById(R.id.timestamp);
+            descriptionRow = (LinearLayout) itemView.findViewById(R.id.description_row);
+            folder = (TextView) itemView.findViewById(R.id.col_folder);
+            numberOfFiles = (TextView) itemView.findViewById(R.id.col_files);
+            sizeOfFiles = (TextView) itemView.findViewById(R.id.col_size);
+            timestamp = (TextView) itemView.findViewById(R.id.col_time);
         }
 
     }
