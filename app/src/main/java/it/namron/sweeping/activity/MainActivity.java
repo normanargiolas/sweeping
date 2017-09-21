@@ -25,8 +25,6 @@ import java.util.List;
 import it.namron.sweeping.adapter.AppItemAdapter;
 import it.namron.sweeping.concurrency.AppEntry;
 import it.namron.sweeping.concurrency.AppListLoader;
-import it.namron.sweeping.data.entity.ErrorLog;
-import it.namron.sweeping.data.service.HistoryService;
 import it.namron.sweeping.dto.AppItemDTO;
 import it.namron.sweeping.dto.DrawerItemDTO;
 import it.namron.sweeping.fragment.HistoryFragment;
@@ -58,7 +56,7 @@ public class MainActivity extends BaseActivity implements
 
     private Toast mToast;
 
-    private boolean onHistory = false;
+    private boolean onFragmentCount = false;
 
     /**
      * A value that uniquely identifies the request to download an
@@ -135,7 +133,7 @@ public class MainActivity extends BaseActivity implements
         setContentView(R.layout.activity_main);
 
 //        HistoryService historyService = new HistoryService();
-//        historyService.setHistory("folder", 15, 1024);
+//        historyService.insertHistory("folder", 15, 1024);
 //
 
 
@@ -206,8 +204,8 @@ public class MainActivity extends BaseActivity implements
     }
 
     private void restoreState(Bundle savedInstanceState) {
-        onHistory = savedInstanceState.getBoolean(ON_HISTORY_PARAM);
-        if (onHistory) {
+        onFragmentCount = savedInstanceState.getBoolean(ON_HISTORY_PARAM);
+        if (onFragmentCount) {
             if (getSupportFragmentManager().getBackStackEntryCount() > 0){
                 getSupportFragmentManager().popBackStack();
             }
@@ -218,8 +216,8 @@ public class MainActivity extends BaseActivity implements
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
         Log.d(LOG_TAG, "onSaveInstanceState");
-        if (onHistory) {
-            savedInstanceState.putBoolean(ON_HISTORY_PARAM, onHistory);
+        if (onFragmentCount) {
+            savedInstanceState.putBoolean(ON_HISTORY_PARAM, onFragmentCount);
         }
         super.onSaveInstanceState(savedInstanceState);
     }
@@ -392,29 +390,52 @@ public class MainActivity extends BaseActivity implements
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
+        Fragment fragment = null;
+        FragmentManager fragmentManager = getSupportFragmentManager();
+
         //noinspection SimplifiableIfStatement
         switch (id) {
             case R.id.action_settings:
                 return true;
             case R.id.action_history:
-                setOnHistoryFragment();
-                return true;
+                fragment = new HistoryFragment();
+
+//                setOnHistoryFragment();
+                break;
             case R.id.action_error:
-                return true;
+                fragment = new ErrorLogFragment();
+
+//                setOnErrorLogFragment();
+                break;
         }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void setOnHistoryFragment() {
-        Fragment fragment = null;
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragment = new HistoryFragment();
         if (mRecyclerView.getParent() != null) {
             ((LinearLayout) mRecyclerView.getParent()).removeView(mRecyclerView);
         }
-        onHistory = true;
+        onFragmentCount = true;
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack(null).commit();
+        return super.onOptionsItemSelected(item);
     }
+
+//    private void setOnErrorLogFragment() {
+//        Fragment fragment = null;
+//        FragmentManager fragmentManager = getSupportFragmentManager();
+//        fragment = new ErrorLogFragment();
+//        if (mRecyclerView.getParent() != null) {
+//            ((LinearLayout) mRecyclerView.getParent()).removeView(mRecyclerView);
+//        }
+//        onFragmentCount = true;
+//        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack(null).commit();
+//    }
+//
+//    private void setOnHistoryFragment() {
+//        Fragment fragment = null;
+//        FragmentManager fragmentManager = getSupportFragmentManager();
+//        fragment = new HistoryFragment();
+//        if (mRecyclerView.getParent() != null) {
+//            ((LinearLayout) mRecyclerView.getParent()).removeView(mRecyclerView);
+//        }
+//        onFragmentCount = true;
+//        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack(null).commit();
+//    }
 }
 

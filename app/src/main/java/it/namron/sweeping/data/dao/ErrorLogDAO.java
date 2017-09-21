@@ -29,7 +29,6 @@ public class ErrorLogDAO {
     public static final String COLUMN_METHOD = "method";
     public static final String COLUMN_LINE = "line";
     public static final String COLUMN_MSG = "msg";
-    public static final String COLUMN_LOG = "log";
     public static final String COLUMN_STACK_TRACE = "stack_trace";
     public static final String COLUMN_ERROR_LOG_HISTORY_ID = "history_id";
 
@@ -50,10 +49,9 @@ public class ErrorLogDAO {
                     COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     COLUMN_FILE + " TEXT NOT NULL, " +
                     COLUMN_METHOD + " TEXT NOT NULL, " +
-                    COLUMN_LINE + " TEXT NOT NULL, " +
+                    COLUMN_LINE + " INTEGER NOT NULL, " +
                     COLUMN_MSG + " TEXT NOT NULL, " +
-                    COLUMN_LOG + " TEXT NOT NULL, " +
-                    COLUMN_STACK_TRACE + " TEXT NOT NULL, " +
+                    COLUMN_STACK_TRACE + " TEXT, " +
                     COLUMN_TIMESTAMP + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
                     COLUMN_ERROR_LOG_HISTORY_ID + " INT, " +
                     "FOREIGN KEY(" + COLUMN_ERROR_LOG_HISTORY_ID + ") REFERENCES " +
@@ -81,7 +79,6 @@ public class ErrorLogDAO {
         values.put(COLUMN_METHOD, errorLog.getMethod());
         values.put(COLUMN_LINE, errorLog.getLine());
         values.put(COLUMN_MSG, errorLog.getMsg());
-        values.put(COLUMN_LOG, errorLog.getLog());
         values.put(COLUMN_STACK_TRACE, errorLog.getStackTrace());
 //        values.put(COLUMN_TIMESTAMP, errorLog.getTimestamp());
         try {
@@ -136,9 +133,8 @@ public class ErrorLogDAO {
                 error.setId(cursor.getInt(cursor.getColumnIndex(COLUMN_ID)));
                 error.setFile(cursor.getString(cursor.getColumnIndex(COLUMN_FILE)));
                 error.setMethod(cursor.getString(cursor.getColumnIndex(COLUMN_METHOD)));
-                error.setLine(cursor.getString(cursor.getColumnIndex(COLUMN_LINE)));
+                error.setLine(cursor.getInt(cursor.getColumnIndex(COLUMN_LINE)));
                 error.setMsg(cursor.getString(cursor.getColumnIndex(COLUMN_MSG)));
-                error.setLog(cursor.getString(cursor.getColumnIndex(COLUMN_LOG)));
                 error.setStackTrace(cursor.getString(cursor.getColumnIndex(COLUMN_STACK_TRACE)));
                 try {
                     error.setTimestamp(Timestamp.valueOf(cursor.getString(cursor.getColumnIndex(COLUMN_TIMESTAMP))));

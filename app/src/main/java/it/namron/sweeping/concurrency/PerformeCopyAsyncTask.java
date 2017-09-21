@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import it.namron.sweeping.data.service.ErrorLogService;
 import it.namron.sweeping.data.service.HistoryService;
 import it.namron.sweeping.dto.FromPerformCopyDTO;
 import it.namron.sweeping.listener.PerformeCopyAsyncTaskListener;
@@ -43,6 +44,7 @@ public class PerformeCopyAsyncTask extends AsyncTask<ArrayList<String>, Integer,
     private PerformeCopyAsyncTaskListener mCallback;
 
     private HistoryService historyService;
+    private ErrorLogService errorLogService;
 
     private int numberOfFiles;
     private long sizeOfFiles;
@@ -63,6 +65,7 @@ public class PerformeCopyAsyncTask extends AsyncTask<ArrayList<String>, Integer,
         mCallback = callback;
 
         historyService = new HistoryService();
+        errorLogService = new ErrorLogService();
         numberOfFiles = 0;
         sizeOfFiles = 0;
     }
@@ -86,6 +89,13 @@ public class PerformeCopyAsyncTask extends AsyncTask<ArrayList<String>, Integer,
 
     private boolean inBackground() {
         LogUtils.LOGD_N(LOG_TAG, "inBackground");
+
+        //todo da provare, togliere successivamente
+        String m = "errore nella copia del file";
+        String t = null;
+        insertErrorLog(m, t);
+
+
         try {
             for (String source : mSources) {
 
@@ -105,8 +115,19 @@ public class PerformeCopyAsyncTask extends AsyncTask<ArrayList<String>, Integer,
             return true;
         } catch (IOException e) {
             e.printStackTrace();
+            String msg = "source o destination non validi";
+            String trace = e.getMessage();
+            insertErrorLog(msg, trace);
             return false;
         }
+    }
+
+    private void insertErrorLog(String msg, String trace) {
+        String fullClassName = Thread.currentThread().getStackTrace()[3].getClassName();
+        String className = fullClassName.substring(fullClassName.lastIndexOf(".") + 1);
+        String methodName = Thread.currentThread().getStackTrace()[3].getMethodName();
+        int lineNumber = Thread.currentThread().getStackTrace()[3].getLineNumber();
+        errorLogService.insertErrorLog(fullClassName, methodName, lineNumber, msg, trace, null);
     }
 
     private void copySelectedFolder(@NonNull File source, @NonNull File destination) throws IOException {
@@ -144,6 +165,10 @@ public class PerformeCopyAsyncTask extends AsyncTask<ArrayList<String>, Integer,
             } else {
                 //todo errore nella copia del file
                 //mCallback.notifyOnErrorOccurred(source.toString(), 0, CLASS_NAME_HASH_CODE);
+
+                String msg = "errore nella copia del file";
+                String trace = null;
+                insertErrorLog(msg, trace);
             }
         }
     }
@@ -214,7 +239,7 @@ public class PerformeCopyAsyncTask extends AsyncTask<ArrayList<String>, Integer,
 
     @Override
     protected void onPostExecute(Boolean result) {
-        historyService.setHistory(mInfo.getFolder(), numberOfFiles, sizeOfFiles);
+        historyService.insertHistory(mInfo.getFolder(), numberOfFiles, sizeOfFiles);
         mCallback.notifyOnPerformeCopyResoult(mActivity, mInfo.getFolder(), ResourceHashCode.getPerformeCopyAsyncTaskCode());
         ResourceHashCode.removePerformeCopyTask(this);
     }

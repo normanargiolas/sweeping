@@ -13,13 +13,13 @@ import it.namron.sweeping.data.entity.History;
 
 public class HistoryService {
 
-    HistoryDAO mHistoryDAO;
+    private HistoryDAO mHistoryDAO;
 
     public HistoryService() {
         mHistoryDAO = new HistoryDAO();
     }
 
-    public void setHistory(String folder, int files, long size) {
+    public void insertHistory(String folder, int files, long size) {
 //        HistoryDAO historyDAO = new HistoryDAO();
         History history = new History();
         history.setFolder(folder);

@@ -17,11 +17,9 @@ public class ErrorLog implements Parcelable {
 
     private String method;
 
-    private String line;
+    private int line;
 
     private String msg;
-
-    private String log;
 
     private String stackTrace;
 
@@ -61,11 +59,11 @@ public class ErrorLog implements Parcelable {
         this.method = method;
     }
 
-    public String getLine() {
+    public int getLine() {
         return line;
     }
 
-    public void setLine(String line) {
+    public void setLine(int line) {
         this.line = line;
     }
 
@@ -75,14 +73,6 @@ public class ErrorLog implements Parcelable {
 
     public void setMsg(String msg) {
         this.msg = msg;
-    }
-
-    public String getLog() {
-        return log;
-    }
-
-    public void setLog(String log) {
-        this.log = log;
     }
 
     public String getStackTrace() {
@@ -97,14 +87,13 @@ public class ErrorLog implements Parcelable {
         super();
     }
 
-    public ErrorLog(int id, String file, String method, String line, String msg, String log, String stackTrace, Timestamp timestamp, History history) {
+    public ErrorLog(int id, String file, String method, int line, String msg, String log, String stackTrace, Timestamp timestamp, History history) {
         super();
         this.id = id;
         this.file = file;
         this.method = method;
         this.line = line;
         this.msg = msg;
-        this.log = log;
         this.stackTrace = stackTrace;
         this.timestamp = timestamp;
         this.history = history;
@@ -115,9 +104,8 @@ public class ErrorLog implements Parcelable {
         id = in.readInt();
         file = in.readString();
         method = in.readString();
-        line = in.readString();
+        line = in.readInt();
         msg = in.readString();
-        log = in.readString();
         stackTrace = in.readString();
         timestamp = (Timestamp) in.readSerializable();
         history = in.readParcelable(History.class.getClassLoader());
@@ -145,9 +133,8 @@ public class ErrorLog implements Parcelable {
         dest.writeInt(id);
         dest.writeString(file);
         dest.writeString(method);
-        dest.writeString(line);
+        dest.writeInt(line);
         dest.writeString(msg);
-        dest.writeString(log);
         dest.writeString(stackTrace);
         dest.writeSerializable(timestamp);
         dest.writeParcelable(history, flags);
