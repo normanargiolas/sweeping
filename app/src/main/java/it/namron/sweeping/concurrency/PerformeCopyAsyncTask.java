@@ -35,6 +35,9 @@ public class PerformeCopyAsyncTask extends AsyncTask<ArrayList<String>, Integer,
 
     private final String LOG_TAG = getClass().getSimpleName();
 
+    int mHistoryId;
+
+
     private Activity mActivity;
     private String mDestination;
     private FromPerformCopyDTO mInfo;
@@ -89,6 +92,8 @@ public class PerformeCopyAsyncTask extends AsyncTask<ArrayList<String>, Integer,
 
     private boolean inBackground() {
         LogUtils.LOGD_N(LOG_TAG, "inBackground");
+
+        mHistoryId = historyService.insertHistory(mInfo.getFolder(), 0, 0);
 
         //todo da provare, togliere successivamente
         String m = "errore nella copia del file";
@@ -239,6 +244,7 @@ public class PerformeCopyAsyncTask extends AsyncTask<ArrayList<String>, Integer,
 
     @Override
     protected void onPostExecute(Boolean result) {
+        //todo aggiornamento con end_time
         historyService.insertHistory(mInfo.getFolder(), numberOfFiles, sizeOfFiles);
         mCallback.notifyOnPerformeCopyResoult(mActivity, mInfo.getFolder(), ResourceHashCode.getPerformeCopyAsyncTaskCode());
         ResourceHashCode.removePerformeCopyTask(this);

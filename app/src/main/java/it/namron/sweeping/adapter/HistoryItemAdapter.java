@@ -17,7 +17,9 @@ import it.namron.sweeping.wrapper.WrappedFormatter;
 import static it.namron.sweeping.data.dao.HistoryDAO.COLUMN_FILE_NUMBER;
 import static it.namron.sweeping.data.dao.HistoryDAO.COLUMN_FOLDER;
 import static it.namron.sweeping.data.dao.HistoryDAO.COLUMN_SIZE;
-import static it.namron.sweeping.data.dao.HistoryDAO.COLUMN_TIMESTAMP;
+import static it.namron.sweeping.data.dao.HistoryDAO.COLUMN_START_TIMESTAMP;
+import static it.namron.sweeping.data.dao.HistoryDAO.COLUMN_END_TIMESTAMP;
+
 
 /**
  * Created by norman on 19/06/17.
@@ -64,12 +66,16 @@ public class HistoryItemAdapter extends RecyclerView.Adapter<HistoryItemAdapter.
         String folder = mCursor.getString(mCursor.getColumnIndex(COLUMN_FOLDER));
         int numberOfFiles = mCursor.getInt(mCursor.getColumnIndex(COLUMN_FILE_NUMBER));
         long size = mCursor.getLong(mCursor.getColumnIndex(COLUMN_SIZE));
-        String timestamp = mCursor.getString(mCursor.getColumnIndex(COLUMN_TIMESTAMP));
+        String startTime = mCursor.getString(mCursor.getColumnIndex(COLUMN_START_TIMESTAMP));
+        String endTIme = mCursor.getString(mCursor.getColumnIndex(COLUMN_END_TIMESTAMP));
+
 
         holder.folder.setText(folder);
         holder.numberOfFiles.setText(WrappedFormatter.filesNumber(numberOfFiles));
         holder.sizeOfFiles.setText(WrappedFormatter.byteSize(size));
-        holder.timestamp.setText(timestamp);
+        holder.startTime.setText(startTime);
+        holder.endTIme.setText(endTIme);
+
 
         if(position % 2 == 1){
             holder.descriptionRow.setBackgroundColor(ContextCompat.getColor(mContext, R.color.row_odd));
@@ -86,7 +92,9 @@ public class HistoryItemAdapter extends RecyclerView.Adapter<HistoryItemAdapter.
         public TextView folder;
         public TextView numberOfFiles;
         public TextView sizeOfFiles;
-        public TextView timestamp;
+        public TextView startTime;
+        public TextView endTIme;
+
 
         public HistoryItemAdapterViewHolder(View itemView) {
             super(itemView);
@@ -94,7 +102,8 @@ public class HistoryItemAdapter extends RecyclerView.Adapter<HistoryItemAdapter.
             folder = (TextView) itemView.findViewById(R.id.col_folder);
             numberOfFiles = (TextView) itemView.findViewById(R.id.col_files);
             sizeOfFiles = (TextView) itemView.findViewById(R.id.col_size);
-            timestamp = (TextView) itemView.findViewById(R.id.col_time);
+            startTime = (TextView) itemView.findViewById(R.id.col_start_time);
+            endTIme = (TextView) itemView.findViewById(R.id.col_end_time);
         }
 
     }

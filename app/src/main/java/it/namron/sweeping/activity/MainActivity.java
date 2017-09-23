@@ -37,7 +37,6 @@ import it.namron.sweeping.utils.LogUtils;
 import static it.namron.sweeping.constant.Constant.APP_SELECTED_BUNDLE;
 import static it.namron.sweeping.constant.Constant.ID_APP_LIST_LOADER;
 import static it.namron.sweeping.constant.Constant.ON_HISTORY_PARAM;
-import static it.namron.sweeping.utils.LogUtils.LOGD;
 
 
 public class MainActivity extends BaseActivity implements

@@ -19,7 +19,9 @@ public class History implements Parcelable {
 
     private long size;
 
-    private Timestamp timestamp;
+    private Timestamp start_time;
+
+    private Timestamp end_time;
 
     public int getId() {
         return id;
@@ -53,25 +55,35 @@ public class History implements Parcelable {
         this.size = size;
     }
 
-    public Timestamp getTimestamp() {
-        return timestamp;
+    public Timestamp getStart_time() {
+        return start_time;
     }
 
-    public void setTimestamp(Timestamp timestamp) {
-        this.timestamp = timestamp;
+    public void setStart_time(Timestamp start_time) {
+        this.start_time = start_time;
     }
+
+    public Timestamp getEnd_time() {
+        return end_time;
+    }
+
+    public void setEnd_time(Timestamp end_time) {
+        this.end_time = end_time;
+    }
+
 
     public History() {
         super();
     }
 
-    public History(int id, String folder, int file_number, long size, Timestamp timestamp) {
+    public History(int id, String folder, int file_number, long size, Timestamp start_time, Timestamp end_time) {
         super();
         this.id = id;
         this.folder = folder;
         this.file_number = file_number;
         this.size = size;
-        this.timestamp = timestamp;
+        this.start_time = start_time;
+        this.end_time = end_time;
     }
 
 
@@ -81,7 +93,9 @@ public class History implements Parcelable {
         folder = in.readString();
         file_number = in.readInt();
         size = in.readLong();
-        timestamp = (Timestamp) in.readSerializable();
+        start_time = (Timestamp) in.readSerializable();
+        end_time = (Timestamp) in.readSerializable();
+
     }
 
     public static final Creator<History> CREATOR = new Creator<History>() {
@@ -107,7 +121,8 @@ public class History implements Parcelable {
         dest.writeString(folder);
         dest.writeInt(file_number);
         dest.writeLong(size);
-        dest.writeSerializable(timestamp);
+        dest.writeSerializable(start_time);
+        dest.writeSerializable(end_time);
     }
 
     @Override
@@ -131,4 +146,5 @@ public class History implements Parcelable {
             return false;
         return true;
     }
+
 }

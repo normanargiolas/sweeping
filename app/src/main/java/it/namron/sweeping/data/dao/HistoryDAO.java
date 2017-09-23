@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,9 +25,11 @@ public class HistoryDAO {
     public static final String COLUMN_FOLDER = "folder";
     public static final String COLUMN_FILE_NUMBER = "file_number";
     public static final String COLUMN_SIZE = "byteSize";
-    public static final String COLUMN_TIMESTAMP = "timestamp";
+    public static final String COLUMN_START_TIMESTAMP = "start_time";
+    public static final String COLUMN_END_TIMESTAMP = "end_time";
 
     private History history;
+    final SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
     public HistoryDAO() {
         history = new History();
@@ -43,7 +46,8 @@ public class HistoryDAO {
                     COLUMN_FOLDER + " TEXT NOT NULL, " +
                     COLUMN_FILE_NUMBER + " INTEGER NOT NULL, " +
                     COLUMN_SIZE + " BIGINT NOT NULL, " +
-                    COLUMN_TIMESTAMP + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP " +
+                    COLUMN_START_TIMESTAMP + " TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
+                    COLUMN_END_TIMESTAMP + " TIMESTAMP " +
                     "); ";
 
     /**
@@ -67,7 +71,7 @@ public class HistoryDAO {
         values.put(COLUMN_FOLDER, history.getFolder());
         values.put(COLUMN_FILE_NUMBER, history.getFile_number());
         values.put(COLUMN_SIZE, history.getSize());
-//        values.put(COLUMN_TIMESTAMP, history.getMsg());
+        values.put(COLUMN_END_TIMESTAMP, parser.format(history.getEnd_time()));
 
         // Inserting Row
         historyId = (int) db.insert(TABLE_NAME, null, values);
@@ -121,9 +125,14 @@ public class HistoryDAO {
                 h.setFile_number(cursor.getInt(cursor.getColumnIndex(COLUMN_FILE_NUMBER)));
                 h.setSize(cursor.getLong(cursor.getColumnIndex(COLUMN_SIZE)));
                 try {
-                    h.setTimestamp(Timestamp.valueOf(cursor.getString(cursor.getColumnIndex(COLUMN_TIMESTAMP))));
+                    h.setStart_time(Timestamp.valueOf(cursor.getString(cursor.getColumnIndex(COLUMN_START_TIMESTAMP))));
                 } catch (Exception e) {
-                    h.setTimestamp(null);
+                    h.setStart_time(null);
+                }
+                try {
+                    h.setEnd_time(Timestamp.valueOf(cursor.getString(cursor.getColumnIndex(COLUMN_END_TIMESTAMP))));
+                } catch (Exception e) {
+                    h.setEnd_time(null);
                 }
                 historys.add(h);
             } while (cursor.moveToNext());
@@ -147,7 +156,6 @@ public class HistoryDAO {
 
         Cursor cursor = db.rawQuery(SQL_GET_ALL_HISTORY_ELEMENTS, null);
 //        cursor.close();
-        //todo da vedere se chiudere
 //        DatabaseManager.getInstance().closeDatabase();
         return cursor;
     }
