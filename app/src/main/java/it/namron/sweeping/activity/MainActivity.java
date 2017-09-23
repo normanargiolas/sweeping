@@ -27,6 +27,7 @@ import it.namron.sweeping.concurrency.AppEntry;
 import it.namron.sweeping.concurrency.AppListLoader;
 import it.namron.sweeping.dto.AppItemDTO;
 import it.namron.sweeping.dto.DrawerItemDTO;
+import it.namron.sweeping.fragment.ErrorLogFragment;
 import it.namron.sweeping.fragment.HistoryFragment;
 import it.namron.sweeping.fragment.ManageFragment;
 import it.namron.sweeping.sweeping.R;
@@ -415,7 +416,7 @@ public class MainActivity extends BaseActivity implements
         fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack(null).commit();
         return super.onOptionsItemSelected(item);
     }
-
+//
 //    private void setOnErrorLogFragment() {
 //        Fragment fragment = null;
 //        FragmentManager fragmentManager = getSupportFragmentManager();
@@ -426,16 +427,16 @@ public class MainActivity extends BaseActivity implements
 //        onFragmentCount = true;
 //        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack(null).commit();
 //    }
-//
-//    private void setOnHistoryFragment() {
-//        Fragment fragment = null;
-//        FragmentManager fragmentManager = getSupportFragmentManager();
-//        fragment = new HistoryFragment();
-//        if (mRecyclerView.getParent() != null) {
-//            ((LinearLayout) mRecyclerView.getParent()).removeView(mRecyclerView);
-//        }
-//        onFragmentCount = true;
-//        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack(null).commit();
-//    }
+
+    private void setOnHistoryFragment() {
+        Fragment fragment = null;
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragment = new HistoryFragment();
+        if (mRecyclerView.getParent() != null) {
+            ((LinearLayout) mRecyclerView.getParent()).removeView(mRecyclerView);
+        }
+        onFragmentCount = true;
+        fragmentManager.beginTransaction().replace(R.id.content_frame, fragment).addToBackStack(null).commit();
+    }
 }
 

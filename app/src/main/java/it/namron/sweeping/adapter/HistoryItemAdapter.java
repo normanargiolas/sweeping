@@ -24,6 +24,7 @@ import static it.namron.sweeping.data.dao.HistoryDAO.COLUMN_TIMESTAMP;
  */
 
 public class HistoryItemAdapter extends RecyclerView.Adapter<HistoryItemAdapter.HistoryItemAdapterViewHolder> {
+    private static final String LOG_TAG = HistoryItemAdapter.class.getSimpleName();
 
     private final Context mContext;
     private Cursor mCursor;
@@ -58,7 +59,8 @@ public class HistoryItemAdapter extends RecyclerView.Adapter<HistoryItemAdapter.
     @Override
     public void onBindViewHolder(HistoryItemAdapterViewHolder holder, int position) {
         if (!mCursor.moveToPosition(position))
-            return; // bail if returned null
+            return; // fails if returned null
+
         String folder = mCursor.getString(mCursor.getColumnIndex(COLUMN_FOLDER));
         int numberOfFiles = mCursor.getInt(mCursor.getColumnIndex(COLUMN_FILE_NUMBER));
         long size = mCursor.getLong(mCursor.getColumnIndex(COLUMN_SIZE));

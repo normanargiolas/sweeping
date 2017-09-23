@@ -147,6 +147,7 @@ public class HistoryDAO {
 
         Cursor cursor = db.rawQuery(SQL_GET_ALL_HISTORY_ELEMENTS, null);
 //        cursor.close();
+        //todo da vedere se chiudere
 //        DatabaseManager.getInstance().closeDatabase();
         return cursor;
     }

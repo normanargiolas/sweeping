@@ -92,7 +92,7 @@ public class PerformeCopyAsyncTask extends AsyncTask<ArrayList<String>, Integer,
 
         //todo da provare, togliere successivamente
         String m = "errore nella copia del file";
-        String t = null;
+        String t = "Stack trace";
         insertErrorLog(m, t);
 
 
