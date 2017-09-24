@@ -91,7 +91,6 @@ public class History implements Parcelable {
         this.folder = folder;
         this.file_number = file_number;
         this.size = size;
-        this.end_time = end_time;
     }
 
 

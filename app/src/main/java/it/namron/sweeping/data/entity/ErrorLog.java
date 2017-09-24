@@ -87,7 +87,7 @@ public class ErrorLog implements Parcelable {
         super();
     }
 
-    public ErrorLog(int id, String file, String method, int line, String msg, String log, String stackTrace, Timestamp timestamp, History history) {
+    public ErrorLog(int id, String file, String method, int line, String msg, String stackTrace, Timestamp timestamp, History history) {
         super();
         this.id = id;
         this.file = file;
@@ -96,6 +96,16 @@ public class ErrorLog implements Parcelable {
         this.msg = msg;
         this.stackTrace = stackTrace;
         this.timestamp = timestamp;
+        this.history = history;
+    }
+
+    public ErrorLog(String file, String method, int line, String msg, String stackTrace, History history) {
+        super();
+        this.file = file;
+        this.method = method;
+        this.line = line;
+        this.msg = msg;
+        this.stackTrace = stackTrace;
         this.history = history;
     }
 

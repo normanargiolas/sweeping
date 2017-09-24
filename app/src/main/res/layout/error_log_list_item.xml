@@ -20,7 +20,7 @@
             android:layout_height="fill_parent"
             android:layout_weight="2"
             android:text="File"
-            android:textSize="@dimen/msg_text_view"
+            android:textSize="@dimen/timestamp"
             tools:gravity="center_vertical" />
 
         <TextView
@@ -29,7 +29,7 @@
             android:layout_height="fill_parent"
             android:layout_weight="2"
             android:text="MSG"
-            android:textSize="@dimen/msg_text_view"
+            android:textSize="@dimen/timestamp"
             tools:gravity="center_vertical" />
 
         <TextView

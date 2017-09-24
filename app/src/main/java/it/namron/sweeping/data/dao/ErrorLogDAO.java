@@ -47,7 +47,7 @@ public class ErrorLogDAO {
     private static final String SQL_CREATE_ERROR_LOG_TABLE =
             "CREATE TABLE " + TABLE_NAME + " (" +
                     COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    COLUMN_FILE + " TEXT NOT NULL, " +
+                    COLUMN_FILE + " TEXT, " +
                     COLUMN_METHOD + " TEXT NOT NULL, " +
                     COLUMN_LINE + " INTEGER NOT NULL, " +
                     COLUMN_MSG + " TEXT NOT NULL, " +

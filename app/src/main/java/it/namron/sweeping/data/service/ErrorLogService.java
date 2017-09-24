@@ -34,6 +34,14 @@ public class ErrorLogService {
         mErrorLogDAO.insert(error);
     }
 
+    public ErrorLog insertErrorLog(ErrorLog errorLog) {
+        int errorLogId = mErrorLogDAO.insert(errorLog);
+        errorLog.setId(errorLogId);
+
+        return errorLog;
+    }
+
+
     public Cursor getAllErrorLogCursor() {
         return mErrorLogDAO.getAllErrorLogCursor();
     }

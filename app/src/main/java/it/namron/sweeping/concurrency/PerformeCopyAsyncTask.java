@@ -23,6 +23,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import it.namron.sweeping.data.entity.ErrorLog;
 import it.namron.sweeping.data.entity.History;
 import it.namron.sweeping.data.service.ErrorLogService;
 import it.namron.sweeping.data.service.HistoryService;
@@ -103,9 +104,10 @@ public class PerformeCopyAsyncTask extends AsyncTask<ArrayList<String>, Integer,
         mHistory = historyService.insertHistory(mHistory);
 
 //        //todo da provare, togliere successivamente
-//        String m = "errore nella copia del file";
-//        String t = "Stack trace";
-//        insertErrorLog(m, t);
+        String m = "errore nella copia del file";
+        String t = "Stack trace";
+        String file = "nome_del_file.mp4";
+        insertErrorLog(file, m, t);
 
 
         try {
@@ -129,17 +131,19 @@ public class PerformeCopyAsyncTask extends AsyncTask<ArrayList<String>, Integer,
             e.printStackTrace();
             String msg = "source o destination non validi";
             String trace = e.getMessage();
-            insertErrorLog(msg, trace);
+            insertErrorLog(null, msg, trace);
             return false;
         }
     }
 
-    private void insertErrorLog(String msg, String trace) {
+    private void insertErrorLog(String file, String msg, String trace) {
         String fullClassName = Thread.currentThread().getStackTrace()[3].getClassName();
         String className = fullClassName.substring(fullClassName.lastIndexOf(".") + 1);
         String methodName = Thread.currentThread().getStackTrace()[3].getMethodName();
         int lineNumber = Thread.currentThread().getStackTrace()[3].getLineNumber();
-        errorLogService.insertErrorLog(fullClassName, methodName, lineNumber, msg, trace, null);
+
+        ErrorLog errorLog = new ErrorLog(file, methodName, lineNumber, msg, trace, mHistory);
+        errorLogService.insertErrorLog(errorLog);
     }
 
     private void copySelectedFolder(@NonNull File source, @NonNull File destination) throws IOException {
@@ -180,7 +184,7 @@ public class PerformeCopyAsyncTask extends AsyncTask<ArrayList<String>, Integer,
 
                 String msg = "errore nella copia del file";
                 String trace = null;
-                insertErrorLog(msg, trace);
+                insertErrorLog(source.getName(), msg, trace);
             }
         }
     }
@@ -260,7 +264,7 @@ public class PerformeCopyAsyncTask extends AsyncTask<ArrayList<String>, Integer,
         ResourceHashCode.removePerformeCopyTask(this);
     }
 
-    public Timestamp getCurrentTimeStamp(){
+    public Timestamp getCurrentTimeStamp() {
         try {
             Date date = new Date();
             Timestamp tsTemp = new Timestamp(date.getTime());
