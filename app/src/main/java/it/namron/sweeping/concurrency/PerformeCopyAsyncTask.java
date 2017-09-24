@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.text.format.Time;
 import android.util.Log;
 
 import org.apache.commons.io.FileUtils;
@@ -14,17 +15,23 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
+import it.namron.sweeping.data.entity.History;
 import it.namron.sweeping.data.service.ErrorLogService;
 import it.namron.sweeping.data.service.HistoryService;
 import it.namron.sweeping.dto.FromPerformCopyDTO;
 import it.namron.sweeping.listener.PerformeCopyAsyncTaskListener;
 import it.namron.sweeping.utils.LogUtils;
 import it.namron.sweeping.utils.ResourceHashCode;
+
+import static it.namron.sweeping.constant.Constant.DATETIME_FORMAT;
 
 /**
  * Created by norman on 13/06/17.
@@ -35,8 +42,7 @@ public class PerformeCopyAsyncTask extends AsyncTask<ArrayList<String>, Integer,
 
     private final String LOG_TAG = getClass().getSimpleName();
 
-    int mHistoryId;
-
+    History mHistory = null;
 
     private Activity mActivity;
     private String mDestination;
@@ -93,12 +99,13 @@ public class PerformeCopyAsyncTask extends AsyncTask<ArrayList<String>, Integer,
     private boolean inBackground() {
         LogUtils.LOGD_N(LOG_TAG, "inBackground");
 
-        mHistoryId = historyService.insertHistory(mInfo.getFolder(), 0, 0);
+        mHistory = new History(mInfo.getFolder(), 0, 0);
+        mHistory = historyService.insertHistory(mHistory);
 
-        //todo da provare, togliere successivamente
-        String m = "errore nella copia del file";
-        String t = "Stack trace";
-        insertErrorLog(m, t);
+//        //todo da provare, togliere successivamente
+//        String m = "errore nella copia del file";
+//        String t = "Stack trace";
+//        insertErrorLog(m, t);
 
 
         try {
@@ -244,9 +251,27 @@ public class PerformeCopyAsyncTask extends AsyncTask<ArrayList<String>, Integer,
 
     @Override
     protected void onPostExecute(Boolean result) {
-        //todo aggiornamento con end_time
-        historyService.insertHistory(mInfo.getFolder(), numberOfFiles, sizeOfFiles);
+        mHistory.setFile_number(numberOfFiles);
+        mHistory.setSize(sizeOfFiles);
+        mHistory.setEnd_time(getCurrentTimeStamp());
+        historyService.updateHistory(mHistory);
+
         mCallback.notifyOnPerformeCopyResoult(mActivity, mInfo.getFolder(), ResourceHashCode.getPerformeCopyAsyncTaskCode());
         ResourceHashCode.removePerformeCopyTask(this);
+    }
+
+    public Timestamp getCurrentTimeStamp(){
+        try {
+            Date date = new Date();
+            Timestamp tsTemp = new Timestamp(date.getTime());
+            final SimpleDateFormat parser = new SimpleDateFormat(DATETIME_FORMAT);
+            tsTemp.valueOf(parser.format(tsTemp));
+            return tsTemp;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return null;
+        }
     }
 }

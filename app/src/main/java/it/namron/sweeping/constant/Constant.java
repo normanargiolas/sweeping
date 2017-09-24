@@ -25,6 +25,11 @@ public class Constant {
     public static final String ENOUGHT_FREE_MEMORY_DIALOG_TAG = "EnoughtFreeMemoryDialog_TAG";
 
     /**
+     Formato della data da visualizzare
+     **/
+    public static final String DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
+
+    /**
      * This number will uniquely identify our Loader
      */
     public static final int ID_APP_LIST_LOADER = 20;

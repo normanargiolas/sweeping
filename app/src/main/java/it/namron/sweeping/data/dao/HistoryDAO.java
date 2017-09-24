@@ -13,6 +13,8 @@ import it.namron.sweeping.data.DatabaseManager;
 import it.namron.sweeping.data.entity.History;
 import it.namron.sweeping.utils.LogUtils;
 
+import static it.namron.sweeping.constant.Constant.DATETIME_FORMAT;
+
 /**
  * Created by norman on 09/06/17.
  */
@@ -29,7 +31,7 @@ public class HistoryDAO {
     public static final String COLUMN_END_TIMESTAMP = "end_time";
 
     private History history;
-    final SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+    final SimpleDateFormat parser = new SimpleDateFormat(DATETIME_FORMAT);
 
     public HistoryDAO() {
         history = new History();
@@ -58,6 +60,9 @@ public class HistoryDAO {
             "SELECT * FROM " + TABLE_NAME + "; ";
 
 
+    private static final String WHERE_ID_EQUALS = COLUMN_ID + " =?";
+
+
     public static String createTableSQL() {
         return SQL_CREATE_HISTORY_TABLE;
     }
@@ -80,6 +85,23 @@ public class HistoryDAO {
 
         return historyId;
     }
+
+    public int update(History history) {
+        ContentValues values = new ContentValues();
+//        values.put(COLUMN_FOLDER, history.getFolder());
+        values.put(COLUMN_FILE_NUMBER, history.getFile_number());
+        values.put(COLUMN_SIZE, history.getSize());
+        values.put(COLUMN_END_TIMESTAMP, parser.format(history.getEnd_time()));
+
+        SQLiteDatabase db = DatabaseManager.getInstance().openDatabase();
+
+        int result = db.update(TABLE_NAME, values, WHERE_ID_EQUALS,
+                new String[]{String.valueOf(history.getId())});
+
+        DatabaseManager.getInstance().closeDatabase();
+        return result;
+    }
+
 
     /**
      * Delete History table
@@ -157,6 +179,7 @@ public class HistoryDAO {
 
         Cursor cursor = db.rawQuery(SQL_GET_ALL_HISTORY_ELEMENTS, null);
 //        cursor.close();
+        //todo chiudere il databaseConnection
 //        DatabaseManager.getInstance().closeDatabase();
         return cursor;
     }

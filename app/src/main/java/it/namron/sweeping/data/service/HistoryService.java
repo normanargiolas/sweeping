@@ -25,13 +25,12 @@ public class HistoryService {
      * Inizialmente start_time viene settato con l'orario corrente
      * mentre end_time è nullo.
      *
-     * @param  folder  cartella
-     * @param  files numero di file
-     * @param  size dimensione dei file
-
-     * @return      ID del record History appena inserito
-     * @see         HistoryService
-     * @see         History
+     * @param folder cartella
+     * @param files  numero di file
+     * @param size   dimensione dei file
+     * @return ID del record History appena inserito
+     * @see HistoryService
+     * @see History
      */
     public int insertHistory(String folder, int files, long size) {
         int historyId;
@@ -45,11 +44,25 @@ public class HistoryService {
         return historyId;
     }
 
+    public History insertHistory(History history) {
+        int historyId = mHistoryDAO.insert(history);
+        history.setId(historyId);
+
+        return history;
+    }
+
     public Cursor getAllHistoryCursor() {
         return mHistoryDAO.getAllHistoryCursor();
     }
 
     public List<History> getAllHistory() {
         return mHistoryDAO.getAllHistory();
+    }
+
+    public History updateHistory(History history) {
+        int result = mHistoryDAO.update(history);
+        if (result != 0)
+            return history;
+        return null;
     }
 }
