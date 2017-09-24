@@ -22,7 +22,8 @@ public class HistoryService {
 
     /**
      * Restituisce l'id del record {@link History} se inserito correttamente.
-     * Inizialmente i valori start_time e end_time vengono settati con l'orario corrente.
+     * Inizialmente start_time viene settato con l'orario corrente
+     * mentre end_time è nullo.
      *
      * @param  folder  cartella
      * @param  files numero di file

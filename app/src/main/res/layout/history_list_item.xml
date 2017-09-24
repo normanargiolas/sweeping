@@ -54,7 +54,7 @@
             android:id="@+id/col_time"
             android:layout_width="0px"
             android:layout_height="fill_parent"
-            android:layout_weight="1"
+            android:layout_weight="2"
             android:orientation="vertical">
 
             <TextView

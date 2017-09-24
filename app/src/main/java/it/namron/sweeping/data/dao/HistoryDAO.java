@@ -71,7 +71,8 @@ public class HistoryDAO {
         values.put(COLUMN_FOLDER, history.getFolder());
         values.put(COLUMN_FILE_NUMBER, history.getFile_number());
         values.put(COLUMN_SIZE, history.getSize());
-        values.put(COLUMN_END_TIMESTAMP, parser.format(history.getEnd_time()));
+//        values.put(COLUMN_END_TIMESTAMP, parser.format(history.getEnd_time()));
+        values.put(COLUMN_END_TIMESTAMP, "");
 
         // Inserting Row
         historyId = (int) db.insert(TABLE_NAME, null, values);
