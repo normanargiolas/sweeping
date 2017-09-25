@@ -12,9 +12,9 @@
             <!--android:id="@+id/nav_telegram"-->
             <!--android:icon="@drawable/deactive_telegram"-->
             <!--android:title="Telegram" />-->
-        <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/deactive_manage"
-            android:title="Manage" />
+        <!--<item-->
+            <!--android:id="@+id/nav_manage"-->
+            <!--android:icon="@drawable/deactive_manage"-->
+            <!--android:title="Manage" />-->
     </group>
 </menu>

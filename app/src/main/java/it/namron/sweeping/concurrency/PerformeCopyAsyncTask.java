@@ -104,10 +104,10 @@ public class PerformeCopyAsyncTask extends AsyncTask<ArrayList<String>, Integer,
         mHistory = historyService.insertHistory(mHistory);
 
 //        //todo da provare, togliere successivamente
-        String m = "errore nella copia del file";
-        String t = "Stack trace";
-        String file = "nome_del_file.mp4";
-        insertErrorLog(file, m, t);
+//        String m = "errore nella copia del file";
+//        String t = "Stack trace";
+//        String file = "nome_del_file.mp4";
+//        insertErrorLog(file, m, t);
 
 
         try {
@@ -129,7 +129,7 @@ public class PerformeCopyAsyncTask extends AsyncTask<ArrayList<String>, Integer,
             return true;
         } catch (IOException e) {
             e.printStackTrace();
-            String msg = "source o destination non validi";
+            String msg = "Percorsi non validi!";
             String trace = e.getMessage();
             insertErrorLog(null, msg, trace);
             return false;
@@ -182,7 +182,7 @@ public class PerformeCopyAsyncTask extends AsyncTask<ArrayList<String>, Integer,
                 //todo errore nella copia del file
                 //mCallback.notifyOnErrorOccurred(source.toString(), 0, CLASS_NAME_HASH_CODE);
 
-                String msg = "errore nella copia del file";
+                String msg = "Copia file fallita!";
                 String trace = null;
                 insertErrorLog(source.getName(), msg, trace);
             }

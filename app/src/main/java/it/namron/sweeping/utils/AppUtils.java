@@ -110,9 +110,9 @@ public class AppUtils {
         List<String> listDirectory = new ArrayList<>();
         File telegramAppDirectory;
 
-        if (Environment.getExternalStorageState() == null) {
-//            todo da pensare come procedere
-            //cercare nella memoria interna del dispositivo
+        if (Environment.getExternalStorageState() == null || Environment.isExternalStorageRemovable()) {
+            LogUtils.LOGD_N(LOG_TAG, Constant.EXTERNAL_STORAGE_STATE);
+            return null;
         } else if (Environment.getExternalStorageState() != null) {
             // search for directory on SD card
             File baseDirectory = new File(Environment.getExternalStorageDirectory().getPath());
@@ -125,15 +125,12 @@ public class AppUtils {
                     Uri dirUri = Uri.parse(dir);
                     String folder = dirUri.getLastPathSegment();
                     if (!folder.startsWith(".")) {
-                        listDirectory.add(folder);
+                        listDirectory.add(dir);
                     }
                 }
-                return listDirectory;
             }
-
         }
-
-        return null;
+        return listDirectory;
     }
 
     public static List<AppItemDTO> listOfTargetDir(List<AppEntry> appList) {

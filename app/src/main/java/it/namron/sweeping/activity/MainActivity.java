@@ -132,26 +132,6 @@ public class MainActivity extends BaseActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        HistoryService historyService = new HistoryService();
-//        historyService.insertHistory("folder", 15, 1024);
-//
-
-
-//        ErrorLogDAO errorLogDAO = new ErrorLogDAO();
-//        //Insert Sample data
-//        ErrorLog errorLog = new ErrorLog();
-//        errorLog.setFile("nome del file");
-//        errorLog.setMethod("descrizione metodo");
-//        errorLog.setLine("numero linea");
-//        errorLog.setMsg("messaggio");
-//        errorLog.setLog("log");
-//        errorLog.setStackTrace("stacktrace");
-//        errorLogDAO.insert(errorLog);
-//
-//        errorLogDAO.insert(errorLog);
-//        errorLogDAO.insert(errorLog);
-
-
         // Keep a reference to the mDb until paused or killed. Get a writable database
         // because you will be adding restaurant customers
 //        ResourceHashCode.setWritableDatabase(dbHelper.getWritableDatabase());
@@ -206,7 +186,7 @@ public class MainActivity extends BaseActivity implements
     private void restoreState(Bundle savedInstanceState) {
         onFragmentCount = savedInstanceState.getBoolean(ON_HISTORY_PARAM);
         if (onFragmentCount) {
-            if (getSupportFragmentManager().getBackStackEntryCount() > 0){
+            if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
                 getSupportFragmentManager().popBackStack();
             }
             setOnHistoryFragment();
@@ -346,8 +326,9 @@ public class MainActivity extends BaseActivity implements
 
 
         switch (id) {
-            case R.id.nav_manage:
-                //todo start activity
+//            case R.id.nav_manage:
+            case -1:
+                //todo start activity da rivedere e rimuovere
                 this.setTitle("Manage");
                 fragment = new ManageFragment();
                 break;

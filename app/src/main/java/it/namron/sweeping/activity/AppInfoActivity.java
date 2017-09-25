@@ -72,7 +72,7 @@ public class AppInfoActivity extends BaseActivity {
     private void restoreState(Bundle savedInstanceState) {
         //Fragments tags were saved in onSavedInstanceState
         String tag = savedInstanceState.getString(TAG_APP_INFO_FRAGMENT);
-        if(tag != null)        {
+        if (tag != null) {
             mAppInfoFragment = (AppInfoFragment) mFragmentManager.findFragmentByTag(tag);
         }
     }
@@ -93,7 +93,7 @@ public class AppInfoActivity extends BaseActivity {
     protected void onSaveInstanceState(Bundle savedInstanceState) {
         Log.d(LOG_TAG, "onSaveInstanceState");
 
-        if(null != mAppInfoFragment) {
+        if (null != mAppInfoFragment) {
             savedInstanceState.putString(TAG_APP_INFO_FRAGMENT, mAppInfoFragment.getTag());
         }
 
@@ -112,8 +112,9 @@ public class AppInfoActivity extends BaseActivity {
         int id = item.getId();
 
         switch (id) {
-            case R.id.nav_manage:
-                //todo da rivedere
+//            case R.id.nav_manage:
+            case -1:
+                //todo da rivedere e rimuovere
                 this.setTitle("Manage");
                 fragment = new ManageFragment();
                 break;
